@@ -1,23 +1,25 @@
-import * as React from "react";
-import * as style from "./style.css";
-import { RouteComponentProps } from "react-router";
+import * as React from "react"
+import { Header, Helper } from '../../components'
+
 
 export namespace App {
-  export interface Props extends RouteComponentProps<void> {
+  export interface Props {
   }
 
   export interface State {
-    /* empty */
   }
 }
 
 export class App extends React.Component<App.Props, App.State> {
   render() {
-    const { children } = this.props;
+    const { children } = this.props
     return (
       <div>
-        Test!
+        <Header/>
+        { children }
+        <Helper/>
       </div>
-    );
+    )
   }
 }
+
