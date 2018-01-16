@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "type": "political",
+    "description": "This is a test",
+    "geo": {
+      "city": "Toronto",
+      "map": "Toronto"
+    },
+    "ripples": [
+      {
+        "scale": 1,
+        "name": "First ripple",
+        "description": "This is a test first ripple"
+      },
+      {
+        "scale": 2,
+        "name": "Second ripple",
+        "description": "This is a test second ripple"
+      }
+    ]
+  }
+]

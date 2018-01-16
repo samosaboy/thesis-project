@@ -6,6 +6,8 @@ import { createBrowserHistory } from "history";
 import { configureStore } from "./store";
 import { App } from "./containers/App";
 
+import 'normalize.css/normalize.css'
+
 const store = configureStore();
 const history = createBrowserHistory();
 

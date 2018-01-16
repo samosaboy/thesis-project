@@ -1,5 +1,6 @@
 import * as React from "react"
-import { Header, Helper } from '../../components'
+import { Canvas, Header, Helper } from '../../components'
+import * as styles from './style.css'
 
 /* redux imports */
 import * as helperActions from '../../actions/helper'
@@ -24,9 +25,15 @@ export class App extends React.Component<App.Props, App.State> {
     const { helper, actions, children } = this.props
     return (
       <div>
-        <Header addHelper={actions.addHelper}/>
-        { children }
-        <Helper helper={helper.text}/>
+        <header className={styles.header}>
+          <Header addHelper={actions.addHelper}/>
+        </header>
+
+        <Canvas/>
+        {children}
+        <div className={styles.helper}>
+          <Helper helper={helper.text}/>
+        </div>
       </div>
     )
   }

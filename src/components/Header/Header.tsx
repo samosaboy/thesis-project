@@ -1,8 +1,6 @@
 import * as React from 'react'
 import * as style from './Header.css'
 
-
-
 export namespace Header {
   export interface Props {
     addHelper: (helper: ContextualHelperData) => void

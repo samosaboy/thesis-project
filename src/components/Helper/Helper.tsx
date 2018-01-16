@@ -1,11 +1,12 @@
 import * as React from 'react'
+import * as styles from './Helper.css'
 
-export interface Props {
+interface Props {
   helper: string
 }
 
 export class Helper extends React.Component<Props, any> {
   render() {
-    return <span>{this.props.helper}</span>
+    return <span className={styles.helperText}>{this.props.helper}</span>
   }
 }
