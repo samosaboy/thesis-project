@@ -10,8 +10,8 @@ export default handleActions<HelperStateConfig, ContextualHelperData>(
   {
     [Actions.ADD_HELPER]: (state, action) => {
       return {
+        ...state,
         ...action.payload,
-        ...state
       }
     }
   },

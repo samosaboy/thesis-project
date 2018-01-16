@@ -1,18 +1,11 @@
 import * as React from 'react'
 
-/* redux imports */
-import { connect } from 'react-redux'
-import { RootState } from '../../reducers'
-
-@connect(mapStateToProps, null)
-export class Helper extends React.Component {
-  render() {
-    return <span>{this.props.helper.text}</span>
-  }
+export interface Props {
+  helper: string
 }
 
-function mapStateToProps(state: RootState) {
-  return {
-    helper: state.helper
+export class Helper extends React.Component<Props, any> {
+  render() {
+    return <span>{this.props.helper}</span>
   }
 }
