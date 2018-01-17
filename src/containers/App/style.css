@@ -30,6 +30,7 @@ body {
   -moz-font-smoothing: antialiased;
   -ms-font-smoothing: antialiased;
   font-smoothing: antialiased;
+  overflow: visible;
 }
 
 button,

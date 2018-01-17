@@ -1,0 +1,11 @@
+.svg {
+  position: absolute;
+  left: 30%;
+  top: 30%;
+  display: block;
+  overflow: visible !important;
+}
+
+.circle {
+  display: block;
+}

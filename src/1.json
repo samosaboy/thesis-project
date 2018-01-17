@@ -9,13 +9,15 @@
     },
     "ripples": [
       {
-        "scale": 1,
         "name": "First ripple",
         "description": "This is a test first ripple"
       },
       {
-        "scale": 2,
         "name": "Second ripple",
+        "description": "This is a test second ripple"
+      },
+      {
+        "name": "Third ripple",
         "description": "This is a test second ripple"
       }
     ]
