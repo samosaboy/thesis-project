@@ -1,11 +1,40 @@
 [
   {
     "id": 1,
+    "importance": 2,
     "type": "political",
     "description": "This is a test",
     "position": {
       "left": 200,
       "top": 200
+    },
+    "geo": {
+      "city": "Toronto",
+      "map": "Toronto"
+    },
+    "ripples": [
+      {
+        "name": "First ripple",
+        "description": "This is a test first ripple"
+      },
+      {
+        "name": "Second ripple",
+        "description": "This is a test second ripple"
+      },
+      {
+        "name": "Third ripple",
+        "description": "This is a test third ripple"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "importance": 1,
+    "type": "political",
+    "description": "This is a test",
+    "position": {
+      "left": 600,
+      "top": 600
     },
     "geo": {
       "city": "Toronto",
