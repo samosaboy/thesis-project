@@ -3,7 +3,7 @@ import { Canvas, Header, Helper } from '../../components'
 import * as styles from './style.css'
 
 /* redux imports */
-import * as helperActions from '../../actions/helper'
+import * as actions from '../../actions/actions'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { RootState } from '../../reducers'
@@ -11,8 +11,9 @@ import { RouteComponentProps } from "react-router"
 
 export namespace App {
   export interface Props extends RouteComponentProps<void> {
-    actions: typeof helperActions,
-    helper: ContextualHelperData
+    actions: typeof actions,
+    helper: ContextualHelperData,
+    rippleActive: rippleActiveData
   }
 
   export interface State {
@@ -22,14 +23,14 @@ export namespace App {
 @connect(mapStateToProps, mapDispatchToProps)
 export class App extends React.Component<App.Props, App.State> {
   render() {
-    const { helper, actions, children } = this.props
+    const { rippleActive, helper, actions, children } = this.props
     return (
       <div>
         <header className={styles.header}>
           <Header addHelper={actions.addHelper}/>
         </header>
 
-        <Canvas/>
+        <Canvas rippleActive={actions.rippleActive} rippleText={rippleActive}/>
         {children}
         <div className={styles.helper}>
           <Helper helper={helper.text}/>
@@ -42,13 +43,14 @@ export class App extends React.Component<App.Props, App.State> {
 
 function mapStateToProps(state: RootState) {
   return {
-    helper: state.helper
+    helper: state.helper,
+    rippleActive: state.rippleActive
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(helperActions as any, dispatch)
+    actions: bindActionCreators(actions as any, dispatch)
   }
 }
 

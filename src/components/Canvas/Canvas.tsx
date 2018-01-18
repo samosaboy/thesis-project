@@ -4,12 +4,17 @@ import * as styles from './Canvas.css'
 import Ripple from '../Ripple/Ripple'
 
 export namespace Canvas {
+  export interface Props {
+    rippleActive: (ripple: rippleActiveData) => void,
+    rippleText: rippleActiveData
+  }
+
   export interface State {
     data: any,
   }
 }
 
-export class Canvas extends React.Component<any, Canvas.State> {
+export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
@@ -25,23 +30,25 @@ export class Canvas extends React.Component<any, Canvas.State> {
       })
   }
 
+  private renderActive = (): JSX.Element => {
+    return <div>{this.props.rippleText.title}</div>
+  }
+
   private renderItem = (): JSX.Element => {
-    return this.state.data.map((item) => (
+    return (
+      this.renderActive(),
+      this.state.data.map((item) => (
       <div key={item.id}>
-        <div>{item.geo.city}</div>
         <svg className={styles.svg} style={{left: item.position.left, top: item.position.top}}>
-          {
-            item.ripples.map((ripple, index) =>
-              <Ripple
-                ripple={ripple}
-                index={index}
-                importance={item.importance}
-              />
-            )
-          }
+          <Ripple
+            rippleActive={this.props.rippleActive}
+            ripples={item.ripples}
+            importance={item.importance}
+          />
         </svg>
       </div>
     ))
+    )
   }
 
   render() {

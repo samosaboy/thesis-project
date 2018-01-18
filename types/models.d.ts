@@ -3,4 +3,10 @@ declare interface ContextualHelperData {
   persistent?: boolean
 }
 
+declare interface rippleActiveData {
+  title: string,
+  description?: string
+}
+
+declare type rippleActiveConfig = rippleActiveData
 declare type HelperStateConfig = ContextualHelperData
