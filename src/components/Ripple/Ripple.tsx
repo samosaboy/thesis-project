@@ -1,11 +1,13 @@
 import * as React from 'react'
 import * as styles from './Ripple.css'
 
+
 export namespace Ripple {
   export interface Props {
     ripples: any,
     importance: number,
-    rippleActive: (ripple: rippleActiveData) => void
+    rippleActive: (ripple: rippleActiveData) => void,
+    addHelper: (helper: ContextualHelperData) => void,
   }
 
   export interface RippleItem {
@@ -20,7 +22,8 @@ export default class Ripple extends React.PureComponent<Ripple.Props, any> {
   }
 
   private rippleHover = (ripple: Ripple.RippleItem): any => {
-    this.props.rippleActive({ title: ripple.name })
+    this.props.addHelper({ text: 'Click the ripple to explore!' })
+    this.props.rippleActive({ title: ripple.name, description: ripple.description })
   }
 
   private renderRipple = (): JSX.Element => {
@@ -29,29 +32,29 @@ export default class Ripple extends React.PureComponent<Ripple.Props, any> {
       const r = scale / 2
 
       return (
-        <svg key={index} className={styles.svgInner}>
+        <g key={ripple.name + ripple.id} className={styles.svgInner}>
           <circle
             cx={100}
             cy={100}
             r={r}
-            fill={'none'}
             stroke={'black'}
             strokeWidth={2}
-            cursor={'pointer'}
+            style={{ animationDuration: (1.5 / (index + 1) + this.props.importance) + 's' }}
           />
           <circle
             cx={100}
             cy={100}
             r={r}
-            fill={'none'}
             stroke={'grey'}
             strokeWidth={30}
-            cursor={'pointer'}
-            style={{opacity: 0}}
+            className={styles.hiddenCircle}
             onMouseOver={() => this.rippleHover(ripple)}
-            onMouseOut={() => this.props.rippleActive({ title: '', description: '' })}
+            onMouseOut={() => {
+              this.props.rippleActive({ title: '', description: '' })
+              this.props.addHelper({ text: 'Use your mouse to scroll around' })
+            }}
           />
-        </svg>
+        </g>
       )
     })
   }
@@ -60,3 +63,4 @@ export default class Ripple extends React.PureComponent<Ripple.Props, any> {
     return this.renderRipple()
   }
 }
+

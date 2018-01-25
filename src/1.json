@@ -14,14 +14,17 @@
     },
     "ripples": [
       {
+        "id": 1,
         "name": "First ripple",
         "description": "This is a test first ripple"
       },
       {
+        "id": 2,
         "name": "Second ripple",
         "description": "This is a test second ripple"
       },
       {
+        "id": 3,
         "name": "Third ripple",
         "description": "This is a test third ripple"
       }
@@ -42,15 +45,80 @@
     },
     "ripples": [
       {
-        "name": "First ripple",
+        "id": 1,
+        "name": "First ripple here",
         "description": "This is a test first ripple"
       },
       {
-        "name": "Second ripple",
+        "id": 2,
+        "name": "Second ripple here",
         "description": "This is a test second ripple"
       },
       {
-        "name": "Third ripple",
+        "id": 3,
+        "name": "Third ripple here",
+        "description": "This is a test third ripple"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "importance": 6,
+    "type": "political",
+    "description": "This is a test",
+    "position": {
+      "left": 1000,
+      "top": 200
+    },
+    "geo": {
+      "city": "Toronto",
+      "map": "Toronto"
+    },
+    "ripples": [
+      {
+        "id": 1,
+        "name": "First ripple here",
+        "description": "This is a test first ripple"
+      },
+      {
+        "id": 2,
+        "name": "Second ripple here",
+        "description": "This is a test second ripple"
+      },
+      {
+        "id": 3,
+        "name": "Third ripple here",
+        "description": "This is a test third ripple"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "importance": 3,
+    "type": "political",
+    "description": "This is a test",
+    "position": {
+      "left": 1600,
+      "top": 200
+    },
+    "geo": {
+      "city": "Toronto",
+      "map": "Toronto"
+    },
+    "ripples": [
+      {
+        "id": 1,
+        "name": "First ripple here",
+        "description": "This is a test first ripple"
+      },
+      {
+        "id": 2,
+        "name": "Second ripple here",
+        "description": "This is a test second ripple"
+      },
+      {
+        "id": 3,
+        "name": "Third ripple here",
         "description": "This is a test third ripple"
       }
     ]

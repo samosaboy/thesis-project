@@ -1,16 +1,17 @@
 import * as React from 'react'
 import * as styles from './Canvas.css'
-
 import Ripple from '../Ripple/Ripple'
 
 export namespace Canvas {
   export interface Props {
+    addHelper: (helper: ContextualHelperData) => void,
     rippleActive: (ripple: rippleActiveData) => void,
     rippleText: rippleActiveData
   }
 
   export interface State {
     data: any,
+    props: any,
   }
 }
 
@@ -19,6 +20,7 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
     super(props, context)
     this.state = {
       data: [],
+      props: {},
     }
   }
 
@@ -30,31 +32,27 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
       })
   }
 
-  private renderActive = (): JSX.Element => {
-    return <div>{this.props.rippleText.title}</div>
-  }
-
   private renderItem = (): JSX.Element => {
-    return (
-      this.renderActive(),
-      this.state.data.map((item) => (
-      <div key={item.id}>
-        <svg className={styles.svg} style={{left: item.position.left, top: item.position.top}}>
-          <Ripple
-            rippleActive={this.props.rippleActive}
-            ripples={item.ripples}
-            importance={item.importance}
-          />
-        </svg>
-      </div>
+    return this.state.data.map((item) => (
+      <svg key={item.id} className={styles.svg} style={{left: item.position.left, top: item.position.top}}>
+        <Ripple
+          addHelper={this.props.addHelper}
+          rippleActive={this.props.rippleActive}
+          ripples={item.ripples}
+          importance={item.importance}
+        />
+      </svg>
     ))
-    )
   }
 
   render() {
     if (!this.state.data.length) {
       return <span>Loading data</span>
     }
-    return this.renderItem()
+    return (
+      <div>
+        {this.renderItem()}
+      </div>
+    )
   }
 }
