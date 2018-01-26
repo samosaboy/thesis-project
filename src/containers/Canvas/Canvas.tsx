@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as styles from './Canvas.css'
-import Ripple from '../Ripple/Ripple'
+import Ripple from '../../components/Ripple/Ripple'
+import { Group, Text } from 'react-konva'
 
 export namespace Canvas {
   export interface Props {
@@ -26,33 +27,30 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
 
   componentDidMount() {
     fetch('../../1.json')
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({data})
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ data })
       })
   }
 
   private renderItem = (): JSX.Element => {
-    return this.state.data.map((item) => (
-      <svg key={item.id} className={styles.svg} style={{left: item.position.left, top: item.position.top}}>
+    return this.state.data.map(item => (
+      <Group
+        x={item.position.left}
+        y={item.position.top}
+        key={item.id}
+      >
         <Ripple
           addHelper={this.props.addHelper}
           rippleActive={this.props.rippleActive}
           ripples={item.ripples}
           importance={item.importance}
         />
-      </svg>
+      </Group>
     ))
   }
 
   render() {
-    if (!this.state.data.length) {
-      return <span>Loading data</span>
-    }
-    return (
-      <div>
-        {this.renderItem()}
-      </div>
-    )
+    return this.renderItem()
   }
 }

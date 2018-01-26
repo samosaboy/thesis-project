@@ -20,13 +20,13 @@ export class Header extends React.Component<Header.Props, Header.State> {
       links: [
         {
           name: 'Home',
-          url: '/'
+          url: '/',
         },
         {
           name: 'FAQ',
-          url: '/faq'
-        }
-      ]
+          url: '/faq',
+        },
+      ],
     }
   }
 

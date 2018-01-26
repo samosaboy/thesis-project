@@ -1,9 +1,9 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 import * as Actions from '../constants/actions'
 
 const initialState: HelperStateConfig = {
   text: 'Use your mouse to scroll around',
-  persistent: false
+  persistent: false,
 }
 
 export default handleActions<HelperStateConfig, ContextualHelperData>(
@@ -13,7 +13,7 @@ export default handleActions<HelperStateConfig, ContextualHelperData>(
         ...state,
         ...action.payload,
       }
-    }
+    },
   },
   initialState
 )
