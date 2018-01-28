@@ -5,8 +5,10 @@ interface Props {
   helper: string
 }
 
-export class Helper extends React.Component<Props, any> {
-  render() {
-    return <span className={styles.helperText}>{this.props.helper}</span>
-  }
+const Helper = (props: Props) => {
+  const { helper } = props
+
+  return <span className={styles.helperText}>{helper}</span>
 }
+
+export default Helper

@@ -1,5 +1,5 @@
 declare interface ContextualHelperData {
-  text: string
+  text: string,
   persistent?: boolean
 }
 
@@ -8,5 +8,11 @@ declare interface rippleActiveData {
   description?: string
 }
 
+declare interface pointerPositionData {
+  x: number,
+  y: number,
+}
+
 declare type rippleActiveConfig = rippleActiveData
 declare type HelperStateConfig = ContextualHelperData
+declare type pointerPosition = pointerPositionData

@@ -1,2 +1,3 @@
 export { Header } from './Header/Header'
-export { Helper } from './Helper/Helper'
+export { Event } from './Event/Event'
+export { Ripple } from './Ripple/Ripple'

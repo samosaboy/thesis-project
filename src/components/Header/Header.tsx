@@ -33,7 +33,6 @@ export class Header extends React.Component<Header.Props, Header.State> {
   componentDidMount() {
     setTimeout(() => {
       this.setState({loading: false})
-      // this.props.addHelper({ text: 'This is a test' })
     }, 1000)
   }
 

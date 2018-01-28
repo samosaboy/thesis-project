@@ -58,7 +58,6 @@
     "konva": "^1.7.6",
     "normalize.css": "^7.0.0",
     "react": "^16.0.0",
-    "react-cursor-position": "^2.4.0",
     "react-dom": "^16.0.0",
     "react-konva": "^1.6.6",
     "react-redux": "^5.0.6",

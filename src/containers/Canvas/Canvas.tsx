@@ -1,7 +1,6 @@
 import * as React from 'react'
-import * as styles from './Canvas.css'
-import Ripple from '../../components/Ripple/Ripple'
-import { Group, Text } from 'react-konva'
+import {Event} from '../../components'
+import {Group} from 'react-konva'
 
 export namespace Canvas {
   export interface Props {
@@ -40,7 +39,7 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
         y={item.position.top}
         key={item.id}
       >
-        <Ripple
+        <Event
           addHelper={this.props.addHelper}
           rippleActive={this.props.rippleActive}
           ripples={item.ripples}

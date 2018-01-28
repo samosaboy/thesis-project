@@ -1,90 +1,99 @@
 import * as React from 'react'
-import * as styles from './Ripple.css'
+import * as Konva from 'konva'
 import {Circle} from 'react-konva'
+import * as actions from '../../actions/actions'
+import {bindActionCreators} from 'redux'
+import {connect} from 'react-redux'
 
 export namespace Ripple {
   export interface Props {
-    ripples: any,
-    importance: number,
-    rippleActive: (ripple: rippleActiveData) => void,
-    addHelper: (helper: ContextualHelperData) => void,
-  }
-
-  export interface State {
-  }
-
-  export interface RippleItem {
-    name: string,
-    description: string
+    ripple: {
+      name: string,
+      id: number,
+      description: string,
+    },
+    radius: number,
+    actions?: typeof actions,
   }
 }
 
-export default class Ripple extends React.PureComponent<Ripple.Props, Ripple.State> {
-  private circle: any // Konva what do you return? why you do this??
+class Ripple extends React.PureComponent<Ripple.Props, {}> {
+  private circle: any
 
-  constructor(props?: any, context?: any) {
-    super(props, context)
+  constructor(props) {
+    super(props)
   }
 
   componentDidMount() {
-    this.circle.cache()
     this.setZIndex(this.circle.parent.children)
+    this.animate()
+  }
+
+  private animate = (): void => {
+    /*
+    * To avoid memory leaks we use .to method to destroy the instance
+    * once it is finished.
+    * */
+    this.circle.to({
+      opacity: 1,
+      duration: (Math.floor(Math.random() * 1.5) + 1) * this.props.ripple.id,
+      easing: Konva.Easings.EaseInOut
+    })
   }
 
   private setZIndex = (array): void => {
     [...array]
       .sort((a, b): number => a.attrs.radius > b.attrs.radius ? 1 : -1)
-      .forEach((ripple, index) => ripple.setZIndex(array.length - (index+1)))
+      .forEach((ripple, index) => ripple.setZIndex(array.length - (index + 1)))
   }
 
-  private rippleHover = (ripple: Ripple.RippleItem): void => {
-    this.props.addHelper({ text: 'Click the ripple to explore!' })
-    this.props.rippleActive({ title: ripple.name, description: ripple.description })
-  }
-
-  private renderRipple = (): JSX.Element => {
-    return this.props.ripples.map((ripple, index) => {
-      const scale = (200 * (index + 1)) / this.props.importance
-      const r = scale / 2
-
-      return (
-        <Circle
-          ref={node => { this.circle = node }}
-          key={ripple.name + ripple.id}
-          x={100}
-          y={100}
-          radius={r}
-          stroke={'black'}
-          strokeWidth={2}
-          onMouseOver={e => {
-            e.target.scaleX(2)
-            e.target.scaleY(2)
-            e.target.cache()
-            this.rippleHover(ripple)
-          }}
-        />
-      )
+  private rippleHover = (): void => {
+    this.circle.to({
+      stroke: '#ffc941',
+      scaleX: 1.01,
+      scaleY: 1.01,
+      easing: Konva.Easings.EaseInOut,
+      duration: 0.2
     })
+    this.props.actions.addHelper({text: 'Click the ripple to explore!'})
+    this.props.actions.rippleActive({title: this.props.ripple.name, description: this.props.ripple.description})
   }
 
-  // <Circle
-  //           ref={node => this.state.circle = node}
-  //           x={100}
-  //           y={100}
-  //           radius={r}
-  //           stroke={'grey'}
-  //           strokeWidth={30}
-  //           opacity={0}
-  //           // className={styles.hiddenCircle}
-  //           // onMouseOver={() => this.rippleHover(ripple)}
-  //           // onMouseOut={() => {
-  //           //   this.props.rippleActive({ title: '', description: '' })
-  //           //   this.props.addHelper({ text: 'Use your mouse to scroll around' })
-  //           // }}
-  //         />
+  private resetHover = (): void => {
+    this.circle.to({
+      stroke: 'black',
+      scaleX: 1,
+      scaleY: 1,
+      easing: Konva.Easings.EaseInOut,
+      duration: 0.2
+    })
+    this.props.actions.addHelper({text: null})
+    this.props.actions.rippleActive({title: null, description: null})
+  }
 
   render() {
-    return this.renderRipple()
+    return (
+      <Circle
+        ref={node => {
+          this.circle = node
+        }}
+        x={100}
+        y={100}
+        radius={this.props.radius}
+        stroke={'black'}
+        strokeWidth={2}
+        opacity={0}
+        onMouseEnter={this.rippleHover}
+        onMouseOut={this.resetHover}
+      />
+    )
   }
 }
 
+function mapDispatchToProps(dispatch: any) {
+  return {
+    actions: bindActionCreators(actions as any, dispatch)
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Ripple)

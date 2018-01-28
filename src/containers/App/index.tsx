@@ -1,11 +1,10 @@
 import * as React from 'react'
-import {Header, Helper} from '../../components'
+import {Header} from '../../components'
+import Helper from '../../components/Helper/Helper'
 import {Canvas} from '../Canvas/Canvas'
 import * as styles from './style.css'
 import Hover from '../../components/Hover/Hover'
-import ReactCursorPosition from 'react-cursor-position'
-import { Stage, Layer } from 'react-konva'
-
+import {Group, Layer, Stage} from 'react-konva'
 /* redux imports */
 import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
@@ -17,7 +16,8 @@ export namespace App {
   export interface Props extends RouteComponentProps<void> {
     actions: typeof actions,
     helper: ContextualHelperData,
-    rippleActive: rippleActiveData
+    rippleActive: rippleActiveData,
+    position: pointerPositionData,
   }
 
   export interface State {
@@ -26,21 +26,26 @@ export namespace App {
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class App extends React.Component<App.Props, App.State> {
+  private stage: any
+
+  private getPointerPosition = (): void => {
+    this.props.actions.positionSet({...this.stage.parent.getPointerPosition()})
+  }
+
   render() {
-    const {rippleActive, helper, actions, children} = this.props
+    const {position, rippleActive, helper, actions, children} = this.props
     return (
       <main>
         <header className={styles.header}>
           <Header addHelper={actions.addHelper}/>
         </header>
 
-        <ReactCursorPosition className={styles.HoverContainer}>
-          <Hover text={rippleActive}/>
-        </ReactCursorPosition>
-
-        <Stage width={window.innerWidth} height={window.innerHeight}>
-          <Layer>
+        <Stage width={window.innerWidth} height={window.innerHeight} onContentMouseMove={this.getPointerPosition}>
+          <Layer ref={node => this.stage = node}>
             <Canvas rippleActive={actions.rippleActive} rippleText={rippleActive} addHelper={actions.addHelper}/>
+            <Group>
+              <Hover position={position} text={rippleActive}/>
+            </Group>
           </Layer>
         </Stage>
 
@@ -59,6 +64,7 @@ function mapStateToProps(state: RootState) {
   return {
     helper: state.helper,
     rippleActive: state.rippleActive,
+    position: state.position,
   }
 }
 
@@ -67,5 +73,3 @@ function mapDispatchToProps(dispatch) {
     actions: bindActionCreators(actions as any, dispatch),
   }
 }
-
-
