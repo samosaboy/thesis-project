@@ -37,16 +37,21 @@ export class Header extends React.Component<Header.Props, Header.State> {
   }
 
   render() {
-    let links
-    if (!this.state.loading) {
-      links = <ul className={style.nav}>{
-        this.state.links.map((link, index) => (
-          <li key={index}><span key={index}>{link.name}</span></li>
-        ))
-      }</ul>
-    } else {
-      links = <span>Loading...</span>
-    }
-    return links
+    return (
+      <span>Nikunj Varshney Ⓒ 2018 <b>THIS IS A WIP</b></span>
+    )
   }
+  // render() {
+  //   let links
+  //   if (!this.state.loading) {
+  //     links = <ul className={style.nav}>{
+  //       this.state.links.map((link, index) => (
+  //         <li key={index}><span key={index}>{link.name}</span></li>
+  //       ))
+  //     }</ul>
+  //   } else {
+  //     links = <span>Loading...</span>
+  //   }
+  //   return links
+  // }
 }

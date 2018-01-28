@@ -24,13 +24,17 @@ body {
   font: 1rem 'Lora', "Times New Roman", "Georgia", serif;
   background: #f5f5f5;
   color: #4d4d4d;
-  width: 100%;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
   -ms-font-smoothing: antialiased;
   font-smoothing: antialiased;
-  overflow: visible;
+  overflow: hidden;
+}
+
+body {
+  width: 3000px;
+  height: 3000px;
 }
 
 button,
@@ -41,13 +45,13 @@ input[type="checkbox"] {
 .header {
   position: absolute;
   top: 1rem;
-  right: 1rem;
+  right: -28rem;
 }
 
 .helper {
   position: absolute;
   bottom: 1rem;
-  left: 1rem;
+  left: 30rem;
 }
 
 .HoverContainer {

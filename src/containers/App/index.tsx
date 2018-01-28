@@ -29,7 +29,24 @@ export class App extends React.Component<App.Props, App.State> {
   private stage: any
 
   private getPointerPosition = (): void => {
-    this.props.actions.positionSet({...this.stage.parent.getPointerPosition()})
+    const stageCursorPosition = this.stage.getStage().getPointerPosition()
+    const stageShift = this.stage.getStage()
+    /*
+    * We have to offset our cursorPosition with stage shift
+    * to determine the new cursor position
+    * */
+    const position = {
+      x: stageCursorPosition.x - stageShift.x(),
+      y: stageCursorPosition.y - stageShift.y()
+    }
+    this.props.actions.positionSet(position)
+  }
+
+  componentDidMount() {
+    console.log('no stage')
+    if (this.stage) {
+      console.log('this.stage')
+    }
   }
 
   render() {
@@ -40,8 +57,17 @@ export class App extends React.Component<App.Props, App.State> {
           <Header addHelper={actions.addHelper}/>
         </header>
 
-        <Stage width={window.innerWidth} height={window.innerHeight} onContentMouseMove={this.getPointerPosition}>
-          <Layer ref={node => this.stage = node}>
+        <Stage
+          ref={node => this.stage = node}
+          draggable={true}
+          onDragMove={() => this.getPointerPosition()}
+          onDragStart={() => this.stage.getStage().container().style.cursor = 'move'}
+          onDragEnd={() => this.stage.getStage().container().style.cursor = 'default'}
+          onContentMouseMove={this.getPointerPosition}
+          width={3000}
+          height={3000}
+        >
+          <Layer>
             <Canvas rippleActive={actions.rippleActive} rippleText={rippleActive} addHelper={actions.addHelper}/>
             <Group>
               <Hover position={position} text={rippleActive}/>
