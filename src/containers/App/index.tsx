@@ -26,7 +26,13 @@ export namespace App {
 
 @connect(mapStateToProps, mapDispatchToProps)
 export class App extends React.Component<App.Props, App.State> {
+  private layer: any
   private stage: any
+
+  componentDidMount() {
+    const ctx = this.layer.canvas.getContext()
+    // console.log(ctx)
+  }
 
   private getPointerPosition = (): void => {
     const stageCursorPosition = this.stage.getStage().getPointerPosition()
@@ -37,16 +43,9 @@ export class App extends React.Component<App.Props, App.State> {
     * */
     const position = {
       x: stageCursorPosition.x - stageShift.x(),
-      y: stageCursorPosition.y - stageShift.y()
+      y: stageCursorPosition.y - stageShift.y(),
     }
     this.props.actions.positionSet(position)
-  }
-
-  componentDidMount() {
-    console.log('no stage')
-    if (this.stage) {
-      console.log('this.stage')
-    }
   }
 
   render() {
@@ -58,6 +57,7 @@ export class App extends React.Component<App.Props, App.State> {
         </header>
 
         <Stage
+          style={{background: '#E2DED8'}}
           ref={node => this.stage = node}
           draggable={true}
           onDragMove={() => this.getPointerPosition()}
@@ -67,7 +67,7 @@ export class App extends React.Component<App.Props, App.State> {
           width={3000}
           height={3000}
         >
-          <Layer>
+          <Layer ref={node => this.layer = node}>
             <Canvas rippleActive={actions.rippleActive} rippleText={rippleActive} addHelper={actions.addHelper}/>
             <Group>
               <Hover position={position} text={rippleActive}/>

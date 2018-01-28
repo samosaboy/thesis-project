@@ -4,6 +4,7 @@ import {Circle} from 'react-konva'
 import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
+import {createStrokeGradient} from '../../constants/helper'
 
 export namespace Ripple {
   export interface Props {
@@ -18,7 +19,6 @@ export namespace Ripple {
 }
 
 class Ripple extends React.PureComponent<Ripple.Props, {}> {
-  private circleAnim: any
   private circle: any
 
   constructor(props) {
@@ -51,12 +51,12 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
   private rippleHover = (): void => {
     this.circle.parent.parent.parent.getStage().container().style.cursor = 'pointer'
     this.circle.to({
-      stroke: '#ffc941',
       scaleX: 1.01,
       scaleY: 1.01,
       easing: Konva.Easings.EaseInOut,
-      duration: 0.1,
+      duration: 0.2,
     })
+    this.circle.setAttr('stroke', createStrokeGradient(['#e7b65c', '#c3246d'], this.circle))
     this.props.actions.addHelper({text: 'Click the ripple to explore!'})
     this.props.actions.rippleActive({title: this.props.ripple.name, description: this.props.ripple.description})
   }
@@ -64,27 +64,32 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
   private resetHover = (): void => {
     this.circle.parent.parent.parent.getStage().container().style.cursor = 'default'
     this.circle.to({
-      stroke: 'black',
       scaleX: 1,
       scaleY: 1,
       easing: Konva.Easings.EaseInOut,
       duration: 0.5,
     })
+
+    this.circle.setAttr('stroke', createStrokeGradient(['#000000', '#494443'], this.circle))
     this.props.actions.addHelper({text: null})
     this.props.actions.rippleActive({title: null, description: null})
   }
 
   render() {
+    let stroke: any
+    stroke = createStrokeGradient(['#000000', '#494443'], null)
     return (
       <Circle
         ref={node => {
           this.circle = node
-          this.circleAnim = node
         }}
         x={100}
         y={100}
         radius={this.props.radius}
-        stroke={'black'}
+        stroke={stroke}
+        fillRadialGradientStartRadius={0.1}
+        fillRadialGradientEndRadius={this.props.radius}
+        fillRadialGradientColorStops={[0, '#bfbbb6', 1, '#E2DED8']}
         strokeWidth={2}
         opacity={0}
         onMouseEnter={this.rippleHover}

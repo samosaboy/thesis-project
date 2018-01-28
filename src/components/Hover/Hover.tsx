@@ -18,31 +18,11 @@ export default class Hover extends React.PureComponent<any, any> {
           y={this.props.position.y}
           width={50}
           height={50}
-          fill={'black'}
+          opacity={1}
+          shadowEnabled={true}
         />
       )
     }
     return null
   }
 }
-// const Hover = props => {
-//   const { children, text, position } = props
-//
-//   const rect = new Konva.Rect({
-//     cornerRadius: 20,
-//     x: position.x,
-//     y: position.y,
-//     width: 50,
-//     height: 50,
-//     fill: 'black',
-//   })
-//
-//   return rect
-//   // return (
-//   //   <div style={{ left: position.x, top: position.y, position: 'absolute' }} className={styles.tooltip}>
-//   //     {position.x}, {position.y}
-//   //     <span className={styles.title}>{text.title}</span>
-//   //     {text.description}
-//   //   </div>
-//   // )
-// }
