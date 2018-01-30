@@ -29,11 +29,6 @@ export class App extends React.Component<App.Props, App.State> {
   private layer: any
   private stage: any
 
-  componentDidMount() {
-    const ctx = this.layer.canvas.getContext()
-    // console.log(ctx)
-  }
-
   private getPointerPosition = (): void => {
     const stageCursorPosition = this.stage.getStage().getPointerPosition()
     const stageShift = this.stage.getStage()

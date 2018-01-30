@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {Event} from '../../components'
 import {Group, Text} from 'react-konva'
-import * as Konva from 'konva'
 
 export namespace Canvas {
   export interface Props {
