@@ -4,7 +4,8 @@ import {Circle} from 'react-konva'
 import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {createRotation, createStrokeGradient} from '../../constants/helper'
+import {createRotation, createStrokeGradient, createBreatheScale} from '../../constants/helper'
+import {create} from "domain";
 
 export namespace Ripple {
   export interface Props {
@@ -19,7 +20,8 @@ export namespace Ripple {
 }
 
 class Ripple extends React.PureComponent<Ripple.Props, {}> {
-  private animate: any
+  private animateBreathe: any
+  private animateRotation: any
   private circle: any
 
   constructor(props) {
@@ -30,15 +32,11 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
     this.setZIndex(this.circle.parent.children)
     this.fadeAnimate()
 
-    this.animate = createRotation(this.circle)
+    this.animateRotation = createRotation(this.circle)
+    this.animateBreathe = createBreatheScale(this.circle, 0.1, 1)
 
     setTimeout(() => {
-      const animate = new Konva.Animation(frame => {
-        const scale = 0.1 * Math.sin(2 * (frame.time / 10000) - (Math.PI / 4)) + 0.9
-        this.circle.scale({x: scale, y: scale})
-      }, this.circle.getLayer())
-
-      animate.start()
+      this.animateBreathe.start()
     }, 1000)
   }
 
@@ -61,14 +59,9 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
   }
 
   private rippleHover = (): void => {
-    this.animate.start()
+    this.animateBreathe.stop()
+    this.animateRotation.start()
     this.circle.parent.parent.parent.getStage().container().style.cursor = 'pointer'
-    this.circle.to({
-      scaleX: 1.01,
-      scaleY: 1.01,
-      easing: Konva.Easings.EaseInOut,
-      duration: 0.2,
-    })
 
     this.circle.setAttr('stroke', createStrokeGradient(['#e7b65c', '#c3246d'], this.circle))
     this.props.actions.addHelper({text: 'Click the ripple to explore!'})
@@ -76,14 +69,9 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
   }
 
   private resetHover = (): void => {
-    this.animate.stop()
+    this.animateBreathe.start()
+    this.animateRotation.stop()
     this.circle.parent.parent.parent.getStage().container().style.cursor = 'default'
-    this.circle.to({
-      scaleX: 1,
-      scaleY: 1,
-      easing: Konva.Easings.EaseInOut,
-      duration: 0.5,
-    })
 
     this.circle.setAttr('stroke', createStrokeGradient(['#000000', '#494443'], this.circle))
     this.props.actions.addHelper({text: null})

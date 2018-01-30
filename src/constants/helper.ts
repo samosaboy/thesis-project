@@ -1,5 +1,11 @@
+/*
+* The following helper functions are created
+* by Nikunj Varshney (http://www.nikunj.ca)
+* for my Thesis at OCAD University, Toronto.
+* */
+
 import * as Konva from 'konva'
-import {Animation} from "konva";
+import {Animation} from 'konva'
 
 /*
 * The following function creates a stroke gradient to use
@@ -36,5 +42,19 @@ export const createRotation = (element: any, speed?: number): Animation => {
 
   return new Konva.Animation(() => {
     element.rotate(t)
+  }, element.getLayer())
+}
+
+/*
+* The following function creates a breathing scale effect
+* for an element with the following:
+*
+* @param amplitude: Peak amplitude of the wave (0.9 -> 1.1 = 0.1)
+* @param midpoint: Midpoint of the wave to oscillate around
+* */
+export const createBreatheScale = (element: any, amplitude: number, midpoint: number): Animation => {
+  return new Konva.Animation(frame => {
+    const scale = amplitude * Math.sin(2 * (frame.time/10000)) + midpoint
+    element.scale({x: scale, y: scale})
   }, element.getLayer())
 }
