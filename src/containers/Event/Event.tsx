@@ -45,6 +45,7 @@ class EventContainer extends React.Component<EventContainer.Props, EventContaine
             className={styles.stage}
             width={window.innerWidth}
             height={window.innerHeight}
+            name={'eventStage'}
           >
             <Layer
               offset={{
