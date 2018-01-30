@@ -16,15 +16,20 @@ export namespace Ripple {
     radius: number,
     actions?: typeof actions,
   }
+
+  export interface State {
+    opacity: number,
+  }
 }
 
-class Ripple extends React.PureComponent<Ripple.Props, {}> {
-  private animateBreathe: any
-  private animateRotation: any
-  private circle: any
+export class Ripple extends React.PureComponent<Ripple.Props, Ripple.State> {
+  public animateBreathe: any
+  public animateRotation: any
+  public circle: any
 
   constructor(props) {
     super(props)
+    this.state = { opacity: 0 }
   }
 
   componentDidMount() {
@@ -43,7 +48,7 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
     this.animateRotation.stop()
   }
 
-  private fadeAnimate = (): void => {
+  public fadeAnimate = (): void => {
     /*
     * To avoid memory leaks we use .to method to destroy the instance
     * once it is finished.
@@ -61,20 +66,20 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
       .forEach((ripple, index) => ripple.setZIndex(array.length - (index + 1)))
   }
 
-  private rippleHover = (): void => {
+  public rippleHover = (): void => {
     this.animateBreathe.stop()
     this.animateRotation.start()
-    this.circle.parent.parent.parent.getStage().container().style.cursor = 'pointer'
+    this.circle.getStage().container().style.cursor = 'pointer'
 
     this.circle.setAttr('stroke', createStrokeGradient(['#e7b65c', '#c3246d'], this.circle))
     this.props.actions.addHelper({text: 'Click the ripple to explore!'})
     this.props.actions.rippleActive({title: this.props.ripple.name, description: this.props.ripple.description})
   }
 
-  private resetHover = (): void => {
+  public resetHover = (): void => {
     this.animateBreathe.start()
     this.animateRotation.stop()
-    this.circle.parent.parent.parent.getStage().container().style.cursor = 'default'
+    this.circle.getStage().container().style.cursor = 'default'
 
     this.circle.setAttr('stroke', createStrokeGradient(['#000000', '#494443'], this.circle))
     this.props.actions.addHelper({text: null})
@@ -98,7 +103,7 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
         fillRadialGradientEndRadius={this.props.radius}
         fillRadialGradientColorStops={[0, '#bfbbb6', 1, '#E2DED8']}
         strokeWidth={2}
-        opacity={0}
+        opacity={this.state.opacity}
         onMouseEnter={this.rippleHover}
         onMouseOut={this.resetHover}
         strokeScaleEnabled={true}
