@@ -9,7 +9,7 @@
       "top": 200
     },
     "geo": {
-      "city": "Toronto1",
+      "city": "New York",
       "map": "Toronto"
     },
     "ripples": [
@@ -40,7 +40,7 @@
       "top": 600
     },
     "geo": {
-      "city": "Toronto2",
+      "city": "Toronto",
       "map": "Toronto"
     },
     "ripples": [
@@ -71,7 +71,7 @@
       "top": 200
     },
     "geo": {
-      "city": "Toronto3",
+      "city": "Lebanon",
       "map": "Toronto"
     },
     "ripples": [
@@ -102,7 +102,7 @@
       "top": 200
     },
     "geo": {
-      "city": "Toronto4",
+      "city": "Damascus",
       "map": "Toronto"
     },
     "ripples": [

@@ -1,22 +1,26 @@
 import * as React from 'react'
-import {Event} from '../../components'
 import {Group, Text} from 'react-konva'
+import {Event} from '../../components/Event/Event'
+import Ladda from '../../components/Ladda/Ladda'
+import {withRouter} from 'react-router'
 
 export namespace Canvas {
   export interface Props {
+    history: any,
     addHelper: (helper: ContextualHelperData) => void,
     rippleActive: (ripple: rippleActiveData) => void,
-    rippleText: rippleActiveData
+    rippleText: rippleActiveData,
   }
 
   export interface State {
     data: any,
     props: any,
     loading: boolean,
+    textPlacement: boolean,
   }
 }
 
-export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
+class Canvas extends React.Component<Canvas.Props, Canvas.State> {
   private group: any
   private text: any
 
@@ -26,7 +30,18 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
       data: [],
       props: {},
       loading: true,
+      textPlacement: false,
     }
+  }
+
+  private setClientRect = (): void => {
+    this.state.data.forEach(item => {
+      this.group.getStage().children[0].children.forEach(parent => {
+        if (parent.getChildren()[0].attrs.x === item.position.left && parent.getChildren()[0].attrs.y === item.position.top) {
+          item.clientRect = parent.getClientRect()
+        }
+      })
+    })
   }
 
   componentDidMount() {
@@ -34,47 +49,61 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
       .then(res => res.json())
       .then(data => {
         this.setState({data})
-      })
-      .then(() => {
         setTimeout(() => {
           this.setState({loading: false})
-        }, 1500)
+          this.setClientRect()
+          this.setState({textPlacement: true})
+        }, 0)
       })
   }
 
-  private showEventInfo = (e?: any): any => {
-    console.log(e.target.getAbsolutePosition())
+  private showEventInfo = (item: any): any => {
+    this.props.history.push({
+      pathname: `/${item.id}`,
+      state: {
+        event: item,
+      }
+    })
   }
 
   private renderItem = (): JSX.Element => {
     return this.state.data.map(item => (
-      <Group
-        ref={node => this.group = node}
-        x={item.position.left}
-        y={item.position.top}
-        key={item.id}
-        onMouseOver={e => this.showEventInfo(e)}
-      >
-        <Text
-          ref={node => this.text = node}
-          align={'center'}
-          text={item.geo.city}
-          fontSize={24}
-        />
-        <Event
-          addHelper={this.props.addHelper}
-          rippleActive={this.props.rippleActive}
-          ripples={item.ripples}
-          importance={item.importance}
-        />
+      <Group key={item.id} ref={node => this.group = node} onClick={() => this.showEventInfo(item)}>
+        <Group
+          x={item.position.left}
+          y={item.position.top}
+        >
+          <Event
+            addHelper={this.props.addHelper}
+            rippleActive={this.props.rippleActive}
+            ripples={item.ripples}
+            importance={item.importance}
+          />
+        </Group>
+        {
+          this.state.textPlacement && <Text
+            x={item.clientRect.x + (item.clientRect.width / 2)}
+            y={item.clientRect.y + (item.clientRect.height / 2)}
+            offset={{x: 75, y: -(item.clientRect.height / 1.5)}}
+            fontFamily={'Lora'}
+            align={'center'}
+            width={150}
+            ref={node => this.text = node}
+            text={item.geo.city}
+            name={item.geo.city}
+            fontSize={18}
+          />
+        }
       </Group>
     ))
   }
 
-  render() {
-    if (!this.state.loading) {
-      return this.renderItem()
+  public render() {
+    if (this.state.loading) {
+      return <Ladda/>
     }
-    return <Text text={'Loading'} x={window.innerWidth / 2} y={window.innerHeight / 2}/>
+    return this.renderItem()
   }
 }
+
+export default withRouter(Canvas)

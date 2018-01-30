@@ -45,13 +45,13 @@ input[type="checkbox"] {
 .header {
   position: absolute;
   top: 1rem;
-  right: -28rem;
+  right: 1rem;
 }
 
 .helper {
   position: absolute;
   bottom: 1rem;
-  left: 30rem;
+  left: 1rem;
 }
 
 .HoverContainer {

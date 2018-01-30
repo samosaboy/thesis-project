@@ -36,12 +36,12 @@ export class Header extends React.Component<Header.Props, Header.State> {
     }, 1000)
   }
 
-  render() {
+  public render() {
     return (
       <span>Nikunj Varshney Ⓒ 2018 <b>THIS IS A WIP</b></span>
     )
   }
-  // render() {
+  // public render() {
   //   let links
   //   if (!this.state.loading) {
   //     links = <ul className={style.nav}>{

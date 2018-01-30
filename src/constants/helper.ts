@@ -3,7 +3,6 @@
 * by Nikunj Varshney (http://www.nikunj.ca)
 * for my Thesis at OCAD University, Toronto.
 * */
-
 import * as Konva from 'konva'
 import {Animation} from 'konva'
 
@@ -38,10 +37,8 @@ export const createStrokeGradient = (colors: [string], element?: any): void => {
 * for an element at a specified (optional) speed
 * */
 export const createRotation = (element: any, speed?: number): Animation => {
-  const t = speed || Math.PI
-
   return new Konva.Animation(() => {
-    element.rotate(t)
+    element.rotate(speed || Math.PI)
   }, element.getLayer())
 }
 
@@ -54,7 +51,31 @@ export const createRotation = (element: any, speed?: number): Animation => {
 * */
 export const createBreatheScale = (element: any, amplitude: number, midpoint: number): Animation => {
   return new Konva.Animation(frame => {
-    const scale = amplitude * Math.sin(2 * (frame.time/10000)) + midpoint
+    const scale = amplitude * Math.sin(2 * (frame.time / 10000)) + midpoint
     element.scale({x: scale, y: scale})
   }, element.getLayer())
+}
+
+/*
+* The following function uses a gradient to create
+* our spinning ladda component.
+* */
+export const createLaddaGradient = (element: any): void => {
+  let context: any
+
+  if (!element) {
+    const canvas = document.createElement('canvas')
+    context = canvas.getContext('2d')
+  } else {
+    context = element.getCanvas().getContext()
+  }
+
+  const gradient = context.createLinearGradient(0, 0, 20, 20)
+
+  for (let i = 1; i < 90; i++) {
+    gradient.addColorStop(i/100, '#E2DED9')
+  }
+  gradient.addColorStop(0.9, '#5e5e5e')
+
+  return gradient
 }

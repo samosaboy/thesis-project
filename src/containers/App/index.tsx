@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Header} from '../../components'
 import Helper from '../../components/Helper/Helper'
-import {Canvas} from '../Canvas/Canvas'
+import Canvas from '../Canvas/Canvas'
 import * as styles from './style.css'
 import Hover from '../../components/Hover/Hover'
 import {Group, Layer, Stage} from 'react-konva'
@@ -10,7 +10,9 @@ import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {RootState} from '../../reducers'
-import {RouteComponentProps} from 'react-router'
+import {Route, RouteComponentProps} from 'react-router'
+import EventContainer from '../Event/Event'
+
 
 export namespace App {
   export interface Props extends RouteComponentProps<void> {
@@ -43,13 +45,19 @@ export class App extends React.Component<App.Props, App.State> {
     this.props.actions.positionSet(position)
   }
 
-  render() {
-    const {position, rippleActive, helper, actions, children} = this.props
+  public render() {
+    const {history, position, rippleActive, helper, actions, children} = this.props
     return (
       <main>
         <header className={styles.header}>
           <Header addHelper={actions.addHelper}/>
         </header>
+
+        <Route
+          exact
+          path={'/:eventId'}
+          component={EventContainer}
+        />
 
         <Stage
           style={{background: '#E2DED8'}}
@@ -63,7 +71,12 @@ export class App extends React.Component<App.Props, App.State> {
           height={3000}
         >
           <Layer ref={node => this.layer = node}>
-            <Canvas rippleActive={actions.rippleActive} rippleText={rippleActive} addHelper={actions.addHelper}/>
+            <Canvas
+              history={history}
+              rippleActive={actions.rippleActive}
+              rippleText={rippleActive}
+              addHelper={actions.addHelper}
+            />
             <Group>
               <Hover position={position} text={rippleActive}/>
             </Group>

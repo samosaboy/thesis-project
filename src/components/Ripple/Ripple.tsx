@@ -5,7 +5,6 @@ import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {createRotation, createStrokeGradient, createBreatheScale} from '../../constants/helper'
-import {create} from "domain";
 
 export namespace Ripple {
   export interface Props {
@@ -31,13 +30,17 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
   componentDidMount() {
     this.setZIndex(this.circle.parent.children)
     this.fadeAnimate()
-
     this.animateRotation = createRotation(this.circle)
-    this.animateBreathe = createBreatheScale(this.circle, 0.1, 1)
+    this.animateBreathe = createBreatheScale(this.circle, 10/this.props.radius, 1)
 
     setTimeout(() => {
       this.animateBreathe.start()
     }, 1000)
+  }
+
+  componentWillUnmount() {
+    this.animateBreathe.stop()
+    this.animateRotation.stop()
   }
 
   private fadeAnimate = (): void => {
@@ -78,9 +81,10 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
     this.props.actions.rippleActive({title: null, description: null})
   }
 
-  render() {
+  public render() {
     let stroke: any
     stroke = createStrokeGradient(['#000000', '#494443'], null)
+
     return (
       <Circle
         ref={node => {
@@ -97,6 +101,7 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
         opacity={0}
         onMouseEnter={this.rippleHover}
         onMouseOut={this.resetHover}
+        strokeScaleEnabled={true}
       />
     )
   }
