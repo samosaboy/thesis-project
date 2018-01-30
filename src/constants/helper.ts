@@ -1,8 +1,11 @@
+import * as Konva from 'konva'
+import {Animation} from "konva";
+
 /*
 * The following function creates a stroke gradient to use
 * with our Konva components as an attribute for shapes.
 * */
-export const createStrokeGradient = (colors: [string], element: any): void => {
+export const createStrokeGradient = (colors: [string], element?: any): void => {
   //TODO: What if its a line
   let context: any
   let end: any
@@ -18,14 +21,20 @@ export const createStrokeGradient = (colors: [string], element: any): void => {
 
   const gradient = context.createLinearGradient(-end, -end, end, end)
   colors.forEach((color, index) => {
-    /*
-    * Sample Array: [value, value, value]
-    * offset[0]: 1/3 = 0.33%
-    * offset[1]: 2/3 = 0.66%
-    * offset[2]: 3/3 = 1.00
-    * */
-    gradient.addColorStop((index + 1)/colors.length, color)
+    gradient.addColorStop((index + 1) / colors.length, color)
   })
 
   return gradient
+}
+
+/*
+* The following function creates a rotation animation
+* for an element at a specified (optional) speed
+* */
+export const createRotation = (element: any, speed?: number): Animation => {
+  const t = speed || Math.PI
+
+  return new Konva.Animation(() => {
+    element.rotate(t)
+  }, element.getLayer())
 }

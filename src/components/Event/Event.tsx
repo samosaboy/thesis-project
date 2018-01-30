@@ -11,6 +11,7 @@ export namespace Event {
 }
 
 export class Event extends React.PureComponent<Event.Props, {}> {
+
   render() {
     return this.props.ripples.map((ripple, index) => {
       const scale = (200 * (index + 1)) / this.props.importance

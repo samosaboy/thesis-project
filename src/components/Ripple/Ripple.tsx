@@ -4,7 +4,7 @@ import {Circle} from 'react-konva'
 import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {createStrokeGradient} from '../../constants/helper'
+import {createRotation, createStrokeGradient} from '../../constants/helper'
 
 export namespace Ripple {
   export interface Props {
@@ -19,6 +19,7 @@ export namespace Ripple {
 }
 
 class Ripple extends React.PureComponent<Ripple.Props, {}> {
+  private animate: any
   private circle: any
 
   constructor(props) {
@@ -28,6 +29,17 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
   componentDidMount() {
     this.setZIndex(this.circle.parent.children)
     this.fadeAnimate()
+
+    this.animate = createRotation(this.circle)
+
+    setTimeout(() => {
+      const animate = new Konva.Animation(frame => {
+        const scale = 0.1 * Math.sin(2 * (frame.time / 10000) - (Math.PI / 4)) + 0.9
+        this.circle.scale({x: scale, y: scale})
+      }, this.circle.getLayer())
+
+      animate.start()
+    }, 1000)
   }
 
   private fadeAnimate = (): void => {
@@ -49,6 +61,7 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
   }
 
   private rippleHover = (): void => {
+    this.animate.start()
     this.circle.parent.parent.parent.getStage().container().style.cursor = 'pointer'
     this.circle.to({
       scaleX: 1.01,
@@ -56,12 +69,14 @@ class Ripple extends React.PureComponent<Ripple.Props, {}> {
       easing: Konva.Easings.EaseInOut,
       duration: 0.2,
     })
+
     this.circle.setAttr('stroke', createStrokeGradient(['#e7b65c', '#c3246d'], this.circle))
     this.props.actions.addHelper({text: 'Click the ripple to explore!'})
     this.props.actions.rippleActive({title: this.props.ripple.name, description: this.props.ripple.description})
   }
 
   private resetHover = (): void => {
+    this.animate.stop()
     this.circle.parent.parent.parent.getStage().container().style.cursor = 'default'
     this.circle.to({
       scaleX: 1,

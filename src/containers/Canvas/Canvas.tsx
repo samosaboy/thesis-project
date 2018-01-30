@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Event} from '../../components'
 import {Group, Text} from 'react-konva'
+import * as Konva from 'konva'
 
 export namespace Canvas {
   export interface Props {
@@ -37,7 +38,6 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
       })
       .then(() => {
         setTimeout(() => {
-          console.log(this.group)
           this.setState({loading: false})
         }, 1500)
       })
@@ -76,6 +76,6 @@ export class Canvas extends React.Component<Canvas.Props, Canvas.State> {
     if (!this.state.loading) {
       return this.renderItem()
     }
-    return <Text text={'Loading'} x={window.innerWidth / 2} y={window.innerHeight / 2} />
+    return <Text text={'Loading'} x={window.innerWidth / 2} y={window.innerHeight / 2}/>
   }
 }
