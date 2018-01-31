@@ -37,6 +37,8 @@ h1 {
 }
 
 button {
+  font-family: 'Lora', 'Times New Roman', serif !important;
+  color: black;
   z-index: 1800;
   border: 1px solid black;
   padding: 1em;
@@ -44,10 +46,11 @@ button {
 
 button:hover {
   cursor: pointer;
-  background: #d2cec9;
+  border: 1px solid #997a29;
+  color: #997a29;
 }
 
 button,
 button:hover {
-  transition: background0.2s ease-in-out;
+  transition: border, color 0.2s ease-in-out;
 }

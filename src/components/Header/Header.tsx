@@ -1,19 +1,12 @@
 import * as React from 'react'
-import * as style from './Header.css'
 
-export namespace Header {
-  export interface Props {
-    addHelper: (helper: ContextualHelperData) => void
-  }
-
-  export interface State {
-    loading: boolean
-    links: Array<{ name: string, url: string }>
-  }
+interface State {
+  loading: boolean
+  links: Array<{ name: string, url: string }>
 }
 
-export class Header extends React.Component<Header.Props, Header.State> {
-  constructor(props?: Header.Props, context?: any) {
+export class Header extends React.Component<{}, State> {
+  constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
       loading: true,
@@ -41,6 +34,7 @@ export class Header extends React.Component<Header.Props, Header.State> {
       <span>Nikunj Varshney Ⓒ 2018 <b>THIS IS A WIP</b></span>
     )
   }
+
   // public render() {
   //   let links
   //   if (!this.state.loading) {

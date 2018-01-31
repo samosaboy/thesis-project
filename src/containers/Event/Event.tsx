@@ -2,7 +2,7 @@ import * as React from 'react'
 import {withRouter} from 'react-router'
 import * as styles from './Event.css'
 import {Layer, Stage} from 'react-konva'
-import {RippleEventView} from './Ripple'
+import RippleEventView from './Ripple'
 import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {RootState} from '../../reducers/index'
@@ -32,9 +32,9 @@ class EventContainer extends React.Component<Props, {}> {
     this.props.history.goBack()
   }
 
-  componentDidMount() {
-    console.log(this.props)
-  }
+  // componentDidMount() {
+  //   console.log(this.props)
+  // }
 
   public render() {
     return (

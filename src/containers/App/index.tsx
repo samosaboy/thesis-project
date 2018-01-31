@@ -50,7 +50,7 @@ export class App extends React.Component<App.Props, App.State> {
     return (
       <main>
         <header className={styles.header}>
-          <Header addHelper={actions.addHelper}/>
+          <Header/>
         </header>
 
         <Route

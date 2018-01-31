@@ -6,6 +6,8 @@ import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 
+// TODO: Wrap this in a HOC
+
 interface Props extends PropBase {
   actions?: typeof actions,
 }
@@ -17,7 +19,7 @@ const mapDispatchToProps = (dispatch: any) => {
 }
 
 @connect(null, mapDispatchToProps)
-export class RippleEventView extends Ripple<Props> {
+export default class RippleEventView extends Ripple<Props> {
   constructor(props?: any) {
     super(props)
     this.state = {opacity: 1}

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Ripple} from '../'
+import Ripple from '../Ripple/Ripple'
 
 interface Props {
   ripples: any,
