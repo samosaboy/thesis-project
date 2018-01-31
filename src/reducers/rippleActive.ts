@@ -1,4 +1,4 @@
-import { handleActions } from "redux-actions"
+import { handleActions } from 'redux-actions'
 import * as Actions from '../constants/actions'
 
 const initialState: rippleActiveConfig = {

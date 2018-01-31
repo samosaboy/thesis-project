@@ -8,7 +8,7 @@ const initialState: HelperStateConfig = {
 
 export default handleActions<HelperStateConfig, ContextualHelperData>(
   {
-    [Actions.ADD_HELPER]: (state, action) => {
+    [Actions.HELPER_ADD]: (state, action) => {
       return {
         ...state,
         ...action.payload && {...action.payload},

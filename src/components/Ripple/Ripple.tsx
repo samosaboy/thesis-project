@@ -4,39 +4,37 @@ import {Circle} from 'react-konva'
 import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {createRotation, createStrokeGradient, createBreatheScale} from '../../constants/helper'
+import {createBreatheScale, createRotation, createStrokeGradient} from '../../constants/helper'
 
-export namespace Ripple {
-  export interface Props {
-    ripple: {
-      name: string,
-      id: number,
-      description: string,
-    },
-    radius: number,
-    actions?: typeof actions,
-  }
-
-  export interface State {
-    opacity: number,
-  }
+export interface Props {
+  ripple: {
+    name: string,
+    id: number,
+    description: string,
+  },
+  radius: number,
+  actions?: typeof actions,
 }
 
-export class Ripple extends React.PureComponent<Ripple.Props, Ripple.State> {
+export interface State {
+  opacity: number,
+}
+
+export class Ripple<T extends Props> extends React.PureComponent<T & Props, State> {
   public animateBreathe: any
   public animateRotation: any
   public circle: any
 
   constructor(props) {
     super(props)
-    this.state = { opacity: 0 }
+    this.state = {opacity: 0}
   }
 
   componentDidMount() {
     this.setZIndex(this.circle.parent.children)
     this.fadeAnimate()
     this.animateRotation = createRotation(this.circle)
-    this.animateBreathe = createBreatheScale(this.circle, 10/this.props.radius, 1)
+    this.animateBreathe = createBreatheScale(this.circle, 10 / this.props.radius, 1)
 
     setTimeout(() => {
       this.animateBreathe.start()
@@ -86,12 +84,21 @@ export class Ripple extends React.PureComponent<Ripple.Props, Ripple.State> {
     this.props.actions.rippleActive({title: null, description: null})
   }
 
+  public fillGradient = (): any => {
+    return {
+      fillRadialGradientStartRadius: 0.1,
+      fillRadialGradientEndRadius: this.props.radius,
+      fillRadialGradientColorStops: [0, '#bfbbb6', 1, '#E2DED8'],
+    }
+  }
+
   public render() {
     let stroke: any
     stroke = createStrokeGradient(['#000000', '#494443'], null)
 
     return (
       <Circle
+        {...this.fillGradient()}
         ref={node => {
           this.circle = node
         }}
@@ -99,9 +106,6 @@ export class Ripple extends React.PureComponent<Ripple.Props, Ripple.State> {
         y={100}
         radius={this.props.radius}
         stroke={stroke}
-        fillRadialGradientStartRadius={0.1}
-        fillRadialGradientEndRadius={this.props.radius}
-        fillRadialGradientColorStops={[0, '#bfbbb6', 1, '#E2DED8']}
         strokeWidth={2}
         opacity={this.state.opacity}
         onMouseEnter={this.rippleHover}

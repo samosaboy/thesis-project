@@ -1,17 +1,14 @@
 import * as React from 'react'
-import Ripple from "../Ripple/Ripple"
+import {Ripple} from '../'
 
-export namespace Event {
-  export interface Props {
-    ripples: any,
-    importance: number,
-    rippleActive: (ripple: rippleActiveData) => void,
-    addHelper: (helper: ContextualHelperData) => void,
-  }
+interface Props {
+  ripples: any,
+  importance: number,
+  rippleActive: (ripple: rippleActiveData) => void,
+  addHelper: (helper: ContextualHelperData) => void,
 }
 
-export class Event extends React.PureComponent<Event.Props, {}> {
-
+export class Event extends React.PureComponent<Props, {}> {
   public render() {
     return this.props.ripples.map((ripple, index) => {
       const scale = (200 * (index + 1)) / this.props.importance

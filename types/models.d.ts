@@ -13,6 +13,18 @@ declare interface pointerPositionData {
   y: number,
 }
 
+declare interface eventRippleActiveData {
+  title: string,
+  description: string,
+  /*
+   * For now we will put {any} for these
+   * these two... but TODO: Fix this stuff
+   */
+  map: any,
+  visual: any,
+}
+
 declare type rippleActiveConfig = rippleActiveData
+declare type rippleEventActiveConfig = eventRippleActiveData
 declare type HelperStateConfig = ContextualHelperData
 declare type pointerPosition = pointerPositionData
