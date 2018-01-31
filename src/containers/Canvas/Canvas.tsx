@@ -37,8 +37,10 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
   private setClientRect = (): void => {
     this.state.data.forEach(item => {
       this.group.getStage().children[0].children.forEach(parent => {
-        if (parent.getChildren()[0].attrs.x === item.position.left && parent.getChildren()[0].attrs.y === item.position.top) {
-          item.clientRect = parent.getClientRect()
+        if (parent.getChildren().length) {
+          if (parent.getChildren()[0].attrs.x === item.position.left && parent.getChildren()[0].attrs.y === item.position.top) {
+            item.clientRect = parent.getClientRect()
+          }
         }
       })
     })
@@ -53,7 +55,7 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
           this.setState({loading: false})
           this.setClientRect()
           this.setState({textPlacement: true})
-        }, 0)
+        }, 1000)
       })
   }
 

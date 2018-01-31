@@ -23,21 +23,21 @@ export default class Hover extends React.PureComponent<any, any> {
         />
       )
     }
-    //return null
-    return (
-      <Shape
-        sceneFunc={context => {
-          context.setAttr('font', '13pt Lora')
-          context.setAttr('fillStyle', 'black')
-          context.fillText(`${this.props.position.x}, ${this.props.position.y}`, 0, 0)
-        }}
-        x={this.props.position.x}
-        y={this.props.position.y}
-        width={50}
-        height={50}
-        opacity={1}
-        shadowEnabled={true}
-      />
-    )
+    return null
+    // return (
+    //   <Shape
+    //     sceneFunc={context => {
+    //       context.setAttr('font', '13pt Lora')
+    //       context.setAttr('fillStyle', 'black')
+    //       context.fillText(`${this.props.position.x}, ${this.props.position.y}`, 0, 0)
+    //     }}
+    //     x={this.props.position.x}
+    //     y={this.props.position.y}
+    //     width={50}
+    //     height={50}
+    //     opacity={1}
+    //     shadowEnabled={true}
+    //   />
+    // )
   }
 }

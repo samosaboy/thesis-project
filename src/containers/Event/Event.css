@@ -3,6 +3,7 @@ h1 {
 }
 
 .stage {
+  flex: 0.5;
   z-index: 1500;
   position: absolute;
   top: 0;
@@ -34,6 +35,26 @@ h1 {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+}
+
+.eventText {
+  width: 30%;
+  height: 80%;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  flex: 0.5;
+  z-index: 1550;
+}
+
+.header {
+  line-height: 50pt;
+  font-size: 4rem;
+  font-weight: 800;
+}
+
+p {
+  font-size: 2rem;
 }
 
 button {

@@ -47,9 +47,13 @@ class EventContainer extends React.Component<Props, {}> {
               <span>{this.props.location.state.event.description}</span>
             </div>
           </div>
-          <div style={{zIndex: 2000}}>
-            {this.props.event.title}
-            {this.props.event.description}
+          <div className={styles.eventText}>
+            <span className={styles.header}>
+              {this.props.event.title}
+            </span>
+            <p>
+              {this.props.event.description}
+            </p>
           </div>
           <Stage
             ref={node => this.stage = node}
