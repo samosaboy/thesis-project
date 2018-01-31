@@ -4,7 +4,6 @@ import * as Actions from '../constants/actions'
 const initialState: rippleEventActiveConfig = {
   title: '',
   description: '',
-  map: null,
   visual: null,
 }
 

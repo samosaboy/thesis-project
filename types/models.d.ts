@@ -20,7 +20,6 @@ declare interface eventRippleActiveData {
    * For now we will put {any} for these
    * these two... but TODO: Fix this stuff
    */
-  map: any,
   visual: any,
 }
 

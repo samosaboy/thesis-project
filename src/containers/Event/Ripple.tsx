@@ -26,9 +26,8 @@ export class RippleEventView extends Ripple<Props> {
   public rippleHover = (): void => {
     this.animateRotation.start()
     this.props.actions.eventRippleActive({
-      title: 'test',
-      description: 'test',
-      map: 'test',
+      title: this.props.ripple.name,
+      description: this.props.ripple.description,
       visual: 'test',
     })
     this.circle.getStage().container().style.cursor = 'pointer'
