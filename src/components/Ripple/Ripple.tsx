@@ -31,6 +31,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   }
 
   componentDidMount() {
+    this.circle.getStage().setAttr('draggable', true)
     this.setZIndex(this.circle.parent.children)
     this.fadeAnimate()
     this.animateRotation = createRotation(this.circle)
@@ -42,6 +43,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   }
 
   componentWillUnmount() {
+    this.circle.getStage().setAttr('draggable', false)
     this.animateBreathe.stop()
     this.animateRotation.stop()
   }

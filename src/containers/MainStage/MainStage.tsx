@@ -56,9 +56,9 @@ class MainStage extends React.Component<MainStage.Props, MainStage.State> {
     const {history, position, rippleActive, actions} = this.props
     return (
       <Stage
+        name={'mainStage'}
         style={{background: '#E2DED8'}}
         ref={node => this.stage = node}
-        draggable={true}
         onDragMove={() => this.getPointerPosition()}
         onDragStart={() => this.stage.getStage().container().style.cursor = 'move'}
         onDragEnd={() => this.stage.getStage().container().style.cursor = 'default'}

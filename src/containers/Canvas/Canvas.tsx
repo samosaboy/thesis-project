@@ -47,9 +47,6 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
   }
 
   componentDidMount() {
-    setInterval(() => {
-      console.log('canvas.tsx')
-    }, 2000)
     fetch('../../1.json')
       .then(res => res.json())
       .then(data => {
@@ -58,7 +55,7 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
           this.setState({loading: false})
           this.setClientRect()
           this.setState({textPlacement: true})
-        }, 1000)
+        }, 2000)
       })
   }
 

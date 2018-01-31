@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import {Provider} from 'react-redux'
-import {Route, Router} from 'react-router'
+import {Redirect, Route, Router} from 'react-router'
 import {createBrowserHistory} from 'history'
 import {configureStore} from './store'
 import {App} from './containers/App'

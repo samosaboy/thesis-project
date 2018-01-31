@@ -100,6 +100,7 @@ class EventContainer extends React.Component<Props, {}> {
             <p dangerouslySetInnerHTML={{__html: this.props.event.description}} />
           </div>
           <Stage
+            draggable={false}
             ref={node => this.stage = node}
             className={styles.stage}
             width={window.innerWidth}
