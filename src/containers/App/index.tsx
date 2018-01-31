@@ -1,100 +1,24 @@
 import * as React from 'react'
 import {Header} from '../../components'
 import Helper from '../../components/Helper/Helper'
-import Canvas from '../Canvas/Canvas'
 import * as styles from './style.css'
-import Hover from '../../components/Hover/Hover'
-import {Group, Layer, Stage} from 'react-konva'
-/* redux imports */
-import * as actions from '../../actions/actions'
-import {bindActionCreators} from 'redux'
+
 import {connect} from 'react-redux'
 import {RootState} from '../../reducers'
-import {Route, RouteComponentProps} from 'react-router'
+import {Route, RouteComponentProps, Switch} from 'react-router'
 import EventContainer from '../Event/Event'
-
+import MainStage from '../MainStage/MainStage'
 
 export namespace App {
   export interface Props extends RouteComponentProps<void> {
-    actions: typeof actions,
     helper: ContextualHelperData,
-    rippleActive: rippleActiveData,
-    position: pointerPositionData,
   }
 
   export interface State {
   }
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class App extends React.Component<App.Props, App.State> {
-  private layer: any
-  private stage: any
-
-  private getPointerPosition = (): void => {
-    const stageCursorPosition = this.stage.getStage().getPointerPosition()
-    const stageShift = this.stage.getStage()
-    /*
-    * We have to offset our cursorPosition with stage shift
-    * to determine the new cursor position
-    * */
-    const position = {
-      x: stageCursorPosition.x - stageShift.x(),
-      y: stageCursorPosition.y - stageShift.y(),
-    }
-    this.props.actions.positionSet(position)
-  }
-
-  public render() {
-    const {history, position, rippleActive, helper, actions, children} = this.props
-    return (
-      <main>
-        <header className={styles.header}>
-          <Header/>
-        </header>
-
-        <Route
-          exact
-          path={'/:eventId'}
-          component={EventContainer}
-        />
-
-        <Stage
-          style={{background: '#E2DED8'}}
-          ref={node => this.stage = node}
-          draggable={true}
-          onDragMove={() => this.getPointerPosition()}
-          onDragStart={() => this.stage.getStage().container().style.cursor = 'move'}
-          onDragEnd={() => this.stage.getStage().container().style.cursor = 'default'}
-          onContentMouseMove={this.getPointerPosition}
-          width={window.innerWidth}
-          height={window.innerHeight}
-        >
-          <Layer ref={node => this.layer = node}>
-            <Canvas
-              history={history}
-              rippleActive={actions.rippleActive}
-              rippleText={rippleActive}
-              addHelper={actions.addHelper}
-            />
-            <Group>
-              <Hover position={position} text={rippleActive}/>
-            </Group>
-          </Layer>
-        </Stage>
-
-        {children}
-
-        <footer className={styles.helper}>
-          <Helper helper={helper.text}/>
-        </footer>
-      </main>
-    )
-  }
-}
-
-
-function mapStateToProps(state: RootState) {
+const mapStateToProps = (state: RootState) => {
   return {
     helper: state.helper,
     rippleActive: state.rippleActive,
@@ -102,8 +26,34 @@ function mapStateToProps(state: RootState) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(actions as any, dispatch),
+@connect(mapStateToProps, null)
+export class App extends React.Component<App.Props, App.State> {
+  public render() {
+    return (
+      <main>
+        <header className={styles.header}>
+          <Header/>
+        </header>
+
+        <Switch>
+          <Route
+            exact
+            path={'/:eventId'}
+            component={EventContainer}
+          />
+          <Route
+            exact
+            path={'/'}
+            component={MainStage}
+          />
+        </Switch>
+
+        {this.props.children}
+
+        <footer className={styles.helper}>
+          <Helper helper={this.props.helper.text}/>
+        </footer>
+      </main>
+    )
   }
 }

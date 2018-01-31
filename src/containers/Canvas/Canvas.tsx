@@ -47,6 +47,9 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
   }
 
   componentDidMount() {
+    setInterval(() => {
+      console.log('canvas.tsx')
+    }, 2000)
     fetch('../../1.json')
       .then(res => res.json())
       .then(data => {
@@ -57,6 +60,10 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
           this.setState({textPlacement: true})
         }, 1000)
       })
+  }
+
+  componentWillUnmount() {
+    this.setState({ loading: true })
   }
 
   private showEventInfo = (item: any): any => {
@@ -70,7 +77,11 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
 
   private renderItem = (): JSX.Element => {
     return this.state.data.map(item => (
-      <Group key={item.id} ref={node => this.group = node} onClick={() => this.showEventInfo(item)}>
+      <Group
+        key={item.id}
+        ref={node => this.group = node}
+        onClick={() => this.showEventInfo(item)}
+      >
         <Group
           x={item.position.left}
           y={item.position.top}
