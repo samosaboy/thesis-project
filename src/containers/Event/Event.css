@@ -1,5 +1,11 @@
-h1 {
-  margin: 0 !important;
+svg {
+  animation: offset 10s linear forwards;
+}
+
+@keyframes offset {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .stage {
@@ -11,6 +17,7 @@ h1 {
 }
 
 .eventOverlayContainer {
+  color: black;
   background: #E2DED8;
   opacity: 1.0;
   position: absolute;
@@ -35,26 +42,34 @@ h1 {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+}
+
+.eventHeader h1 {
+  margin: 0 !important;
+  font-weight: 400;
+  font-size: 2.5rem;
+}
+
+.eventHeader span {
+  color: black;
+  display: inline;
+  background: #c3bfb9;
+  box-shadow: 10px 0 0 #c3bfb9, -10px 0 0 #c3bfb9;
+  position: absolute;
+  right: 0;
+  z-index: 1550;
 }
 
 .eventText {
-  width: 30%;
-  height: 80%;
   position: absolute;
-  left: 50%;
-  bottom: 0;
   flex: 0.5;
   z-index: 1550;
 }
 
-.header {
+.eventText span.header {
   line-height: 50pt;
-  font-size: 4rem;
   font-weight: 800;
-}
-
-p {
-  font-size: 2rem;
 }
 
 button {

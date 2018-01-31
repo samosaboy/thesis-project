@@ -74,6 +74,21 @@ module.exports = {
           ]
         })
       },
+      // svg
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: "babel-loader"
+          },
+          {
+            loader: "react-svg-loader",
+            options: {
+              jsx: false // true outputs JSX tags
+            }
+          }
+        ]
+      },
       // static assets
       { test: /\.html$/, use: 'html-loader' },
       { test: /\.png$/, use: 'url-loader?limit=10000' },

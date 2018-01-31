@@ -12,7 +12,7 @@ export default class Hover extends React.PureComponent<any, any> {
           sceneFunc={context => {
             context.setAttr('font', '13pt Lora')
             context.setAttr('fillStyle', 'black')
-            context.fillText(`${this.props.text.title} / ${this.props.text.description}`, 0, 0)
+            context.fillText(`${this.props.text.title}`, 0, 0)
           }}
           x={this.props.position.x}
           y={this.props.position.y}

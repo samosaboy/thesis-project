@@ -67,8 +67,8 @@ export class App extends React.Component<App.Props, App.State> {
           onDragStart={() => this.stage.getStage().container().style.cursor = 'move'}
           onDragEnd={() => this.stage.getStage().container().style.cursor = 'default'}
           onContentMouseMove={this.getPointerPosition}
-          width={3000}
-          height={3000}
+          width={window.innerWidth}
+          height={window.innerHeight}
         >
           <Layer ref={node => this.layer = node}>
             <Canvas

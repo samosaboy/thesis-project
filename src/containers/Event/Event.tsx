@@ -5,7 +5,13 @@ import {Layer, Stage} from 'react-konva'
 import RippleEventView from './Ripple'
 import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
+import SyriaMap from '../../../_assets/syria_map.svg'
+
+//TODO: Use SVGO with react-svg-loader
+//TODO: Figure out how to display SVGS based on our data...
+//TODO: Figure out how to offset the SVGs so it shows the ripple over the area you are talking about
 
 interface Props {
   history: any,
@@ -14,13 +20,19 @@ interface Props {
   event: eventRippleActiveData,
 }
 
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    actions: bindActionCreators(actions as any, dispatch)
+  }
+}
+
 const mapStateToProps = (state: RootState) => {
   return {
     event: state.eventRippleActive,
   }
 }
 
-@connect(mapStateToProps, null)
+@connect(mapStateToProps, mapDispatchToProps)
 class EventContainer extends React.Component<Props, {}> {
   private stage: any
 
@@ -30,11 +42,12 @@ class EventContainer extends React.Component<Props, {}> {
 
   private goBack = (): void => {
     this.props.history.goBack()
+    this.props.actions.eventRippleActive({
+      title: null,
+      description: null,
+      visual: null,
+    })
   }
-
-  // componentDidMount() {
-  //   console.log(this.props)
-  // }
 
   public render() {
     return (
@@ -47,13 +60,44 @@ class EventContainer extends React.Component<Props, {}> {
               <span>{this.props.location.state.event.description}</span>
             </div>
           </div>
-          <div className={styles.eventText}>
-            <span className={styles.header}>
+          <div>
+            {/*{*/}
+              {/*this.props.location.state.event.geo.map === 'Syria'*/}
+                {/*? <SyriaMap*/}
+                  {/*style={{*/}
+                    {/*position: 'absolute',*/}
+                    {/*bottom: '100px',*/}
+                    {/*left: '-90px',*/}
+                    {/*zIndex: 1000,*/}
+                    {/*opacity: 0.8,*/}
+                    {/*strokeDasharray: 2529,*/}
+                    {/*strokeDashoffset: 2529,*/}
+                  {/*}}*/}
+                  {/*width={window.innerWidth}*/}
+                  {/*height={window.innerHeight}*/}
+                {/*/>*/}
+                {/*: null*/}
+            {/*}*/}
+          </div>
+          <div
+            className={styles.eventText}
+            style={{
+              width: window.innerWidth / 3,
+              height: window.innerHeight,
+              left: window.innerWidth / 2,
+              top: 6 + 'em',
+              fontSize: 1.8 + 'vw',
+            }}>
+            <span
+              className={styles.header}
+              style={{
+                fontSize: 2.6 + 'vw',
+                lineHeight: 3.6 + 'rem',
+              }}
+            >
               {this.props.event.title}
             </span>
-            <p>
-              {this.props.event.description}
-            </p>
+            <p dangerouslySetInnerHTML={{__html: this.props.event.description}} />
           </div>
           <Stage
             ref={node => this.stage = node}

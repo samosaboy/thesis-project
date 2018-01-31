@@ -10,6 +10,7 @@ const initialState: rippleEventActiveConfig = {
 export default handleActions<rippleEventActiveConfig, ContextualHelperData>(
   {
     [Actions.EVENT_RIPPLE_ACTIVE]: (state, action) => {
+      console.log(action)
       return {
         ...state,
         ...action.payload,

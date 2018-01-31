@@ -2,7 +2,7 @@ import {handleActions} from 'redux-actions'
 import * as Actions from '../constants/actions'
 
 const initialState: HelperStateConfig = {
-  text: 'Use your mouse to scroll around',
+  text: 'Left-click to drag around',
   persistent: false,
 }
 
@@ -12,7 +12,7 @@ export default handleActions<HelperStateConfig, ContextualHelperData>(
       return {
         ...state,
         ...action.payload && {...action.payload},
-        ...!action.payload.text && {text: 'Use your mouse to scroll around'}
+        ...!action.payload.text && {text: 'Left-click to drag around'}
       }
     },
   },
