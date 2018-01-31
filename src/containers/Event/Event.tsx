@@ -4,46 +4,21 @@ import * as styles from './Event.css'
 import {Layer, Stage} from 'react-konva'
 import {RippleEventView} from './Ripple'
 import * as actions from '../../actions/actions'
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
 
-export namespace EventContainer {
-  export interface Props {
-    history: any,
-    location: any,
-    actions?: typeof actions,
-  }
-
-  export interface State {
-  }
+interface Props {
+  history: any,
+  location: any,
+  actions?: typeof actions,
 }
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    actions: bindActionCreators(actions as any, dispatch)
-  }
+interface State {
 }
 
-@connect(null, mapDispatchToProps)
-class EventContainer extends React.Component<EventContainer.Props, EventContainer.State> {
+class EventContainer extends React.Component<Props, State> {
   private stage: any
+
   constructor(props?: any, context?: any) {
     super(props, context)
-  }
-
-  // componentDidMount() {
-  //   console.log(this.props.location.state.event)
-  //   console.log(this.stage.getStage())
-  // }
-
-  private hoverEvent = ({data}): void => {
-    const { title, description, map, visual } = data
-    this.props.actions.eventRippleActive({
-      title: 'test',
-      description: 'test',
-      map: 'test',
-      visual: 'test',
-    })
   }
 
   private goBack = (): void => {
