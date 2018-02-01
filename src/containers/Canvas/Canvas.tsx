@@ -20,7 +20,7 @@ export namespace Canvas {
   }
 }
 
-class Canvas extends React.Component<Canvas.Props, Canvas.State> {
+class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   private group: any
   private text: any
 
@@ -47,20 +47,22 @@ class Canvas extends React.Component<Canvas.Props, Canvas.State> {
   }
 
   componentDidMount() {
-    fetch('../../1.json')
-      .then(res => res.json())
-      .then(data => {
-        this.setState({data})
-        setTimeout(() => {
-          this.setState({loading: false})
-          this.setClientRect()
-          this.setState({textPlacement: true})
-        }, 2000)
-      })
+    if (!this.state.data.length) {
+      fetch('../../1.json')
+        .then(res => res.json())
+        .then(data => {
+          this.setState({data})
+          setTimeout(() => {
+            this.setState({loading: false})
+            this.setClientRect()
+            this.setState({textPlacement: true})
+          }, 0)
+        })
+    }
   }
 
   componentWillUnmount() {
-    this.setState({ loading: true })
+    this.setState({loading: true})
   }
 
   private showEventInfo = (item: any): any => {

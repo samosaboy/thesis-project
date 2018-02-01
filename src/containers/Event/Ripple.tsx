@@ -33,7 +33,7 @@ export default class RippleEventView extends Ripple<Props> {
       visual: 'test',
     })
     this.circle.getStage().container().style.cursor = 'pointer'
-    this.circle.setAttr('stroke', createStrokeGradient(['#7b746f', '#d20400'], this.circle))
+    this.circle.setAttr('stroke', createStrokeGradient(['#c0492a', '#d20400'], this.circle))
     this.circle.to({
       strokeWidth: 30,
       duration: 0.5,

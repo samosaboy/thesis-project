@@ -74,7 +74,11 @@ class MainStage extends React.Component<MainStage.Props, MainStage.State> {
             addHelper={actions.addHelper}
           />
           <Group>
-            <Hover position={position} text={rippleActive}/>
+            {
+              rippleActive.title
+                ? <Hover position={position} text={rippleActive}/>
+                : null
+            }
           </Group>
         </Layer>
       </Stage>

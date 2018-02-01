@@ -5,7 +5,7 @@ interface State {
   links: Array<{ name: string, url: string }>
 }
 
-export class Header extends React.Component<{}, State> {
+export class Header extends React.PureComponent<{}, State> {
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
@@ -31,7 +31,7 @@ export class Header extends React.Component<{}, State> {
 
   public render() {
     return (
-      <span>Nikunj Varshney Ⓒ 2018 <b>THIS IS A WIP</b></span>
+      <span><b>THIS IS A WIP</b></span>
     )
   }
 

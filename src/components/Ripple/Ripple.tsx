@@ -43,6 +43,8 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   }
 
   componentWillUnmount() {
+    this.props.actions.addHelper({text: null})
+    this.props.actions.rippleActive({title: null, description: null})
     this.circle.getStage().setAttr('draggable', false)
     this.animateBreathe.stop()
     this.animateRotation.stop()

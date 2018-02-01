@@ -33,7 +33,7 @@ const mapStateToProps = (state: RootState) => {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-class EventContainer extends React.Component<Props, {}> {
+class EventContainer extends React.PureComponent<Props, {}> {
   private stage: any
 
   constructor(props?: any, context?: any) {
@@ -61,23 +61,23 @@ class EventContainer extends React.Component<Props, {}> {
             </div>
           </div>
           <div>
-            {/*{*/}
-              {/*this.props.location.state.event.geo.map === 'Syria'*/}
-                {/*? <SyriaMap*/}
-                  {/*style={{*/}
-                    {/*position: 'absolute',*/}
-                    {/*bottom: '100px',*/}
-                    {/*left: '-90px',*/}
-                    {/*zIndex: 1000,*/}
-                    {/*opacity: 0.8,*/}
-                    {/*strokeDasharray: 2529,*/}
-                    {/*strokeDashoffset: 2529,*/}
-                  {/*}}*/}
-                  {/*width={window.innerWidth}*/}
-                  {/*height={window.innerHeight}*/}
-                {/*/>*/}
-                {/*: null*/}
-            {/*}*/}
+            {
+              this.props.location.state.event.geo.map === 'Syria'
+                ? <SyriaMap
+                  style={{
+                    position: 'absolute',
+                    bottom: '0px',
+                    left: '-250px',
+                    zIndex: 1000,
+                    opacity: 0.8,
+                    strokeDasharray: 2529,
+                    strokeDashoffset: 2529,
+                  }}
+                  width={window.innerWidth}
+                  height={window.innerHeight}
+                />
+                : null
+            }
           </div>
           <div
             className={styles.eventText}
