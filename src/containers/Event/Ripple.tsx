@@ -25,6 +25,10 @@ export default class RippleEventView extends Ripple<Props> {
     this.state = {opacity: 1}
   }
 
+  public animate = (): void => {
+    this.fadeAnimate()
+  }
+
   public rippleHover = (): void => {
     this.animateRotation.start()
     this.props.actions.eventRippleActive({

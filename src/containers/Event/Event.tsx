@@ -1,17 +1,14 @@
 import * as React from 'react'
 import {withRouter} from 'react-router'
 import * as styles from './Event.css'
-import {Layer, Stage} from 'react-konva'
+import {Path, Layer, Stage} from 'react-konva'
 import RippleEventView from './Ripple'
 import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
+import {Damascus} from '../../constants/paths'
 import SyriaMap from '../../../_assets/syria_map.svg'
-
-//TODO: Use SVGO with react-svg-loader
-//TODO: Figure out how to display SVGS based on our data...
-//TODO: Figure out how to offset the SVGs so it shows the ripple over the area you are talking about
 
 interface Props {
   history: any,
@@ -100,7 +97,7 @@ class EventContainer extends React.PureComponent<Props, {}> {
             <p dangerouslySetInnerHTML={{__html: this.props.event.description}} />
           </div>
           <Stage
-            draggable={false}
+            draggable={true}
             ref={node => this.stage = node}
             className={styles.stage}
             width={window.innerWidth}
@@ -113,6 +110,16 @@ class EventContainer extends React.PureComponent<Props, {}> {
                 y: -window.innerHeight / 2,
               }}
             >
+              {/*<Path*/}
+                {/*data={Damascus}*/}
+                {/*x={100}*/}
+                {/*y={-window.innerHeight}*/}
+                {/*stroke={'#494443'}*/}
+                {/*strokeWidth={1}*/}
+                {/*rotation={0}*/}
+                {/*strokeScaleEnabled={true}*/}
+                {/*scale={{x:1, y:1}}*/}
+              {/*/>*/}
               {
                 this.props.location.state.event.ripples.map((ripple, index) => {
                   const scale = 200 * (index + 1)

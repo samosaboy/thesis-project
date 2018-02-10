@@ -75,7 +75,7 @@ class MainStage extends React.Component<MainStage.Props, MainStage.State> {
           />
           <Group>
             {
-              rippleActive.title
+              rippleActive
                 ? <Hover position={position} text={rippleActive}/>
                 : null
             }

@@ -4,7 +4,7 @@ import {Circle} from 'react-konva'
 import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {createBreatheScale, createRotation, createStrokeGradient} from '../../constants/helper'
+import {createOscillation, createRotation, createStrokeGradient} from '../../constants/helper'
 
 export interface Props {
   ripple: {
@@ -21,8 +21,8 @@ export interface State {
 }
 
 export class Ripple<T extends Props> extends React.PureComponent<T & Props, State> {
-  public animateBreathe: any
   public animateRotation: any
+  public animationOscillation: any
   public circle: any
 
   constructor(props) {
@@ -33,33 +33,57 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   componentDidMount() {
     this.circle.getStage().setAttr('draggable', true)
     this.setZIndex(this.circle.parent.children)
-    this.fadeAnimate()
-    this.animateRotation = createRotation(this.circle)
-    this.animateBreathe = createBreatheScale(this.circle, 10 / this.props.radius, 1)
 
-    setTimeout(() => {
-      this.animateBreathe.start()
-    }, 1000)
+    this.animateRotation = createRotation(this.circle)
+    this.animationOscillation = createOscillation(this.circle, this.props.radius, this.props.ripple.id)
+    this.animate()
+  }
+
+  public animate = (): void => {
+    this.fadeAnimate()
+    // this.animationOscillation.start()
   }
 
   componentWillUnmount() {
     this.props.actions.addHelper({text: null})
     this.props.actions.rippleActive({title: null, description: null})
     this.circle.getStage().setAttr('draggable', false)
-    this.animateBreathe.stop()
     this.animateRotation.stop()
+    // this.animationOscillation.stop()
   }
 
   public fadeAnimate = (): void => {
-    /*
-    * To avoid memory leaks we use .to method to destroy the instance
-    * once it is finished.
-    * */
-    this.circle.to({
+    // this.circle.to({
+    //   opacity: 1,
+    //   duration: 1.5 * this.props.ripple.id,
+    //   easing: Konva.Easings.EaseInOut,
+    //   onFinish: () => {
+    //     console.log('test')
+    //   }
+    // })
+
+    const group = this.circle.getStage().find('.eventGroup')[0].children
+    const groupClone: any = [...group].reverse()
+
+    groupClone[0].to({
       opacity: 1,
-      duration: (Math.floor(Math.random() * 1.5) + 1) * this.props.ripple.id,
+      scaleX: group.length / this.props.ripple.id,
+      scaleY: group.length / this.props.ripple.id,
+      duration: 1.5 * this.props.ripple.id,
       easing: Konva.Easings.EaseInOut,
     })
+
+    setTimeout(() => {
+      groupClone
+        .forEach((item, index) => {
+          item.to({
+            opacity: 1,
+            scaleX: group.length / (index + 1),
+            scaleY: group.length / (index + 1),
+            duration: 1.5 * this.props.ripple.id * 4,
+          })
+        })
+    }, 1.5 * this.props.ripple.id * 1000)
   }
 
   private setZIndex = (array): void => {
@@ -69,7 +93,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   }
 
   public rippleHover = (): void => {
-    this.animateBreathe.stop()
+    // this.animationOscillation.stop()
     this.animateRotation.start()
     this.circle.getStage().container().style.cursor = 'pointer'
 
@@ -79,8 +103,8 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   }
 
   public resetHover = (): void => {
-    this.animateBreathe.start()
     this.animateRotation.stop()
+    // this.animationOscillation.start()
     this.circle.getStage().container().style.cursor = 'default'
 
     this.circle.setAttr('stroke', createStrokeGradient(['#000000', '#494443'], this.circle))

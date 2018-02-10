@@ -1,104 +1,31 @@
 [
   {
     "id": 1,
-    "importance": 2,
-    "type": "political",
-    "description": "This is a test",
-    "position": {
-      "left": 200,
-      "top": 200
-    },
-    "geo": {
-      "city": "New York",
-      "map": "Toronto"
-    },
-    "ripples": [
-      {
-        "id": 1,
-        "name": "First ripple",
-        "description": "This is a test first ripple"
-      },
-      {
-        "id": 2,
-        "name": "Second ripple",
-        "description": "This is a test second ripple"
-      },
-      {
-        "id": 3,
-        "name": "Third ripple",
-        "description": "This is a test third ripple"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "importance": 1,
-    "type": "political",
-    "description": "This is a test",
-    "position": {
-      "left": 600,
-      "top": 600
-    },
-    "geo": {
-      "city": "Toronto",
-      "map": "Toronto"
-    },
-    "ripples": [
-      {
-        "id": 1,
-        "name": "First ripple here",
-        "description": "This is a test first ripple"
-      },
-      {
-        "id": 2,
-        "name": "Second ripple here",
-        "description": "This is a test second ripple"
-      },
-      {
-        "id": 3,
-        "name": "Third ripple here",
-        "description": "This is a test third ripple"
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "importance": 6,
-    "type": "political",
-    "description": "This is a test",
-    "position": {
-      "left": 1000,
-      "top": 200
-    },
-    "geo": {
-      "city": "Lebanon",
-      "map": "Toronto"
-    },
-    "ripples": [
-      {
-        "id": 1,
-        "name": "First ripple here",
-        "description": "This is a test first ripple"
-      },
-      {
-        "id": 2,
-        "name": "Second ripple here",
-        "description": "This is a test second ripple"
-      },
-      {
-        "id": 3,
-        "name": "Third ripple here",
-        "description": "This is a test third ripple"
-      }
-    ]
-  },
-  {
-    "id": 4,
     "importance": 3,
     "type": "political",
+    "stats": [
+      {
+        "type": "death",
+        "value": 470000,
+        "increment": {
+          "type": "positive",
+          "value": 5,
+          "rate": "hourly"
+        }
+      },
+      {
+        "type": "detained",
+        "value": 117000,
+        "increment": {
+          "type": "negative",
+          "value": 1,
+          "rate": "day"
+        }
+      }
+    ],
     "description": "Death Toll: 470,000 / Detained: 117,000 / Seeking Refuge: 4,800,000",
     "position": {
-      "left": 1600,
+      "left": 700,
       "top": 200
     },
     "geo": {
@@ -118,6 +45,11 @@
       },
       {
         "id": 3,
+        "name": "The footsteps of 5,440,749 refugees.",
+        "description": "One of the closest safe havens is Horgos, Serbia, which is 2,973,960 footsteps from Damascus. It would take <b>50 days at 8 hours per day</b> to walk there. <br /><br />A calm spring day is about 40 decibels. The sound of casual conversation is 60 decibels. The sound of a helicopter passing by is 105 decibels. The sound of a truck driving by is 90 decibels."
+      },
+      {
+        "id": 4,
         "name": "The footsteps of 5,440,749 refugees.",
         "description": "One of the closest safe havens is Horgos, Serbia, which is 2,973,960 footsteps from Damascus. It would take <b>50 days at 8 hours per day</b> to walk there. <br /><br />A calm spring day is about 40 decibels. The sound of casual conversation is 60 decibels. The sound of a helicopter passing by is 105 decibels. The sound of a truck driving by is 90 decibels."
       }

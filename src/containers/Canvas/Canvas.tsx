@@ -70,7 +70,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
       pathname: `/${item.id}`,
       state: {
         event: item,
-      }
+      },
     })
   }
 
@@ -82,6 +82,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
         onClick={() => this.showEventInfo(item)}
       >
         <Group
+          name={'eventGroup'}
           x={item.position.left}
           y={item.position.top}
         >

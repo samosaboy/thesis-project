@@ -52,7 +52,11 @@ export const createRotation = (element: any, speed?: number): Animation => {
 export const createBreatheScale = (element: any, amplitude: number, midpoint: number): Animation => {
   return new Konva.Animation(frame => {
     const scale = amplitude * Math.sin(2 * (frame.time / 10000)) + midpoint
-    element.scale({x: scale, y: scale})
+
+    element.scale({
+      x: scale,
+      y: scale,
+    })
   }, element.getLayer())
 }
 
@@ -73,9 +77,24 @@ export const createLaddaGradient = (element: any): void => {
   const gradient = context.createLinearGradient(0, 0, 20, 20)
 
   for (let i = 1; i < 90; i++) {
-    gradient.addColorStop(i/100, '#E2DED9')
+    gradient.addColorStop(i / 100, '#E2DED9')
   }
   gradient.addColorStop(0.9, '#5e5e5e')
 
   return gradient
+}
+
+export const createOscillation = (element: any, radius: number, id: number): any => {
+  /*
+  * Maybe we can clone element and add it using add() to the stage?
+  * Then in our return create a new animation with that element and
+  * offset it by a bit... hmm..
+  * */
+  return new Konva.Animation(frame => {
+    const t = 0.1 * Math.sin(0.1 * radius * (frame.time / 10000)) + 1
+    element.scale({
+      x: t,
+      y: t,
+    })
+  }, element.getLayer())
 }

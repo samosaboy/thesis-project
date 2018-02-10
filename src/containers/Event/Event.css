@@ -1,5 +1,5 @@
 svg {
-  animation: offset 10s linear forwards;
+  animation: offset 10s linear forwards !important;
 }
 
 @keyframes offset {
