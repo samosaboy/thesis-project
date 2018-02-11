@@ -9,7 +9,6 @@ svg {
 }
 
 .stage {
-  flex: 0.5;
   z-index: 1500;
   position: absolute;
   top: 0;
@@ -62,6 +61,7 @@ svg {
 }
 
 .eventText {
+  background: none;
   position: absolute;
   flex: 0.5;
   z-index: 1550;

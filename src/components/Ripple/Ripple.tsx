@@ -1,6 +1,6 @@
 import * as React from 'react'
-import * as Konva from 'konva'
 import {Circle} from 'react-konva'
+import * as Konva from 'konva'
 import * as actions from '../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
@@ -53,15 +53,14 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   }
 
   public fadeAnimate = (): void => {
-    // this.circle.to({
-    //   opacity: 1,
-    //   duration: 1.5 * this.props.ripple.id,
-    //   easing: Konva.Easings.EaseInOut,
-    //   onFinish: () => {
-    //     console.log('test')
-    //   }
-    // })
+    this.circle.to({
+      opacity: 1,
+      duration: 1.5 * this.props.ripple.id,
+      easing: Konva.Easings.EaseInOut,
+    })
+  }
 
+  public createRippleEffect = (): void => {
     const group = this.circle.getStage().find('.eventGroup')[0].children
     const groupClone: any = [...group].reverse()
 
@@ -74,12 +73,13 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
     })
 
     setTimeout(() => {
+      // delete groupClone[0]
       groupClone
         .forEach((item, index) => {
           item.to({
             opacity: 1,
-            scaleX: group.length / (index + 1),
-            scaleY: group.length / (index + 1),
+            scaleX: group.length / (index),
+            scaleY: group.length / (index),
             duration: 1.5 * this.props.ripple.id * 4,
           })
         })

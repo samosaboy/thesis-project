@@ -22,11 +22,11 @@ const mapDispatchToProps = (dispatch: any) => {
 export default class RippleEventView extends Ripple<Props> {
   constructor(props?: any) {
     super(props)
-    this.state = {opacity: 1}
+    this.state = {opacity: 0}
   }
 
   public animate = (): void => {
-    this.fadeAnimate()
+    // this.fadeAnimate()
   }
 
   public rippleHover = (): void => {
@@ -37,7 +37,8 @@ export default class RippleEventView extends Ripple<Props> {
       visual: 'test',
     })
     this.circle.getStage().container().style.cursor = 'pointer'
-    this.circle.setAttr('stroke', createStrokeGradient(['#c0492a', '#d20400'], this.circle))
+    this.circle.setAttr('stroke', createStrokeGradient(['#c0b65b', '#d20400'], this.circle))
+    this.circle.getLayer().children[0].setAttr('opacity', 1)
     this.circle.to({
       strokeWidth: 30,
       duration: 0.5,

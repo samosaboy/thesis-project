@@ -6,7 +6,7 @@ import * as styles from './style.css'
 import {connect} from 'react-redux'
 import {RootState} from '../../reducers'
 import {Route, RouteComponentProps, Switch} from 'react-router'
-import EventContainer from '../Event/Event'
+import EventContainer from '../Event/EventView'
 import MainStage from '../MainStage/MainStage'
 
 export namespace App {
