@@ -22,7 +22,7 @@ const mapDispatchToProps = (dispatch: any) => {
 export default class RippleEventView extends Ripple<Props> {
   constructor(props?: any) {
     super(props)
-    this.state = {opacity: 0}
+    this.state = {opacity: 1}
   }
 
   public animate = (): void => {
