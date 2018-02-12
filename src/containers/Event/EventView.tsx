@@ -1,22 +1,28 @@
 import * as React from 'react'
 import {withRouter} from 'react-router'
 import * as styles from './Event.css'
-import {Layer, Path, Stage} from 'react-konva'
-import * as THREE from 'three'
+import {Layer, Stage} from 'react-konva'
 import RippleEventView from './Ripple'
 import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
 import {Damascus} from '../../constants/paths'
-import createGeometry from 'three-simplicial-complex'
-import svgMesh3d from 'svg-mesh-3d'
+import Ladda from '../../components/Ladda/Ladda'
+
+import * as THREE from 'three'
+
+// import 'three/examples/js/renderers/CanvasRenderer.js'
 
 interface Props {
   history: any,
   location: any,
   actions?: typeof actions,
   event: eventRippleActiveData,
+}
+
+interface State {
+  loading: Boolean
 }
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -32,7 +38,7 @@ const mapStateToProps = (state: RootState) => {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-class EventContainer extends React.PureComponent<Props, {}> {
+class EventContainer extends React.PureComponent<Props, State> {
   private stage: any
   private layer: any
   private mount: any
@@ -43,6 +49,9 @@ class EventContainer extends React.PureComponent<Props, {}> {
 
   constructor(props?: any, context?: any) {
     super(props, context)
+    this.state = {
+      loading: true
+    }
   }
 
   componentDidMount() {
@@ -60,7 +69,13 @@ class EventContainer extends React.PureComponent<Props, {}> {
       this.camera.position.z = 5
       this.mount.appendChild(this.renderer.domElement)
       this.start()
-      this.renderMap()
+      // this.renderMap()
+      setTimeout(() => {
+        this.renderMap()
+        setTimeout(() => {
+          this.setState({loading: false})
+        }, 0)
+      }, 1000)
     }
   }
 
@@ -80,6 +95,7 @@ class EventContainer extends React.PureComponent<Props, {}> {
     })
     const mapMesh = new THREE.Mesh(mapGeometry, mapMaterial)
     this.scene.add(mapMesh)
+    console.log('mapCreated')
   }
 
   private start = () => {
@@ -110,19 +126,9 @@ class EventContainer extends React.PureComponent<Props, {}> {
     })
   }
 
-  public render() {
+  private renderEvent = () => {
     return (
-      <div className={styles.eventOverlayContainer}>
-
-        <div
-          style={{
-            width: window.innerWidth,
-            height: window.innerHeight,
-          }}
-          ref={node => this.mount = node}
-        />
-
-
+      <div>
         <div className={styles.eventContainer}>
           <div
             style={{
@@ -174,21 +180,6 @@ class EventContainer extends React.PureComponent<Props, {}> {
                 y: -window.innerHeight / 2,
               }}
             >
-              {/*<Path*/}
-                {/*x={-window.innerWidth / 6}*/}
-                {/*y={-window.innerHeight / 2}*/}
-                {/*opacity={1}*/}
-                {/*data={Damascus}*/}
-                {/*name={'rippleEventMap'}*/}
-                {/*stroke={'#807775'}*/}
-                {/*strokeWidth={2}*/}
-                {/*rotation={0}*/}
-                {/*strokeScaleEnabled={false}*/}
-                {/*scale={{*/}
-                  {/*x: 6,*/}
-                  {/*y: 6,*/}
-                {/*}}*/}
-              {/*/>*/}
               {
                 this.props.location.state.event.ripples.map((ripple, index) => {
                   const scale = 200 * (index + 1)
@@ -205,6 +196,37 @@ class EventContainer extends React.PureComponent<Props, {}> {
             </Layer>
           </Stage>
         </div>
+      </div>
+    )
+  }
+
+  public render() {
+    return (
+      <div className={styles.eventOverlayContainer}>
+        {
+          this.state.loading ? (
+            <div
+              style={{
+                backgroundColor: 'black',
+                position: 'absolute',
+                width: window.innerWidth,
+                height: window.innerHeight,
+                top: 0,
+                left: 0,
+                zIndex: 999
+              }}
+            >
+              <Ladda isolated={true}/>
+            </div>
+          ) : this.renderEvent()
+        }
+        <div
+          style={{
+            width: window.innerWidth,
+            height: window.innerHeight,
+          }}
+          ref={node => this.mount = node}
+        />
       </div>
     )
   }

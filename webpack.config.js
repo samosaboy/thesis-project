@@ -111,6 +111,9 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: 'index.html'
+    }),
+    new Webpack.ProvidePlugin({
+      THREE: 'three'
     })
   ],
   devServer: {
