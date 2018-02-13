@@ -11,6 +11,8 @@ import {Damascus} from '../../constants/paths'
 import Ladda from '../../components/Ladda/Ladda'
 import 'three-examples/modifiers/ExplodeModifier.js'
 import 'three-examples/modifiers/TessellateModifier.js'
+import '../../../node_modules/three.textsprite/THREE.TextSprite.js'
+import {isNullOrUndefined} from 'util'
 
 const THREE = require('three')
 
@@ -60,6 +62,7 @@ class EventContainer extends React.PureComponent<Props, State> {
   private renderer: any
   private frameId: any
   private box: any
+  private mouse: any
 
   /* Map */
   private mapGeometry: any
@@ -89,7 +92,7 @@ class EventContainer extends React.PureComponent<Props, State> {
         height: window.innerHeight / 2
       }
     })
-    
+
     document.addEventListener('mousemove', this.mouseMove, false)
     this.scene = new THREE.Scene()
     this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true})
@@ -106,11 +109,12 @@ class EventContainer extends React.PureComponent<Props, State> {
       this.camera.position.z = 5
       this.mount.appendChild(this.renderer.domElement)
       this.start()
+
       setTimeout(() => {
-        // this.renderGrid()
+        this.renderGrid()
         this.renderMap()
         this.setState({loading: false})
-      }, 0)
+      }, 100)
     }
   }
 
@@ -122,8 +126,8 @@ class EventContainer extends React.PureComponent<Props, State> {
   private mouseMove = (event) => {
     this.setState({
       mouse: {
-        x: event.clientX - (this.state.client.width),
-        y: event.clientY - (this.state.client.height)
+        x: (event.clientX / window.innerWidth) * 2 - 1,
+        y: -(event.clientY / window.innerHeight) * 2 + 1
       }
     })
   }
@@ -156,8 +160,8 @@ class EventContainer extends React.PureComponent<Props, State> {
 
     this.mapGeometryOutline = createGeometry(meshData)
     const mapOutlineMaterial = new THREE.MeshBasicMaterial({
-      // color: '#d3d3d3',
-      color: '#d3262b',
+      color: '#d3d3d3',
+      // color: '#d3262b',
       wireframe: true,
     })
     const mapMeshOutline = new THREE.Mesh(this.mapGeometryOutline, mapOutlineMaterial)
@@ -165,6 +169,73 @@ class EventContainer extends React.PureComponent<Props, State> {
     this.mapGeometryOutline.scale(1.8, 1.8, 1.8)
     this.scene.add(mapMeshOutline)
 
+    /*
+    *
+    * Hard coding events for now
+    * TODO: Not hard code these events
+    *
+    *
+    * */
+
+    const setZPosition = this.mapMesh.position.z + 0.01
+
+    const capitalCityMarkerGeometry = new THREE.TorusGeometry(0.05, 0.002, 100, 100)
+    const capitalCityMarkerMaterial = new THREE.MeshBasicMaterial({
+      color: '#000000',
+      wireframe: true,
+    })
+    const capitalCityMarkerMesh = new THREE.Mesh(capitalCityMarkerGeometry, capitalCityMarkerMaterial)
+    capitalCityMarkerMesh.geometry.name = this.props.location.state.event.geo.city
+    capitalCityMarkerMesh.position.z = setZPosition
+    capitalCityMarkerMesh.position.x = -0.7
+    capitalCityMarkerMesh.position.y = -0.3
+    capitalCityMarkerMesh.up = new THREE.Vector3(0, 12, 2)
+    this.scene.add(capitalCityMarkerMesh)
+
+    const capitalCityText = new THREE.TextSprite({
+      textSize: 0.03,
+      redrawInterval: 100000,
+      texture: {
+        text: this.props.location.state.event.geo.city,
+        fontFamily: 'Lora, Times New Roman, serif',
+        fontWeight: '400'
+      },
+      material: {
+        color: 0x000000,
+      },
+    })
+
+    capitalCityText.position.z = setZPosition
+    capitalCityText.position.x = capitalCityMarkerMesh.position.x + 0.15
+    capitalCityText.position.y = capitalCityMarkerMesh.position.y
+
+    this.scene.add(capitalCityText)
+  }
+
+  private mouseMoveEvents = () => {
+    /* Mouse Events */
+    if (this.scene.children && !isNullOrUndefined(this.props.location)) {
+      const vector = new THREE.Vector3(this.state.mouse.x, this.state.mouse.y, 1).unproject(this.camera)
+      const raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize())
+      const intersections = raycaster.intersectObjects(this.scene.children)
+
+      if (intersections.length) {
+
+        // TODO: Figure out how to reset colours back automatically
+        // TODO: Figure out how to hover over any ripple/event
+        // Capital Marker Check
+        const capitalMarker = intersections.filter(inter => inter.object.geometry.name === this.props.location.state.event.geo.city)
+        let capitalMarkerColor = null
+        if (capitalMarker.length) {
+          window.document.body.style.cursor = 'pointer'
+
+          capitalMarker[0].object.material.color.setHex(0xffff00)
+        } else {
+          window.document.body.style.cursor = 'default'
+        }
+
+      }
+    }
   }
 
   private start = () => {
@@ -175,7 +246,7 @@ class EventContainer extends React.PureComponent<Props, State> {
 
   private renderScene = () => {
     if (this.box) {
-      const moveRate = 0.0000009
+      const moveRate = 0.00000009
       if (this.camera.position.x <= (this.box.max.x / 3) && this.camera.position.x >= (this.box.min.x / 3)) {
         this.camera.position.x += (this.state.mouse.x - this.camera.position.x) * moveRate
       }
@@ -197,6 +268,7 @@ class EventContainer extends React.PureComponent<Props, State> {
 
   private animate = () => {
     this.renderScene()
+    this.mouseMoveEvents()
     this.frameId = window.requestAnimationFrame(this.animate)
   }
 
