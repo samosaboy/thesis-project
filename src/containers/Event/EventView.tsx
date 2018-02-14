@@ -7,14 +7,16 @@ import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
-import {Damascus} from '../../constants/paths'
+import {Damascus, DamascusPath1} from '../../constants/paths'
 import Ladda from '../../components/Ladda/Ladda'
 import 'three-examples/modifiers/ExplodeModifier.js'
 import 'three-examples/modifiers/TessellateModifier.js'
 import '../../../node_modules/three.textsprite/THREE.TextSprite.js'
+// import {Easing, Tween} from 'es6-tween'
 import {isNullOrUndefined} from 'util'
 
 const THREE = require('three')
+const TWEEN = require('@tweenjs/tween.js')
 
 /*
 * In case you have to import examples (probably will have to) i.e. :
@@ -62,13 +64,16 @@ class EventContainer extends React.PureComponent<Props, State> {
   private renderer: any
   private frameId: any
   private box: any
-  private mouse: any
 
   /* Map */
   private mapGeometry: any
   private mapMaterial: any
   private mapMesh: any
   private mapGeometryOutline: any
+
+  /* Geometry */
+  private createGeometry: any
+  private svgMesh3d: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -83,6 +88,8 @@ class EventContainer extends React.PureComponent<Props, State> {
         y: 0,
       }
     }
+    this.createGeometry = require('three-simplicial-complex')(THREE)
+    this.svgMesh3d = require('svg-mesh-3d')
   }
 
   componentDidMount() {
@@ -111,7 +118,7 @@ class EventContainer extends React.PureComponent<Props, State> {
       this.start()
 
       setTimeout(() => {
-        this.renderGrid()
+        // this.renderGrid()
         this.renderMap()
         this.setState({loading: false})
       }, 100)
@@ -140,12 +147,10 @@ class EventContainer extends React.PureComponent<Props, State> {
   }
 
   public renderMap = () => {
-    const createGeometry = require('three-simplicial-complex')(THREE)
-    const svgMesh3d = require('svg-mesh-3d')
-    const meshData = svgMesh3d(Damascus)
+    const meshData = this.svgMesh3d(Damascus)
 
     // Physical Map
-    this.mapGeometry = createGeometry(meshData)
+    this.mapGeometry = this.createGeometry(meshData)
     this.mapMaterial = new THREE.MeshBasicMaterial({
       color: '#b7b7b7',
       side: THREE.BackSide,
@@ -158,7 +163,7 @@ class EventContainer extends React.PureComponent<Props, State> {
     this.box = new THREE.Box3()
     this.box.setFromObject(this.mapMesh)
 
-    this.mapGeometryOutline = createGeometry(meshData)
+    this.mapGeometryOutline = this.createGeometry(meshData)
     const mapOutlineMaterial = new THREE.MeshBasicMaterial({
       color: '#d3d3d3',
       // color: '#d3262b',
@@ -179,6 +184,7 @@ class EventContainer extends React.PureComponent<Props, State> {
 
     const setZPosition = this.mapMesh.position.z + 0.01
 
+    // Capital City Marker and Text
     const capitalCityMarkerGeometry = new THREE.TorusGeometry(0.05, 0.002, 100, 100)
     const capitalCityMarkerMaterial = new THREE.MeshBasicMaterial({
       color: '#000000',
@@ -194,7 +200,7 @@ class EventContainer extends React.PureComponent<Props, State> {
 
     const capitalCityText = new THREE.TextSprite({
       textSize: 0.03,
-      redrawInterval: 100000,
+      redrawInterval: 10000000,
       texture: {
         text: this.props.location.state.event.geo.city,
         fontFamily: 'Lora, Times New Roman, serif',
@@ -205,11 +211,25 @@ class EventContainer extends React.PureComponent<Props, State> {
       },
     })
 
+    capitalCityText.name = this.props.location.state.event.geo.city
     capitalCityText.position.z = setZPosition
     capitalCityText.position.x = capitalCityMarkerMesh.position.x + 0.15
     capitalCityText.position.y = capitalCityMarkerMesh.position.y
-
     this.scene.add(capitalCityText)
+
+    // Event 1 Marker
+    const event1MarkerGeometry = new THREE.TorusGeometry(0.02, 0.002, 100, 100)
+    const event1MarkerMaterial = new THREE.MeshBasicMaterial({
+      color: '#595959',
+      wireframe: true,
+    })
+    const event1CityMarkerMesh = new THREE.Mesh(event1MarkerGeometry, event1MarkerMaterial)
+    event1CityMarkerMesh.geometry.name = 'Event 1'
+    event1CityMarkerMesh.position.z = setZPosition
+    event1CityMarkerMesh.position.x = -0.8
+    event1CityMarkerMesh.position.y = -0.5
+    this.scene.add(event1CityMarkerMesh)
+
   }
 
   private mouseMoveEvents = () => {
@@ -223,15 +243,70 @@ class EventContainer extends React.PureComponent<Props, State> {
 
         // TODO: Figure out how to reset colours back automatically
         // TODO: Figure out how to hover over any ripple/event
+
         // Capital Marker Check
-        const capitalMarker = intersections.filter(inter => inter.object.geometry.name === this.props.location.state.event.geo.city)
-        let capitalMarkerColor = null
+        const capitalMarker = intersections.filter(inter => {
+          if (inter.object.geometry) {
+            return inter.object.geometry.name === this.props.location.state.event.geo.city
+          }
+          return []
+        })
+
         if (capitalMarker.length) {
           window.document.body.style.cursor = 'pointer'
+          capitalMarker[0].object.material.color.setHex(0xb73921)
 
-          capitalMarker[0].object.material.color.setHex(0xffff00)
+          const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
+          match.material.color.setHex(0xb73921)
+
+          // Damascus1 Path
+          const meshData = this.svgMesh3d(DamascusPath1)
+          const meshGeometry = this.createGeometry(meshData)
+          const meshMaterial = new THREE.MeshBasicMaterial({
+            color: '#b73921',
+            side: THREE.BackSide,
+          })
+          const meshPath = new THREE.Mesh(meshGeometry, meshMaterial)
+          meshPath.scale.multiplyScalar(0.7)
+          meshPath.scale.y = 0.6
+          meshPath.position.z = 2.55
+          meshPath.position.x = -0.65
+          meshPath.position.y = 0.3
+          this.scene.add(meshPath)
+
+          const path1Text = new THREE.TextSprite({
+            textSize: 0.03,
+            redrawInterval: 10000000,
+            texture: {
+              text: '2,973,960 Footsteps to Serbia',
+              fontFamily: 'Lora, Times New Roman, serif',
+              fontWeight: '400',
+              autoRedraw: false
+            },
+            material: {
+              color: 0xb73921,
+            },
+          })
+
+          path1Text.position.z = 2.55
+          path1Text.position.y = 0.85
+          path1Text.position.x = -0.40
+          this.scene.add(path1Text)
+
+          meshPath.scale.y = 0
+          const tween = new TWEEN.Tween(meshPath.scale)
+            .to({y: 0.6}, 2000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+
+          if (!tween.isPlaying()) {
+            tween.start()
+          }
+
         } else {
           window.document.body.style.cursor = 'default'
+
+          const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
+          match.material.color.setHex(0x000000)
         }
 
       }
@@ -246,12 +321,12 @@ class EventContainer extends React.PureComponent<Props, State> {
 
   private renderScene = () => {
     if (this.box) {
-      const moveRate = 0.00000009
+      const moveRate = 0.000009
       if (this.camera.position.x <= (this.box.max.x / 3) && this.camera.position.x >= (this.box.min.x / 3)) {
         this.camera.position.x += (this.state.mouse.x - this.camera.position.x) * moveRate
       }
       if (this.camera.position.y <= (this.box.max.y / 3) && this.camera.position.y >= (this.box.min.y / 3)) {
-        this.camera.position.y += -(this.state.mouse.y - this.camera.position.y) * moveRate
+        this.camera.position.y += (this.state.mouse.y - this.camera.position.y) * moveRate
       }
       if ((this.camera.position.x >= (this.box.max.x / 3) || this.camera.position.x <= (this.box.min.x / 3))
         || (this.camera.position.y >= (this.box.max.y / 3) || this.camera.position.y <= (this.box.min.y / 3))) {
@@ -269,6 +344,7 @@ class EventContainer extends React.PureComponent<Props, State> {
   private animate = () => {
     this.renderScene()
     this.mouseMoveEvents()
+    TWEEN.update()
     this.frameId = window.requestAnimationFrame(this.animate)
   }
 
@@ -363,18 +439,34 @@ class EventContainer extends React.PureComponent<Props, State> {
           <div
             style={{
               width: window.innerWidth,
-              top: 0,
+              top: 30,
               right: 0
             }}
             className={styles.eventHeader}
           >
-            <button onClick={this.goBack}>Go Back</button>
-            <div style={{textAlign: 'right'}}>
-              <h1>{this.props.location.state.event.geo.city}</h1>
-              <span>{this.props.location.state.event.description}</span>
+            <button
+              style={{
+                position:'absolute',
+                left:30,
+                top:-15,
+              }}
+              onClick={this.goBack}
+            >Go Back</button>
+            <div
+              style={{
+                position: 'absolute',
+                display:'flex',
+                alignItems:'flex-end',
+                flexDirection:'column',
+                right: 30,
+                width: 300,
+              }}
+            >
+              <h1>{this.props.location.state.event.geo.map}</h1>
+              <span style={{marginTop:30}}>{this.props.location.state.event.description}</span>
             </div>
           </div>
-          {/*{this.renderRippleText()}*/}
+          {this.renderRippleText()}
           {/*{this.renderRipples()}*/}
         </div>
       </div>

@@ -58,8 +58,10 @@
   "dependencies": {
     "@babel/core": "^7.0.0-beta.39",
     "@babel/preset-env": "^7.0.0-beta.39",
+    "@tweenjs/tween.js": "^17.2.0",
     "babel-loader": "^8.0.0-beta.0",
     "classnames": "^2.2.5",
+    "es6-tween": "^5.1.0",
     "konva": "^1.7.6",
     "normalize.css": "^7.0.0",
     "react": "^16.0.0",

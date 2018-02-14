@@ -23,7 +23,7 @@
         }
       }
     ],
-    "description": "Death Toll: 470,000 / Detained: 117,000 / Seeking Refuge: 4,800,000",
+    "description": "The ongoing civil war",
     "position": {
       "left": 700,
       "top": 200
@@ -45,11 +45,6 @@
       },
       {
         "id": 3,
-        "name": "The footsteps of 5,440,749 refugees.",
-        "description": "One of the closest safe havens is Horgos, Serbia, which is 2,973,960 footsteps from Damascus. It would take <b>50 days at 8 hours per day</b> to walk there. <br /><br />A calm spring day is about 40 decibels. The sound of casual conversation is 60 decibels. The sound of a helicopter passing by is 105 decibels. The sound of a truck driving by is 90 decibels."
-      },
-      {
-        "id": 4,
         "name": "The footsteps of 5,440,749 refugees.",
         "description": "One of the closest safe havens is Horgos, Serbia, which is 2,973,960 footsteps from Damascus. It would take <b>50 days at 8 hours per day</b> to walk there. <br /><br />A calm spring day is about 40 decibels. The sound of casual conversation is 60 decibels. The sound of a helicopter passing by is 105 decibels. The sound of a truck driving by is 90 decibels."
       }
