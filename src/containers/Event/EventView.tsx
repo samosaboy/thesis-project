@@ -75,6 +75,11 @@ class EventContainer extends React.PureComponent<Props, State> {
   private createGeometry: any
   private svgMesh3d: any
 
+  /* Video */
+  private video: any
+  private videotexture: any
+  private videocanvasctx: any
+
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
@@ -146,6 +151,53 @@ class EventContainer extends React.PureComponent<Props, State> {
     this.scene.add(grid)
   }
 
+  private createPoint = (position: { x: number, y: number, z: number }, type: string, name?: string, color?: string | number): any => {
+    let geometry
+    switch (type.toLowerCase()) {
+      case 'capital':
+        geometry = new THREE.TorusGeometry(0.05, 0.002, 100, 100)
+        break
+      default:
+        geometry = new THREE.TorusGeometry(0.025, 0.002, 100, 100)
+        break
+    }
+
+    const material = new THREE.MeshBasicMaterial({
+      color: color || '#d3d3d3',
+      wireframe: true,
+    })
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.geometry.name = name
+    mesh.position.z = position.z
+    mesh.position.x = position.x
+    mesh.position.y = position.y
+    mesh.up = new THREE.Vector3(0, 12, 2)
+
+    return mesh
+  }
+
+  private createText = (position: { x: number, y: number, z: number }, size: number, value: string, color?: string | number): any => {
+    const text = new THREE.TextSprite({
+      textSize: size,
+      redrawInterval: 1000000,
+      texture: {
+        text: value,
+        fontFamily: 'Lora, Times New Roman, serif',
+        fontWeight: '400'
+      },
+      material: {
+        color,
+      },
+    })
+
+    text.name = value
+    text.position.x = position.x
+    text.position.y = position.y
+    text.position.z = position.z
+
+    return text
+  }
+
   public renderMap = () => {
     const meshData = this.svgMesh3d(Damascus)
 
@@ -153,7 +205,7 @@ class EventContainer extends React.PureComponent<Props, State> {
     this.mapGeometry = this.createGeometry(meshData)
     this.mapMaterial = new THREE.MeshBasicMaterial({
       color: '#b7b7b7',
-      side: THREE.BackSide,
+      side: THREE.DoubleSide
     })
     this.mapMesh = new THREE.Mesh(this.mapGeometry, this.mapMaterial)
     this.mapMesh.position.z = 2.55
@@ -174,6 +226,10 @@ class EventContainer extends React.PureComponent<Props, State> {
     this.mapGeometryOutline.scale(1.8, 1.8, 1.8)
     this.scene.add(mapMeshOutline)
 
+    // Ambient Light
+    const light = new THREE.AmbientLight(0xffffff)
+    this.scene.add(light)
+
     /*
     *
     * Hard coding events for now
@@ -184,51 +240,45 @@ class EventContainer extends React.PureComponent<Props, State> {
 
     const setZPosition = this.mapMesh.position.z + 0.01
 
-    // Capital City Marker and Text
-    const capitalCityMarkerGeometry = new THREE.TorusGeometry(0.05, 0.002, 100, 100)
-    const capitalCityMarkerMaterial = new THREE.MeshBasicMaterial({
-      color: '#000000',
-      wireframe: true,
-    })
-    const capitalCityMarkerMesh = new THREE.Mesh(capitalCityMarkerGeometry, capitalCityMarkerMaterial)
-    capitalCityMarkerMesh.geometry.name = this.props.location.state.event.geo.city
-    capitalCityMarkerMesh.position.z = setZPosition
-    capitalCityMarkerMesh.position.x = -0.7
-    capitalCityMarkerMesh.position.y = -0.3
-    capitalCityMarkerMesh.up = new THREE.Vector3(0, 12, 2)
-    this.scene.add(capitalCityMarkerMesh)
+    // Capital City Marker & Text
+    const capitalCity = this.createPoint({
+      x: -0.7,
+      y: -0.3,
+      z: setZPosition
+    }, 'Capital', this.props.location.state.event.geo.city, '#000000')
+    this.scene.add(capitalCity)
 
-    const capitalCityText = new THREE.TextSprite({
-      textSize: 0.03,
-      redrawInterval: 10000000,
-      texture: {
-        text: this.props.location.state.event.geo.city,
-        fontFamily: 'Lora, Times New Roman, serif',
-        fontWeight: '400'
-      },
-      material: {
-        color: 0x000000,
-      },
-    })
-
-    capitalCityText.name = this.props.location.state.event.geo.city
-    capitalCityText.position.z = setZPosition
-    capitalCityText.position.x = capitalCityMarkerMesh.position.x + 0.15
-    capitalCityText.position.y = capitalCityMarkerMesh.position.y
-    this.scene.add(capitalCityText)
+    const capitalCityText = this.createText({
+      x: capitalCity.position.x + 0.15,
+      y: capitalCity.position.y,
+      z: setZPosition
+    }, 0.03, this.props.location.state.event.geo.city, 0x000000)
+    // this.scene.add(capitalCityText)
 
     // Event 1 Marker
-    const event1MarkerGeometry = new THREE.TorusGeometry(0.02, 0.002, 100, 100)
-    const event1MarkerMaterial = new THREE.MeshBasicMaterial({
-      color: '#595959',
-      wireframe: true,
-    })
-    const event1CityMarkerMesh = new THREE.Mesh(event1MarkerGeometry, event1MarkerMaterial)
-    event1CityMarkerMesh.geometry.name = 'Event 1'
-    event1CityMarkerMesh.position.z = setZPosition
-    event1CityMarkerMesh.position.x = -0.8
-    event1CityMarkerMesh.position.y = -0.5
-    this.scene.add(event1CityMarkerMesh)
+    const event1Marker = this.createPoint({
+      x: -0.8,
+      y: -0.5,
+      z: setZPosition
+    }, 'event', 'Event 1', '#7e7e7e')
+    this.scene.add(event1Marker)
+
+    // Statistical Text
+
+    const statisticalText = document.createElement('div')
+    const people = Math.round((Math.random() + 2) * 1 * Math.random())
+    const deaths = Math.round((Math.random() + 2) * 2 * Math.random())
+    const sounds = Math.round((Math.random() + 30) * 6 * Math.random())
+    statisticalText.innerHTML = '<div style="display:flex;justify-content:space-between;flex-direction: column;text-align: right">' +
+      '<div>Since clicking this event:</div>' +
+      '<div><span style="color:#b73921;font-weight:700">' + people + ' people have been displaced</span></div>' +
+      '<div><span style="color:#b73921;font-weight:700">' + deaths + ' people have passed</span></div>' +
+      '<div><span style="color:#b73921;font-weight:700">' + sounds + ' sounds have been heard</span></div>' +
+      '</div>'
+    statisticalText.style.position = 'absolute'
+    statisticalText.style.right = '20px'
+    statisticalText.style.bottom = '100px'
+    document.getElementById('event').appendChild(statisticalText)
 
   }
 
@@ -243,21 +293,38 @@ class EventContainer extends React.PureComponent<Props, State> {
 
         // TODO: Figure out how to reset colours back automatically
         // TODO: Figure out how to hover over any ripple/event
+        // TODO: Implement LoadingManager
 
         // Capital Marker Check
         const capitalMarker = intersections.filter(inter => {
           if (inter.object.geometry) {
             return inter.object.geometry.name === this.props.location.state.event.geo.city
           }
-          return []
+          return null
         })
+
+        //Event1 Marker Check
+        const event1Marker = intersections.filter(inter => {
+          if (inter.object.geometry) {
+            return inter.object.geometry.name === 'Event 1'
+          }
+          return null
+        })
+
+        // Event1 Audio
+        const listener = new THREE.AudioListener()
+        this.camera.add(listener)
+
+        const sound = new THREE.Audio(listener)
+        const audioLoader = new THREE.AudioLoader()
 
         if (capitalMarker.length) {
           window.document.body.style.cursor = 'pointer'
           capitalMarker[0].object.material.color.setHex(0xb73921)
 
-          const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
-          match.material.color.setHex(0xb73921)
+          // Uncomment if you add Capital City Name back (1/2)
+          // const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
+          // match.material.color.setHex(0xb73921)
 
           // Damascus1 Path
           const meshData = this.svgMesh3d(DamascusPath1)
@@ -274,41 +341,118 @@ class EventContainer extends React.PureComponent<Props, State> {
           meshPath.position.y = 0.3
           this.scene.add(meshPath)
 
-          const path1Text = new THREE.TextSprite({
-            textSize: 0.03,
-            redrawInterval: 10000000,
-            texture: {
-              text: '2,973,960 Footsteps to Serbia',
-              fontFamily: 'Lora, Times New Roman, serif',
-              fontWeight: '400',
-              autoRedraw: false
-            },
-            material: {
-              color: 0xb73921,
-            },
-          })
+          const DamascusPath1Geometry = this.createPoint({
+            x: -0.7,
+            y: -0.3,
+            z: 2.55
+          }, 'event', 'DamascusPath1Geometry', '#2da750')
 
-          path1Text.position.z = 2.55
-          path1Text.position.y = 0.85
-          path1Text.position.x = -0.40
-          this.scene.add(path1Text)
+          this.scene.add(DamascusPath1Geometry)
 
-          meshPath.scale.y = 0
-          const tween = new TWEEN.Tween(meshPath.scale)
-            .to({y: 0.6}, 2000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
+          // DamascusPath1 text
+          if (!document.getElementById('path1Text')) {
+            const path1Text = document.createElement('div')
+            path1Text.id = 'path1Text'
 
-          if (!tween.isPlaying()) {
-            tween.start()
+            const timer = `50 days, 24 hours, 60 minutes remain until freedom`
+            path1Text.innerHTML = '<div style="display:flex;justify-content:space-between;">' +
+              '<button onclick="this.sound.stop()">Pause</button>' +
+              '<div style="padding: 7px 8px"><span style="color:#b73921;font-weight:700">2,973,960 Footsteps to Serbia</span><br />' + timer + '</div>' +
+              '</div>'
+            path1Text.style.position = 'absolute'
+            path1Text.style.left = '550px'
+            document.getElementById('event').appendChild(path1Text)
           }
 
+          audioLoader.load('../../media/syria_damascus/walking_audio.mp3', buffer => {
+            sound.setBuffer(buffer)
+            sound.setLoop(true)
+            sound.setVolume(0.3)
+            sound.play()
+          })
+
+          // Animate DamascusPath1 via TWEEN
+          // meshPath.scale.y = 0
+          // const tween = new TWEEN.Tween(meshPath.scale)
+          //   .to({y: 0.6}, 2000)
+          //   .easing(TWEEN.Easing.Quadratic.InOut)
+          //
+          // if (!tween.isPlaying()) {
+          //   tween.start()
+          // }
+        }
+
+        if (event1Marker.length) {
+          window.document.body.style.cursor = 'pointer'
+          event1Marker[0].object.material.color.setHex(0xb73921)
+          const eventMarkerRegionTitle = this.createText({
+            x: -0.4,
+            y: -0.5,
+            z: 2.56,
+          }, 0.03, 'Syrian regime bombs civilians in Eastern Ghouta.', 0xb73921)
+          // this.scene.add(eventMarkerRegionTitle)
+
+          const event1Text = document.createElement('div')
+          event1Text.id = 'event1Text'
+
+          event1Text.innerHTML = '<div style="display:flex;justify-content:space-between;">' +
+            '<button onclick="this.sound.stop()">Pause</button>' +
+            '<div style="padding: 7px 8px"><span style="color:#b73921;font-weight:700">Syrian regime bombs civilians in Eastern Ghouta</span><br />' +
+            '<span>A child\'s scream generally reaches 115 decibels. A bomb exploding reaches 240 - 280 decibels.</span>' + '</div>' +
+            '</div>'
+          event1Text.style.position = 'absolute'
+          event1Text.style.left = '450px'
+          event1Text.style.bottom = '230px'
+          document.getElementById('event').appendChild(event1Text)
+
+          this.video = document.createElement('video')
+          this.video.src = '../../media/syria_damascus/video.ogv'
+          this.video.volume = 0
+          this.video.load()
+          this.video.play()
+
+          const videocanvas = document.createElement('canvas')
+          videocanvas.width = 640
+          videocanvas.height = 480
+
+          this.videocanvasctx = videocanvas.getContext('2d')
+          this.videocanvasctx.fillStyle = '#b7b7b7'
+          this.videocanvasctx.fillRect(0, 0, 640, 480)
+
+          this.videotexture = new THREE.VideoTexture(videocanvas)
+          this.videotexture.minFilter = THREE.LinearFilter
+          this.videotexture.maxFilter = THREE.LinearFilter
+
+          const imageTexture = new THREE.TextureLoader()
+            .setCrossOrigin('')
+            .load('../../media/syria_damascus/image_small.jpg', (texture) => {
+              texture.wrapS = THREE.RepeatWrapping
+              texture.wrapT = THREE.RepeatWrapping
+              texture.repeat.set(1, 1)
+              // texture.offset.x = 100
+
+              // const material = new THREE.MeshBasicMaterial({
+              const material = new THREE.SpriteMaterial({
+                // map: this.videotexture,
+                map: texture,
+                side: THREE.DoubleSide,
+              })
+              const sprite = new THREE.Sprite(material)
+              sprite.position.z = 2.57
+              sprite.position.x = -0.25
+              sprite.position.y = 0.05
+              this.scene.add(sprite)
+              // this.mapMesh = new THREE.Mesh(this.mapGeometry, material)
+              // this.mapMesh.position.z = 2.56
+              // this.scene.add(this.mapMesh)
+            })
         } else {
           window.document.body.style.cursor = 'default'
 
-          const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
-          match.material.color.setHex(0x000000)
+          // Uncomment if you add Capital City Name back (2/2)
+          // const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
+          // match.material.color.setHex(0x000000)
         }
-
       }
     }
   }
@@ -321,7 +465,7 @@ class EventContainer extends React.PureComponent<Props, State> {
 
   private renderScene = () => {
     if (this.box) {
-      const moveRate = 0.000009
+      const moveRate = 0.00009
       if (this.camera.position.x <= (this.box.max.x / 3) && this.camera.position.x >= (this.box.min.x / 3)) {
         this.camera.position.x += (this.state.mouse.x - this.camera.position.x) * moveRate
       }
@@ -332,6 +476,13 @@ class EventContainer extends React.PureComponent<Props, State> {
         || (this.camera.position.y >= (this.box.max.y / 3) || this.camera.position.y <= (this.box.min.y / 3))) {
         this.camera.translate.x = 0
         this.camera.translate.y = 0
+      }
+    }
+
+    if (this.video && this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+      this.videocanvasctx.drawImage(this.video, 0, 0)
+      if (this.videotexture) {
+        this.videotexture.needsUpdate = true
       }
     }
     this.renderer.render(this.scene, this.camera)
@@ -446,24 +597,25 @@ class EventContainer extends React.PureComponent<Props, State> {
           >
             <button
               style={{
-                position:'absolute',
-                left:30,
-                top:-15,
+                position: 'absolute',
+                left: 30,
+                top: -15,
               }}
               onClick={this.goBack}
-            >Go Back</button>
+            >Back To Pond
+            </button>
             <div
               style={{
                 position: 'absolute',
-                display:'flex',
-                alignItems:'flex-end',
-                flexDirection:'column',
+                display: 'flex',
+                alignItems: 'flex-end',
+                flexDirection: 'column',
                 right: 30,
                 width: 300,
               }}
             >
               <h1>{this.props.location.state.event.geo.map}</h1>
-              <span style={{marginTop:30}}>{this.props.location.state.event.description}</span>
+              <span style={{marginTop: 30}}>{this.props.location.state.event.description}</span>
             </div>
           </div>
           {this.renderRippleText()}
@@ -475,7 +627,10 @@ class EventContainer extends React.PureComponent<Props, State> {
 
   public render() {
     return (
-      <div className={styles.eventOverlayContainer}>
+      <div
+        id={'event'}
+        className={styles.eventOverlayContainer}
+      >
         {
           this.state.loading ? (
             <div
