@@ -32,6 +32,7 @@ interface Props {
 
 interface State {
   loading: Boolean
+  location: any,
   client: {
     width: number,
     height: number,
@@ -55,7 +56,7 @@ const mapStateToProps = (state: RootState) => {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-class EventContainer extends React.PureComponent<Props, State> {
+class EventContainer extends React.Component<Props, State> {
   private stage: any
   private layer: any
   private mount: any
@@ -83,10 +84,11 @@ class EventContainer extends React.PureComponent<Props, State> {
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
+      location: props.location.state.event || null,
       loading: true,
       client: {
-        width: 0,
-        height: 0,
+        width: window.innerWidth / 2,
+        height: window.innerHeight / 2,
       },
       mouse: {
         x: 0,
@@ -98,35 +100,30 @@ class EventContainer extends React.PureComponent<Props, State> {
   }
 
   componentDidMount() {
-    this.setState({
-      client: {
-        width: window.innerWidth / 2,
-        height: window.innerHeight / 2
+    if (this.state.location) {
+      document.addEventListener('mousemove', this.mouseMove, false)
+      this.scene = new THREE.Scene()
+      this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true})
+      this.renderer.setClearColor('#f5f5f5', 0)
+      this.renderer.setSize(window.innerWidth, window.innerHeight)
+
+      if (this.mount) {
+        this.camera = new THREE.PerspectiveCamera(
+          45,
+          this.mount.clientWidth / this.mount.clientHeight,
+          1,
+          1000
+        )
+        this.camera.position.z = 5
+        this.mount.appendChild(this.renderer.domElement)
+        this.start()
+
+        setTimeout(() => {
+          // this.renderGrid()
+          this.renderMap()
+          this.setState({loading: false})
+        }, 100)
       }
-    })
-
-    document.addEventListener('mousemove', this.mouseMove, false)
-    this.scene = new THREE.Scene()
-    this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true})
-    this.renderer.setClearColor('#f5f5f5', 0)
-    this.renderer.setSize(window.innerWidth, window.innerHeight)
-
-    if (this.mount) {
-      this.camera = new THREE.PerspectiveCamera(
-        45,
-        this.mount.clientWidth / this.mount.clientHeight,
-        1,
-        1000
-      )
-      this.camera.position.z = 5
-      this.mount.appendChild(this.renderer.domElement)
-      this.start()
-
-      setTimeout(() => {
-        // this.renderGrid()
-        this.renderMap()
-        this.setState({loading: false})
-      }, 100)
     }
   }
 
@@ -240,20 +237,24 @@ class EventContainer extends React.PureComponent<Props, State> {
 
     const setZPosition = this.mapMesh.position.z + 0.01
 
-    // Capital City Marker & Text
-    const capitalCity = this.createPoint({
-      x: -0.7,
-      y: -0.3,
-      z: setZPosition
-    }, 'Capital', this.props.location.state.event.geo.city, '#000000')
-    this.scene.add(capitalCity)
+    if (this.props) {
+      if (!isNullOrUndefined(this.state.location.geo.city)) {
+        // Capital City Marker & Text
+        const capitalCity = this.createPoint({
+          x: -0.7,
+          y: -0.3,
+          z: setZPosition
+        }, 'Capital', this.state.location.geo.city, '#000000')
+        this.scene.add(capitalCity)
 
-    const capitalCityText = this.createText({
-      x: capitalCity.position.x + 0.15,
-      y: capitalCity.position.y,
-      z: setZPosition
-    }, 0.03, this.props.location.state.event.geo.city, 0x000000)
-    // this.scene.add(capitalCityText)
+        const capitalCityText = this.createText({
+          x: capitalCity.position.x + 0.15,
+          y: capitalCity.position.y,
+          z: setZPosition
+        }, 0.03, this.state.location.geo.city, 0x000000)
+        // this.scene.add(capitalCityText)
+      }
+    }
 
     // Event 1 Marker
     const event1Marker = this.createPoint({
@@ -284,7 +285,7 @@ class EventContainer extends React.PureComponent<Props, State> {
 
   private mouseMoveEvents = () => {
     /* Mouse Events */
-    if (this.scene.children && !isNullOrUndefined(this.props.location)) {
+    if (this.scene.children && !isNullOrUndefined(this.state.location.geo.city)) {
       const vector = new THREE.Vector3(this.state.mouse.x, this.state.mouse.y, 1).unproject(this.camera)
       const raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize())
       const intersections = raycaster.intersectObjects(this.scene.children)
@@ -298,7 +299,7 @@ class EventContainer extends React.PureComponent<Props, State> {
         // Capital Marker Check
         const capitalMarker = intersections.filter(inter => {
           if (inter.object.geometry) {
-            return inter.object.geometry.name === this.props.location.state.event.geo.city
+            return inter.object.geometry.name === this.state.location.geo.city
           }
           return null
         })
@@ -323,7 +324,7 @@ class EventContainer extends React.PureComponent<Props, State> {
           capitalMarker[0].object.material.color.setHex(0xb73921)
 
           // Uncomment if you add Capital City Name back (1/2)
-          // const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
+          // const match = this.scene.children.filter(child => child.name === this.state.location.geo.city)[0]
           // match.material.color.setHex(0xb73921)
 
           // Damascus1 Path
@@ -364,7 +365,7 @@ class EventContainer extends React.PureComponent<Props, State> {
             document.getElementById('event').appendChild(path1Text)
           }
 
-          audioLoader.load('../../media/syria_damascus/walking_audio.mp3', buffer => {
+          audioLoader.load(process.env.PUBLIC_URL + 'media/syria_damascus/walking_audio.mp3', buffer => {
             sound.setBuffer(buffer)
             sound.setLoop(true)
             sound.setVolume(0.3)
@@ -406,7 +407,7 @@ class EventContainer extends React.PureComponent<Props, State> {
           document.getElementById('event').appendChild(event1Text)
 
           this.video = document.createElement('video')
-          this.video.src = '../../media/syria_damascus/video.ogv'
+          this.video.src = process.env.PUBLIC_URL + 'media/syria_damascus/video.ogv'
           this.video.volume = 0
           this.video.load()
           this.video.play()
@@ -424,33 +425,33 @@ class EventContainer extends React.PureComponent<Props, State> {
           this.videotexture.maxFilter = THREE.LinearFilter
 
           const imageTexture = new THREE.TextureLoader()
-            .setCrossOrigin('')
-            .load('../../media/syria_damascus/image_small.jpg', (texture) => {
-              texture.wrapS = THREE.RepeatWrapping
-              texture.wrapT = THREE.RepeatWrapping
-              texture.repeat.set(1, 1)
-              // texture.offset.x = 100
+          .setCrossOrigin('')
+          .load(process.env.PUBLIC_URL + 'media/syria_damascus/image_small.jpg', (texture) => {
+            texture.wrapS = THREE.RepeatWrapping
+            texture.wrapT = THREE.RepeatWrapping
+            texture.repeat.set(1, 1)
+            // texture.offset.x = 100
 
-              // const material = new THREE.MeshBasicMaterial({
-              const material = new THREE.SpriteMaterial({
-                // map: this.videotexture,
-                map: texture,
-                side: THREE.DoubleSide,
-              })
-              const sprite = new THREE.Sprite(material)
-              sprite.position.z = 2.57
-              sprite.position.x = -0.25
-              sprite.position.y = 0.05
-              this.scene.add(sprite)
-              // this.mapMesh = new THREE.Mesh(this.mapGeometry, material)
-              // this.mapMesh.position.z = 2.56
-              // this.scene.add(this.mapMesh)
+            // const material = new THREE.MeshBasicMaterial({
+            const material = new THREE.SpriteMaterial({
+              // map: this.videotexture,
+              map: texture,
+              side: THREE.DoubleSide,
             })
+            const sprite = new THREE.Sprite(material)
+            sprite.position.z = 2.57
+            sprite.position.x = -0.25
+            sprite.position.y = 0.05
+            this.scene.add(sprite)
+            // this.mapMesh = new THREE.Mesh(this.mapGeometry, material)
+            // this.mapMesh.position.z = 2.56
+            // this.scene.add(this.mapMesh)
+          })
         } else {
           window.document.body.style.cursor = 'default'
 
           // Uncomment if you add Capital City Name back (2/2)
-          // const match = this.scene.children.filter(child => child.name === this.props.location.state.event.geo.city)[0]
+          // const match = this.scene.children.filter(child => child.name === this.state.location.geo.city)[0]
           // match.material.color.setHex(0x000000)
         }
       }
@@ -562,7 +563,7 @@ class EventContainer extends React.PureComponent<Props, State> {
           }}
         >
           {
-            this.props.location.state.event.ripples.map((ripple, index) => {
+            this.state.location.ripples.map((ripple, index) => {
               const scale = 200 * (index + 1)
               const r = scale / 2
               return (
@@ -614,8 +615,8 @@ class EventContainer extends React.PureComponent<Props, State> {
                 width: 300,
               }}
             >
-              <h1>{this.props.location.state.event.geo.map}</h1>
-              <span style={{marginTop: 30}}>{this.props.location.state.event.description}</span>
+              <h1>{this.state.location.geo.map}</h1>
+              <span style={{marginTop: 30}}>{this.state.location.description}</span>
             </div>
           </div>
           {this.renderRippleText()}

@@ -3,6 +3,7 @@ import {Group, Text} from 'react-konva'
 import {Event} from '../../components/Event/Event'
 import Ladda from '../../components/Ladda/Ladda'
 import {withRouter} from 'react-router'
+import {data} from '../../../public/data.js'
 
 export namespace Canvas {
   export interface Props {
@@ -48,16 +49,12 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
 
   componentDidMount() {
     if (!this.state.data.length) {
-      fetch('../../1.json')
-        .then(res => res.json())
-        .then(data => {
-          this.setState({data})
-          setTimeout(() => {
-            this.setState({loading: false})
-            this.setClientRect()
-            this.setState({textPlacement: true})
-          }, 0)
-        })
+      this.setState({data: data})
+      setTimeout(() => {
+        this.setState({loading: false})
+        this.setClientRect()
+        this.setState({textPlacement: true})
+      }, 0)
     }
   }
 
