@@ -1,12 +1,16 @@
 import { handleActions } from 'redux-actions'
 import * as Actions from '../constants/actions'
 
+/*
+* This is the reducer for ripple Active which is
+* what the user hovers over in our main stage
+* */
+
 const initialState: rippleActiveConfig = {
   title: '',
-  description: ''
 }
 
-export default handleActions<rippleActiveConfig, ContextualHelperData>(
+export default handleActions<rippleActiveConfig, helperData>(
   {
     [Actions.RIPPLE_ACTIVE]: (state, action) => {
       return {

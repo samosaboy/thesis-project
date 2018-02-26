@@ -1,16 +1,18 @@
 import * as React from 'react'
 import {Group, Text} from 'react-konva'
-import {Event} from '../../components/Event/Event'
-import Ladda from '../../components/Ladda/Ladda'
+import * as actions from '../../actions/actions'
+import {Event} from '../../components'
+import Ladda from '../../components/Utils/Ladda/Ladda'
 import {withRouter} from 'react-router'
 import {data} from '../../../public/data.js'
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
 export namespace Canvas {
   export interface Props {
     history: any,
-    addHelper: (helper: ContextualHelperData) => void,
-    rippleActive: (ripple: rippleActiveData) => void,
     rippleText: rippleActiveData,
+    actions?: typeof actions,
   }
 
   export interface State {
@@ -21,6 +23,13 @@ export namespace Canvas {
   }
 }
 
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions as any, dispatch)
+  }
+}
+
+@connect(null, mapDispatchToProps)
 class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   private group: any
   private text: any
@@ -63,11 +72,9 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   }
 
   private showEventInfo = (item: any): any => {
+    this.props.actions.eventActive({data:item})
     this.props.history.push({
       pathname: `/${item.id}`,
-      state: {
-        event: item,
-      },
     })
   }
 
@@ -84,8 +91,8 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
           y={item.position.top}
         >
           <Event
-            addHelper={this.props.addHelper}
-            rippleActive={this.props.rippleActive}
+            addHelper={this.props.actions.addHelper}
+            rippleActive={this.props.actions.rippleActive}
             ripples={item.ripples}
             importance={item.importance}
           />

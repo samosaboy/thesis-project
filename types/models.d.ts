@@ -1,11 +1,10 @@
-declare interface ContextualHelperData {
+declare interface helperData {
   text: string,
   persistent?: boolean
 }
 
 declare interface rippleActiveData {
   title: string,
-  description?: string
 }
 
 declare interface pointerPositionData {
@@ -13,17 +12,15 @@ declare interface pointerPositionData {
   y: number,
 }
 
-declare interface eventRippleActiveData {
-  title: string,
-  description: string,
-  /*
-   * For now we will put {any} for these
-   * these two... but TODO: Fix this stuff
-   */
-  visual: any,
+// This interface defines the types when a user clicks an event
+declare interface eventActiveData {
+  // Until its final imma put any
+  data: any
 }
 
+
+// Declare Type using interface for our reducers
 declare type rippleActiveConfig = rippleActiveData
-declare type rippleEventActiveConfig = eventRippleActiveData
-declare type HelperStateConfig = ContextualHelperData
-declare type pointerPosition = pointerPositionData
+declare type helperConfig = helperData
+declare type pointerPositionConfig = pointerPositionData
+declare type eventActiveConfig = eventActiveData

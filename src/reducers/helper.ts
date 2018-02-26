@@ -1,12 +1,12 @@
 import {handleActions} from 'redux-actions'
 import * as Actions from '../constants/actions'
 
-const initialState: HelperStateConfig = {
+const initialState: helperConfig = {
   text: 'Left-click to drag around',
   persistent: false,
 }
 
-export default handleActions<HelperStateConfig, ContextualHelperData>(
+export default handleActions<helperConfig, helperData>(
   {
     [Actions.HELPER_ADD]: (state, action) => {
       return {

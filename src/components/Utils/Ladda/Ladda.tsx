@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Circle, Group, Layer, Stage} from 'react-konva'
 import * as Konva from 'konva'
-import {createLaddaGradient} from '../../constants/helper'
+import {createLaddaGradient} from '../../../constants/helper'
 
 interface Props {
   isolated?: Boolean

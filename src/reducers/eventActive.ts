@@ -1,14 +1,13 @@
 import {handleActions} from 'redux-actions'
 import * as Actions from '../constants/actions'
 
-const initialState: pointerPositionConfig = {
-  x: 0,
-  y: 0,
+const initialState: eventActiveConfig = {
+  data: []
 }
 
-export default handleActions<pointerPositionConfig, pointerPositionData>(
+export default handleActions<eventActiveConfig, eventActiveData>(
   {
-    [Actions.POSITION_SET]: (state, action) => {
+    [Actions.EVENT_ACTIVE]: (state, action) => {
       return {
         ...state,
         ...action.payload

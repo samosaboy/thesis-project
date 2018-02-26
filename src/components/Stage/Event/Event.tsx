@@ -5,7 +5,7 @@ interface Props {
   ripples: any,
   importance: number,
   rippleActive: (ripple: rippleActiveData) => void,
-  addHelper: (helper: ContextualHelperData) => void,
+  addHelper: (helper: helperData) => void,
 }
 
 export class Event extends React.PureComponent<Props, {}> {

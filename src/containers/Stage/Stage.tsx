@@ -4,9 +4,13 @@ import {bindActionCreators} from 'redux'
 import {withRouter} from 'react-router'
 import {connect} from 'react-redux'
 import Canvas from '../Canvas/Canvas'
-import Hover from '../../components/Hover/Hover'
+import {Hover} from '../../components'
 import {Group, Layer, Stage} from 'react-konva'
 import {RootState} from '../../reducers'
+
+/*
+* This is the main stage of the app (index)
+* */
 
 export namespace MainStage {
   export interface Props {
@@ -53,7 +57,7 @@ class MainStage extends React.Component<MainStage.Props, MainStage.State> {
   }
 
   public render() {
-    const {history, position, rippleActive, actions} = this.props
+    const {history, position, rippleActive} = this.props
     return (
       <Stage
         name={'mainStage'}
@@ -69,16 +73,10 @@ class MainStage extends React.Component<MainStage.Props, MainStage.State> {
         <Layer ref={node => this.layer = node}>
           <Canvas
             history={history}
-            rippleActive={actions.rippleActive}
             rippleText={rippleActive}
-            addHelper={actions.addHelper}
           />
           <Group>
-            {
-              rippleActive
-                ? <Hover position={position} text={rippleActive}/>
-                : null
-            }
+            <Hover position={position} text={rippleActive}/>
           </Group>
         </Layer>
       </Stage>

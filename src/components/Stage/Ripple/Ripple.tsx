@@ -1,10 +1,10 @@
 import * as React from 'react'
 import {Circle} from 'react-konva'
 import * as Konva from 'konva'
-import * as actions from '../../actions/actions'
+import * as actions from '../../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-import {createOscillation, createRotation, createStrokeGradient} from '../../constants/helper'
+import {createOscillation, createRotation, createStrokeGradient} from '../../../constants/helper'
 
 export interface Props {
   ripple: {
@@ -46,7 +46,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
 
   componentWillUnmount() {
     this.props.actions.addHelper({text: null})
-    this.props.actions.rippleActive({title: null, description: null})
+    this.props.actions.rippleActive({title: null})
     this.circle.getStage().setAttr('draggable', false)
     this.animateRotation.stop()
     // this.animationOscillation.stop()
@@ -99,7 +99,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
 
     this.circle.setAttr('stroke', createStrokeGradient(['#e7b65c', '#c3246d'], this.circle))
     this.props.actions.addHelper({text: 'Click the ripple to explore!'})
-    this.props.actions.rippleActive({title: this.props.ripple.name, description: this.props.ripple.description})
+    this.props.actions.rippleActive({title: this.props.ripple.name})
   }
 
   public resetHover = (): void => {
@@ -109,7 +109,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
 
     this.circle.setAttr('stroke', createStrokeGradient(['#000000', '#494443'], this.circle))
     this.props.actions.addHelper({text: null})
-    this.props.actions.rippleActive({title: null, description: null})
+    this.props.actions.rippleActive({title: null})
   }
 
   public fillGradient = (): any => {

@@ -1,17 +1,17 @@
 import * as React from 'react'
 import {Header} from '../../components'
-import Helper from '../../components/Helper/Helper'
+import Helper from '../../components/Utils/Helper/Helper'
 import * as styles from './style.css'
 
 import {connect} from 'react-redux'
 import {RootState} from '../../reducers'
 import {Route, RouteComponentProps, Switch} from 'react-router'
-import EventContainer from '../Event/EventView'
-import MainStage from '../MainStage/MainStage'
+import EventContainer from '../Event/Event'
+import MainStage from '../Stage/Stage'
 
 export namespace App {
   export interface Props extends RouteComponentProps<void> {
-    helper: ContextualHelperData,
+    helper: helperData,
   }
 
   export interface State {

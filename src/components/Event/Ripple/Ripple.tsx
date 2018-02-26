@@ -1,12 +1,10 @@
 import * as React from 'react'
-import {Props as PropBase, Ripple} from '../../components'
-import {createStrokeGradient} from '../../constants/helper'
+import {Props as PropBase, Ripple} from '../../index'
+import {createStrokeGradient} from '../../../constants/helper'
 import * as Konva from 'konva'
-import * as actions from '../../actions/actions'
+import * as actions from '../../../actions/actions'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
-
-// TODO: Wrap this in a HOC
 
 interface Props extends PropBase {
   actions?: typeof actions,
@@ -31,11 +29,6 @@ export default class RippleEventView extends Ripple<Props> {
 
   public rippleHover = (): void => {
     this.animateRotation.start()
-    this.props.actions.eventRippleActive({
-      title: this.props.ripple.name,
-      description: this.props.ripple.description,
-      visual: 'test',
-    })
     this.circle.getStage().container().style.cursor = 'pointer'
     this.circle.setAttr('stroke', createStrokeGradient(['#c0b65b', '#d20400'], this.circle))
     this.circle.getLayer().children[0].setAttr('opacity', 1)
