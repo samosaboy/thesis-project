@@ -6,8 +6,6 @@
 import * as Konva from 'konva'
 import {Animation} from 'konva'
 
-const THREE = require('three')
-
 /*
 * The following function creates a stroke gradient to use
 * with our Konva components as an attribute for shapes.
@@ -99,57 +97,4 @@ export const createOscillation = (element: any, radius: number, id: number): any
       y: t,
     })
   }, element.getLayer())
-}
-
-/*
-* Create text using THREE
-* */
-export const createText = (position: { x: number, y: number, z: number }, size: number, value: string, color?: string | number): any => {
-  const text = new THREE.TextSprite({
-    textSize: size,
-    redrawInterval: 1000000,
-    texture: {
-      text: value,
-      fontFamily: 'Lora, Times New Roman, serif',
-      fontWeight: '400'
-    },
-    material: {
-      color,
-    },
-  })
-
-  text.name = value
-  text.position.x = position.x
-  text.position.y = position.y
-  text.position.z = position.z
-
-  return text
-}
-
-/*
-* Create point using THREE
-* */
-export const createPoint = (position: { x: number, y: number, z: number }, type: string, name?: string, color?: string | number): any => {
-  let geometry
-  switch (type.toLowerCase()) {
-    case 'capital':
-      geometry = new THREE.TorusGeometry(0.05, 0.002, 100, 100)
-      break
-    default:
-      geometry = new THREE.TorusGeometry(0.025, 0.002, 100, 100)
-      break
-  }
-
-  const material = new THREE.MeshBasicMaterial({
-    color: color || '#d3d3d3',
-    wireframe: true,
-  })
-  const mesh = new THREE.Mesh(geometry, material)
-  mesh.geometry.name = name
-  mesh.position.z = position.z
-  mesh.position.x = position.x
-  mesh.position.y = position.y
-  mesh.up = new THREE.Vector3(0, 12, 2)
-
-  return mesh
 }

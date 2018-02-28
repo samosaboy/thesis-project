@@ -48,7 +48,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
     this.state.data.forEach(item => {
       this.group.getStage().children[0].children.forEach(parent => {
         if (parent.getChildren().length) {
-          if (parent.getChildren()[0].attrs.x === item.position.left && parent.getChildren()[0].attrs.y === item.position.top) {
+          if (parent.getChildren()[0].attrs.x === item.properties.coordinates.x && parent.getChildren()[0].attrs.y === item.properties.coordinates.y) {
             item.clientRect = parent.getClientRect()
           }
         }
@@ -87,8 +87,8 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
       >
         <Group
           name={'eventGroup'}
-          x={item.position.left}
-          y={item.position.top}
+          x={item.properties.coordinates.x}
+          y={item.properties.coordinates.y}
         >
           <Event
             addHelper={this.props.actions.addHelper}
@@ -106,8 +106,8 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
             align={'center'}
             width={150}
             ref={node => this.text = node}
-            text={item.geo.city}
-            name={item.geo.city}
+            text={item.properties.title}
+            name={item.properties.geo.city}
             fontSize={18}
           />
         }

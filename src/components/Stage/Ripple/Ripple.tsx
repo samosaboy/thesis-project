@@ -7,11 +7,7 @@ import {connect} from 'react-redux'
 import {createOscillation, createRotation, createStrokeGradient} from '../../../constants/helper'
 
 export interface Props {
-  ripple: {
-    name: string,
-    id: number,
-    description: string,
-  },
+  ripple: any,
   radius: number,
   actions?: typeof actions,
 }
@@ -99,7 +95,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
 
     this.circle.setAttr('stroke', createStrokeGradient(['#e7b65c', '#c3246d'], this.circle))
     this.props.actions.addHelper({text: 'Click the ripple to explore!'})
-    this.props.actions.rippleActive({title: this.props.ripple.name})
+    this.props.actions.rippleActive({title: this.props.ripple.properties.title})
   }
 
   public resetHover = (): void => {

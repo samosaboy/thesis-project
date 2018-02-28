@@ -44,17 +44,20 @@ class EventContainer extends React.Component<Props, State> {
   }
 
   private renderRest = (): any => {
-    const {geo} = this.props.data.data
+    const {geo} = this.props.data.data.properties
     return (
       <Map
-        city={geo.city}
+        map={geo.map}
       />
     )
   }
 
   public render() {
     return (
-      <div>
+      <div style={{
+        width: window.innerWidth,
+        height: window.innerHeight
+      }}>
         {this.renderRest()}
       </div>
     )

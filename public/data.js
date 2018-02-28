@@ -3,51 +3,75 @@ export const data = [
     "id": 1,
     "importance": 3,
     "type": "political",
-    "stats": [
-      {
-        "type": "death",
-        "value": 470000,
-        "increment": {
-          "type": "positive",
-          "value": 5,
-          "rate": "hourly"
-        }
+    "properties": {
+      "title": "The Syrian Civil War",
+      "description": "The ongoing civil war",
+      "geo": {
+        "location": "Damascus",
+        "map": "Syria"
       },
-      {
-        "type": "detained",
-        "value": 117000,
-        "increment": {
-          "type": "negative",
-          "value": 1,
-          "rate": "day"
-        }
+      "coordinates": {
+        "x": 700,
+        "y": 200
       }
-    ],
-    "description": "The ongoing civil war",
-    "position": {
-      "left": 700,
-      "top": 200
-    },
-    "geo": {
-      "city": "Damascus",
-      "map": "Syria"
     },
     "ripples": [
       {
         "id": 1,
-        "name": "Syrian regime bombs civilians in Eastern Ghouta.",
-        "description": "A besieged area consisting of young families and children on the outskirts of Damascus has been under constant bombing. A child's scream generally reaches 115 decibels. A bomb exploding reaches 240 - 280 decibels.<br /><br />It has been estimated that 393,000 people have been trapped in this region since mid-November 2017."
-      },
+        "type": "ripple type i.e. paths, single event",
+        "type_properties": {
+          "coordinates": {
+            "x": 0.01,
+            "y": 0.05
+          },
+          "color": "red"
+        },
+        "media": {
+          "id": 1,
+          "type": "video",
+          "file": "video",
+          "extension": "ogv",
+          "volume": 50,
+          "allow_drag": true,
+          "allow_click": false,
+          "auto_close": true,
+          "auto_play": true
+        },
+        "properties": {
+          "title": "Syrian regime bombs civilians in Eastern Ghouta",
+          "description": "A besieged area consisting of young families and children on the outskirts of Damascus has been under constant bombing. A child's scream generally reaches 115 decibels. A bomb exploding reaches 240 - 280 decibels.<br /><br />It has been estimated that 393,000 people have been trapped in this region since mid-November 2017.",
+          "location": "bottom"
+        },
+        "content": [
+          {
+            "media_id": 1,
+            "coordinates": {
+              "x": 0.015,
+              "y": 0.02
+            },
+            "interval": 420,
+            "properties": {
+              "title": "content title",
+              "text": "content information"
+            }
+          }
+        ]
+      }
+    ],
+    "stats": [
       {
-        "id": 2,
-        "name": "U.S. launches 59 missles from the Mediterranean Sea which strike an airbase in Syria.",
-        "description": "The Mediterranean Sea has hundreds of cargo ships and warships at any given time. One ship generates 100 decibels. A human screaming generates 120 decibels.<br /><br />There is one refugee death at sea per 269 refugees that reach the shores of Europe."
-      },
-      {
-        "id": 3,
-        "name": "The footsteps of 5,440,749 refugees.",
-        "description": "One of the closest safe havens is Horgos, Serbia, which is 2,973,960 footsteps from Damascus. It would take <b>50 days at 8 hours per day</b> to walk there. <br /><br />A calm spring day is about 40 decibels. The sound of casual conversation is 60 decibels. The sound of a helicopter passing by is 105 decibels. The sound of a truck driving by is 90 decibels."
+        "type": "stat type i.e. deaths",
+        "value": 12312,
+        "progression": {
+          "type": "overtime, does it increase or decrease?",
+          "value": 12,
+          "rate": {
+            "type": "is it daily, monthly, per second?",
+            "value": 23
+          }
+        }
       }
     ]
   }
+
 ]
