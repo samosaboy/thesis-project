@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Props as PropBase, Ripple} from '../../index'
+import {Circle} from 'react-konva'
 import {createStrokeGradient} from '../../../constants/helper'
 import * as Konva from 'konva'
 import * as actions from '../../../actions/actions'
@@ -18,9 +19,14 @@ const mapDispatchToProps = (dispatch: any) => {
 
 @connect(null, mapDispatchToProps)
 export default class RippleEventView extends Ripple<Props> {
+
+
   constructor(props?: any) {
     super(props)
-    this.state = {opacity: 1}
+    this.state = {
+      opacity: 1,
+      stroke: createStrokeGradient(['#5783CE', '#52495D'], null)
+    }
   }
 
   public animate = (): void => {
@@ -30,24 +36,26 @@ export default class RippleEventView extends Ripple<Props> {
   public rippleHover = (): void => {
     this.animateRotation.start()
     this.circle.getStage().container().style.cursor = 'pointer'
-    this.circle.setAttr('stroke', createStrokeGradient(['#c0b65b', '#d20400'], this.circle))
+    this.circle.setAttr('stroke', createStrokeGradient(['#6A11CB', '#2575FC'], this.circle))
     this.circle.getLayer().children[0].setAttr('opacity', 1)
     this.circle.to({
       strokeWidth: 30,
       duration: 0.5,
       easing: Konva.Easings.EaseIn(),
     })
+    this.props.actions.eventRippleActive({ripple: this.props.ripple})
   }
 
   public resetHover = (): void => {
     this.animateRotation.stop()
     this.circle.getStage().container().style.cursor = 'default'
-    this.circle.setAttr('stroke', createStrokeGradient(['#000000', '#494443'], this.circle))
+    this.circle.setAttr('stroke', createStrokeGradient(['#5783CE', '#52495D'], this.circle))
     this.circle.to({
       strokeWidth: 2,
       duration: 0.5,
       easing: Konva.Easings.EaseOut(),
     })
+    this.props.actions.eventRippleActive({ripple: null})
   }
 
   public fillGradient = (): any => {
@@ -55,5 +63,25 @@ export default class RippleEventView extends Ripple<Props> {
       fill: false,
       opacity: 0,
     }
+  }
+
+  public render() {
+    return (
+      <Circle
+        {...this.fillGradient()}
+        ref={node => {
+          this.circle = node
+        }}
+        x={100}
+        y={100}
+        radius={this.props.radius}
+        stroke={this.state.stroke}
+        strokeWidth={2}
+        opacity={this.state.opacity}
+        onMouseEnter={this.rippleHover}
+        onMouseOut={this.resetHover}
+        strokeScaleEnabled={true}
+      />
+    )
   }
 }

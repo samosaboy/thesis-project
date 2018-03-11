@@ -138,17 +138,8 @@
               "description": {
                 "type": "string"
               },
-              "coordinates": {
-                "type": "object",
-                "required": [],
-                "properties": {
-                  "x": {
-                    "type": "number"
-                  },
-                  "y": {
-                    "type": "number"
-                  }
-                }
+              "location": {
+                "type": "string"
               }
             }
           },

@@ -100,6 +100,7 @@ module.exports = {
       { test: /\.html$/, use: 'html-loader' },
       { test: /\.png$/, use: 'url-loader?limit=10000' },
       { test: /\.jpg$/, use: 'file-loader' },
+      { test: /\.mp3$/, use: 'file-loader' }
     ]
   },
   plugins: [

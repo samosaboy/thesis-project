@@ -14,6 +14,7 @@ export interface Props {
 
 export interface State {
   opacity: number,
+  stroke: () => any,
 }
 
 export class Ripple<T extends Props> extends React.PureComponent<T & Props, State> {
@@ -23,17 +24,24 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
 
   constructor(props) {
     super(props)
-    this.state = {opacity: 0}
+    this.state = {
+      opacity: 0,
+      stroke: createStrokeGradient(['#000000', '#494443'], null)
+    }
   }
 
   componentDidMount() {
-    this.circle.getStage().setAttr('draggable', true)
+    // this.circle.getStage().setAttr('draggable', true)
     this.setZIndex(this.circle.parent.children)
 
     this.animateRotation = createRotation(this.circle)
     this.animationOscillation = createOscillation(this.circle, this.props.radius, this.props.ripple.id)
     this.animate()
+    this.setAudio()
   }
+
+  public setAudio() {}
+
 
   public animate = (): void => {
     this.fadeAnimate()
@@ -43,7 +51,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   componentWillUnmount() {
     this.props.actions.addHelper({text: null})
     this.props.actions.rippleActive({title: null})
-    this.circle.getStage().setAttr('draggable', false)
+    // this.circle.getStage().setAttr('draggable', false)
     this.animateRotation.stop()
     // this.animationOscillation.stop()
   }
@@ -117,9 +125,6 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
   }
 
   public render() {
-    let stroke: any
-    stroke = createStrokeGradient(['#000000', '#494443'], null)
-
     return (
       <Circle
         {...this.fillGradient()}
@@ -129,7 +134,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
         x={100}
         y={100}
         radius={this.props.radius}
-        stroke={stroke}
+        stroke={this.state.stroke}
         strokeWidth={2}
         opacity={this.state.opacity}
         onMouseEnter={this.rippleHover}

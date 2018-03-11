@@ -18,9 +18,14 @@ declare interface eventActiveData {
   data: any
 }
 
+declare interface eventRippleActiveData {
+  ripple: any
+}
+
 
 // Declare Type using interface for our reducers
 declare type rippleActiveConfig = rippleActiveData
 declare type helperConfig = helperData
 declare type pointerPositionConfig = pointerPositionData
 declare type eventActiveConfig = eventActiveData
+declare type eventRippleActiveConfig = eventRippleActiveData

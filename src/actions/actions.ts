@@ -6,6 +6,7 @@ export const rippleActive = createAction<rippleActiveConfig>(Actions.RIPPLE_ACTI
 
 // Event View Actions
 export const eventActive = createAction<eventActiveConfig>(Actions.EVENT_ACTIVE)
+export const eventRippleActive = createAction<eventRippleActiveConfig>(Actions.EVENT_RIPPLE_ACTIVE)
 
 // Util Actions
 export const addHelper = createAction<helperConfig>(Actions.HELPER_ADD)

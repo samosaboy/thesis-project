@@ -1,8 +1,0 @@
-.svg, .svgInner {
-  overflow: visible !important;
-}
-.svg {
-  z-index: 10;
-  position: absolute;
-  display: block;
-}

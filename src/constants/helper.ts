@@ -9,8 +9,10 @@ import {Animation} from 'konva'
 /*
 * The following function creates a stroke gradient to use
 * with our Konva components as an attribute for shapes.
+*
+* @return CanvasGradient
 * */
-export const createStrokeGradient = (colors: Array<string>, element?: any): void => {
+export const createStrokeGradient = (colors: Array<string>, element?: any): any => {
   //TODO: What if its a line
   let context: any
   let end: any
