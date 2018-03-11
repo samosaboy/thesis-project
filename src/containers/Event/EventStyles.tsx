@@ -28,6 +28,7 @@ export default {
     width: window.innerWidth,
     height: window.innerHeight,
     position: 'absolute' as 'absolute',
+    zIndex: 999
     // left: window.innerWidth / 3.4,
     // top: window.innerHeight / 4
   }

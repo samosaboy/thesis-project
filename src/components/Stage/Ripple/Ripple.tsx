@@ -35,13 +35,9 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
     this.setZIndex(this.circle.parent.children)
 
     this.animateRotation = createRotation(this.circle)
-    this.animationOscillation = createOscillation(this.circle, this.props.radius, this.props.ripple.id)
+    this.animationOscillation = createOscillation(this.circle, this.props.radius)
     this.animate()
-    this.setAudio()
   }
-
-  public setAudio() {}
-
 
   public animate = (): void => {
     this.fadeAnimate()
@@ -53,7 +49,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
     this.props.actions.rippleActive({title: null})
     // this.circle.getStage().setAttr('draggable', false)
     this.animateRotation.stop()
-    // this.animationOscillation.stop()
+    this.animationOscillation.stop()
   }
 
   public fadeAnimate = (): void => {
@@ -90,7 +86,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
     }, 1.5 * this.props.ripple.id * 1000)
   }
 
-  private setZIndex = (array): void => {
+  public setZIndex = (array): void => {
     [...array]
       .sort((a, b): number => a.attrs.radius > b.attrs.radius ? 1 : -1)
       .forEach((ripple, index) => ripple.setZIndex(array.length - (index + 1)))

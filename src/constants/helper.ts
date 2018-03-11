@@ -86,7 +86,7 @@ export const createLaddaGradient = (element: any): void => {
   return gradient
 }
 
-export const createOscillation = (element: any, radius: number, id: number): any => {
+export const createOscillation = (element: any, radius: number): any => {
   /*
   * Maybe we can clone element and add it using add() to the stage?
   * Then in our return create a new animation with that element and
