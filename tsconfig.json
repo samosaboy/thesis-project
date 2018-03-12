@@ -17,7 +17,8 @@
       "es6",
       "es7",
       "dom"
-    ]
+    ],
+    "typeRoots": ["./node_modules/@types"]
   },
   "exclude": [
     "dist",

@@ -29,7 +29,10 @@ module.exports = {
     extensions: ['.js', '.ts', '.tsx'],
     // Fix webpack's default behavior to not load packages with jsnext:main module
     // https://github.com/Microsoft/TypeScript/issues/11677
-    mainFields: ['browser', 'main']
+    mainFields: ['module', 'browser', 'main'],
+    alias: {
+      'three-examples': Path.join(__dirname, './node_modules/three/examples/js')
+    },
   },
   module: {
     loaders: [
@@ -89,11 +92,16 @@ module.exports = {
           }
         ]
       },
+      {
+        test: /three\/examples\/js/,
+        use: 'imports-loader?THREE=three'
+      },
       // static assets
       { test: /\.html$/, use: 'html-loader' },
       { test: /\.png$/, use: 'url-loader?limit=10000' },
       { test: /\.jpg$/, use: 'file-loader' },
-    ],
+      { test: /\.mp3$/, use: 'file-loader' }
+    ]
   },
   plugins: [
     new Webpack.DefinePlugin({
@@ -111,6 +119,9 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: 'index.html'
+    }),
+    new Webpack.ProvidePlugin({
+      THREE: 'three'
     })
   ],
   devServer: {

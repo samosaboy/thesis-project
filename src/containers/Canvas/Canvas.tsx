@@ -1,15 +1,18 @@
 import * as React from 'react'
 import {Group, Text} from 'react-konva'
-import {Event} from '../../components/Event/Event'
-import Ladda from '../../components/Ladda/Ladda'
+import * as actions from '../../actions/actions'
+import {Event} from '../../components'
+import Ladda from '../../components/Utils/Ladda/Ladda'
 import {withRouter} from 'react-router'
+import {data} from '../../../public/data.js'
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
 
 export namespace Canvas {
   export interface Props {
     history: any,
-    addHelper: (helper: ContextualHelperData) => void,
-    rippleActive: (ripple: rippleActiveData) => void,
     rippleText: rippleActiveData,
+    actions?: typeof actions,
   }
 
   export interface State {
@@ -20,6 +23,13 @@ export namespace Canvas {
   }
 }
 
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions as any, dispatch)
+  }
+}
+
+@connect(null, mapDispatchToProps)
 class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   private group: any
   private text: any
@@ -38,7 +48,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
     this.state.data.forEach(item => {
       this.group.getStage().children[0].children.forEach(parent => {
         if (parent.getChildren().length) {
-          if (parent.getChildren()[0].attrs.x === item.position.left && parent.getChildren()[0].attrs.y === item.position.top) {
+          if (parent.getChildren()[0].attrs.x === item.properties.coordinates.x && parent.getChildren()[0].attrs.y === item.properties.coordinates.y) {
             item.clientRect = parent.getClientRect()
           }
         }
@@ -48,16 +58,12 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
 
   componentDidMount() {
     if (!this.state.data.length) {
-      fetch('../../1.json')
-        .then(res => res.json())
-        .then(data => {
-          this.setState({data})
-          setTimeout(() => {
-            this.setState({loading: false})
-            this.setClientRect()
-            this.setState({textPlacement: true})
-          }, 0)
-        })
+      this.setState({data: data})
+      setTimeout(() => {
+        this.setState({loading: false})
+        this.setClientRect()
+        this.setState({textPlacement: true})
+      }, 0)
     }
   }
 
@@ -66,11 +72,9 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   }
 
   private showEventInfo = (item: any): any => {
+    this.props.actions.eventActive({data:item})
     this.props.history.push({
       pathname: `/${item.id}`,
-      state: {
-        event: item,
-      },
     })
   }
 
@@ -83,12 +87,12 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
       >
         <Group
           name={'eventGroup'}
-          x={item.position.left}
-          y={item.position.top}
+          x={item.properties.coordinates.x}
+          y={item.properties.coordinates.y}
         >
           <Event
-            addHelper={this.props.addHelper}
-            rippleActive={this.props.rippleActive}
+            addHelper={this.props.actions.addHelper}
+            rippleActive={this.props.actions.rippleActive}
             ripples={item.ripples}
             importance={item.importance}
           />
@@ -102,8 +106,8 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
             align={'center'}
             width={150}
             ref={node => this.text = node}
-            text={item.geo.city}
-            name={item.geo.city}
+            text={item.properties.title}
+            name={item.properties.geo.city}
             fontSize={18}
           />
         }

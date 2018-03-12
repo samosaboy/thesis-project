@@ -9,8 +9,10 @@ import {Animation} from 'konva'
 /*
 * The following function creates a stroke gradient to use
 * with our Konva components as an attribute for shapes.
+*
+* @return CanvasGradient
 * */
-export const createStrokeGradient = (colors: [string], element?: any): void => {
+export const createStrokeGradient = (colors: Array<string>, element?: any): any => {
   //TODO: What if its a line
   let context: any
   let end: any
@@ -84,7 +86,7 @@ export const createLaddaGradient = (element: any): void => {
   return gradient
 }
 
-export const createOscillation = (element: any, radius: number, id: number): any => {
+export const createOscillation = (element: any, radius: number): any => {
   /*
   * Maybe we can clone element and add it using add() to the stage?
   * Then in our return create a new animation with that element and
