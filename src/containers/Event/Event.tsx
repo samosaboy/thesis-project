@@ -6,7 +6,7 @@ import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
-import {Group, Layer, Stage} from 'react-konva'
+import * as Tone from 'tone'
 import * as d3 from 'd3'
 
 // Temporarily
@@ -39,7 +39,16 @@ const mapStateToProps = (state: RootState) => {
 @connect(mapStateToProps, mapDispatchToProps)
 class EventContainer extends React.Component<Props, State> {
   private layer: any
-  private audioContainer: any
+
+  // svg setup
+  private svgContainer: any
+  private svgCircles: any
+
+  // audio setup
+  private analyser: any
+  private synth: any
+  private fft: any
+  private waveform: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -63,6 +72,69 @@ class EventContainer extends React.Component<Props, State> {
       this.layer.setAttr('x', this.layer.getStage().width() / 2.35)
       this.layer.setAttr('y', this.layer.getStage().height() / 2.4)
     }
+
+    this.waveform = new Tone.Waveform(1024)
+    this.fft = new Tone.FFT(32)
+
+    this.synth = new Tone.Synth({
+      'oscillator': {
+        'type': 'fmsine4',
+        'modulationType': 'square'
+      }
+    }).fan(this.fft, this.waveform).toMaster()
+
+    this.createRipples()
+  }
+
+  createRipples = () => {
+    if (this.svgContainer) {
+      const svg = d3.select(this.svgContainer)
+        .append('svg')
+        .attr('width', window.innerWidth)
+        .attr('height', window.innerHeight)
+
+      this.svgCircles = svg.selectAll('circle')
+        .data([100]) // radius in arrays
+        .enter()
+        .append('circle')
+
+      this.svgCircles.attr('r', 100)
+      this.svgCircles.attr('cx', window.innerWidth / 2)
+      this.svgCircles.attr('cy', window.innerHeight / 2)
+      this.svgCircles.attr('fill', 'white')
+
+      // events
+      this.svgCircles.on('mouseover', this.handleRippleHover)
+      this.svgCircles.on('mouseout', this.handleRippleHoverOut)
+    }
+  }
+
+  handleRippleHover = () => {
+    // For audio files you might have to use 'Tone.Player'
+    const loop = new Tone.Pattern((time, note) => {
+      this.synth.triggerAttackRelease(note, '4n', time)
+
+      Tone.Draw.schedule(() => {
+        /*
+        * I think this runs requestAnimationFrame
+        * */
+
+        const frequencyData = this.synth.frequency.value
+        this.svgCircles.attr('r', (frequencyData / 10))
+      }, time)
+    }, ['C4', 'D4']).start(0)
+
+    loop.interval = '4n'
+
+    /*
+    * Start the Transport
+    * */
+
+    Tone.Transport.start('+0.05')
+  }
+
+  handleRippleHoverOut = () => {
+    Tone.Transport.stop()
   }
 
   public render() {
@@ -81,7 +153,7 @@ class EventContainer extends React.Component<Props, State> {
 
         <div
           style={styles.svgContainer}
-          ref={node => this.audioContainer = node}
+          ref={node => this.svgContainer = node}
         />
 
       </div>
