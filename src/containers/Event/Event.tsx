@@ -46,7 +46,7 @@ class EventContainer extends React.Component<Props, State> {
 
   // audio setup
   private analyser: any
-  private synth: any
+  private sound: any
   private fft: any
   private waveform: any
 
@@ -76,12 +76,13 @@ class EventContainer extends React.Component<Props, State> {
     this.waveform = new Tone.Waveform(1024)
     this.fft = new Tone.FFT(32)
 
-    this.synth = new Tone.Synth({
-      'oscillator': {
-        'type': 'fmsine4',
-        'modulationType': 'square'
-      }
+    this.sound = new Tone.Noise({
+      'volume': -35,
+      'type': 'brown'
     }).fan(this.fft, this.waveform).toMaster()
+
+    // For audio files you might have to use 'Tone.Player'
+    this.sound.start()
 
     this.createRipples()
   }
@@ -104,38 +105,32 @@ class EventContainer extends React.Component<Props, State> {
       this.svgCircles.attr('fill', 'white')
 
       // events
-      this.svgCircles.on('mouseover', this.handleRippleHover)
-      this.svgCircles.on('mouseout', this.handleRippleHoverOut)
+      this.handleRippleHover()
+      // this.svgCircles.on('mouseover', this.handleRippleHover)
+      // this.svgCircles.on('mouseout', this.handleRippleHoverOut)
     }
   }
 
   handleRippleHover = () => {
-    // For audio files you might have to use 'Tone.Player'
-    const loop = new Tone.Pattern((time, note) => {
-      this.synth.triggerAttackRelease(note, '4n', time)
+    // Schedule the Transport
+    Tone.Transport.schedule((time) => {
+      const frequencyData = this.waveform.getValue()
+      const max: number = parseFloat(d3.max(frequencyData))
+      console.log(max);
+      this.svgCircles.attr('r', max * 10000)
+    })
 
-      Tone.Draw.schedule(() => {
-        /*
-        * I think this runs requestAnimationFrame
-        * */
+    // Set Transport values
+    Tone.Transport.loopStart = 0
+    Tone.Transport.loopEnd = "1:0"
+    Tone.Transport.loop = true
 
-        const frequencyData = this.synth.frequency.value
-        console.log(frequencyData / 10)
-        this.svgCircles.attr('r', frequencyData)
-      }, time)
-    }, ['C4', 'D4']).start(0)
-
-    loop.interval = '4n'
-
-    /*
-    * Start the Transport
-    * */
-
+    // Start the transport
     Tone.Transport.start('+0.05')
   }
 
   handleRippleHoverOut = () => {
-    Tone.Transport.stop()
+    Tone.Transport.pause()
   }
 
   public render() {
