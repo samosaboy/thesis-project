@@ -120,7 +120,8 @@ class EventContainer extends React.Component<Props, State> {
         * */
 
         const frequencyData = this.synth.frequency.value
-        this.svgCircles.attr('r', (frequencyData / 10))
+        console.log(frequencyData / 10)
+        this.svgCircles.attr('r', frequencyData)
       }, time)
     }, ['C4', 'D4']).start(0)
 
