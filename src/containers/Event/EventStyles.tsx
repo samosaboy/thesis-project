@@ -12,11 +12,13 @@ export default {
     borderStyle: 'solid'
   },
   header: {
+    paddingTop: 20,
     position: 'absolute' as 'absolute',
     width: window.innerWidth,
     textAlign: 'center',
   },
   geoText: {
+    margin: 0,
     color: colors.eventHeadings,
     fontSize: fonts.title
   },
@@ -31,5 +33,10 @@ export default {
     zIndex: 999
     // left: window.innerWidth / 3.4,
     // top: window.innerHeight / 4
+  },
+  close: {
+    zIndex: 9999,
+    position: 'absolute' as 'absolute',
+    left: 20
   }
 }
