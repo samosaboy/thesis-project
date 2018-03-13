@@ -11,7 +11,8 @@ import * as d3 from 'd3'
 
 // Temporarily
 import {data} from '../../../public/data.js'
-import * as sound from '../../../public/media/test.mp3'
+import * as cello_a4 from '../../../public/media/syria_damascus/cello_A4.mp3'
+import * as drone from '../../../public/media/drone_01_sound.mp3'
 
 interface Props {
   history: any,
@@ -46,6 +47,7 @@ class EventContainer extends React.Component<Props, State> {
 
   // audio setup
   private analyser: any
+  private backgroundSound: any
   private sound: any
   private fft: any
   private waveform: any
@@ -73,64 +75,122 @@ class EventContainer extends React.Component<Props, State> {
       this.layer.setAttr('y', this.layer.getStage().height() / 2.4)
     }
 
-    this.waveform = new Tone.Waveform(1024)
-    this.fft = new Tone.FFT(32)
+    // this.waveform = new Tone.Waveform(1024)
+    // this.fft = new Tone.FFT(32)
 
-    this.sound = new Tone.Noise({
-      'volume': -35,
-      'type': 'brown'
-    }).fan(this.fft, this.waveform).toMaster()
+    this.backgroundSound = new Tone.Player(drone).toMaster()
+    // Create sound and attach it to an svg element
+    // this.sound = new Tone.Player(sound).fan(this.fft, this.waveform).toMaster()
+    // this.sound.autoStart = true
 
-    // For audio files you might have to use 'Tone.Player'
-    this.sound.start()
-
-    this.createRipples()
+    // TEMPORARY
+    data.forEach(event => {
+      event.stats.forEach(stat => {
+        // TODO: Figure out how to import mp3s inline in loop
+        // const { geo } = event.properties
+        // console.log(process.env.PUBLIC_URL);
+        // const filePath = `${process.env.PUBLIC_URL}/media/${geo.map.toLowerCase()}_${geo.location.toLowerCase()}/${stat.sound}`
+        // const sound = require(filePath)
+        this.createRippleWave(stat, cello_a4).start()
+      })
+    })
   }
 
-  createRipples = () => {
-    if (this.svgContainer) {
-      const svg = d3.select(this.svgContainer)
-        .append('svg')
-        .attr('width', window.innerWidth)
-        .attr('height', window.innerHeight)
+  /*
+  * Set Sound and tie that to its own fft and waveform
+  * Create an SVG of supplied radius
+  * Create mouseover and mouseout events
+  * Return an svg
+  * */
 
-      this.svgCircles = svg.selectAll('circle')
-        .data([100]) // radius in arrays
-        .enter()
-        .append('circle')
+  public createRippleWave = (stat, file) => {
+    // setup
+    const waveform = new Tone.Waveform(1024)
+    const fft = new Tone.FFT(32)
 
-      this.svgCircles.attr('r', 100)
-      this.svgCircles.attr('cx', window.innerWidth / 2)
-      this.svgCircles.attr('cy', window.innerHeight / 2)
-      this.svgCircles.attr('fill', 'white')
+    const envelope = new Tone.AmplitudeEnvelope({
+      "attack": 1,
+      "decay": 1,
+      "sustain": 1,
+      "release": 1
+    }).toMaster()
 
-      // events
-      this.handleRippleHover()
-      // this.svgCircles.on('mouseover', this.handleRippleHover)
-      // this.svgCircles.on('mouseout', this.handleRippleHoverOut)
+    const sound = new Tone.Player({
+      url: file,
+      autoStart: true,
+      // volume: -1,
+      volume: -20,
+      retrigger: true,
+      loop: true,
+    }).fan(fft, waveform).toMaster()
+
+    // create svg
+    const svg = d3.select(this.svgContainer)
+      .append('svg')
+      .attr('width', window.innerWidth)
+      .attr('height', window.innerHeight)
+
+    const svgCircles = svg.selectAll('circle')
+      .data([100]) // radius in arrays
+      .enter()
+      .append('circle')
+
+    svgCircles.attr('id', stat.id)
+    svgCircles.attr('r', 0)
+    svgCircles.attr('cx', window.innerWidth / 2)
+    svgCircles.attr('cy', window.innerHeight / 2)
+    svgCircles.attr('fill', 'none')
+    svgCircles.attr('stroke-width', 5)
+    svgCircles.attr('stroke', 'white')
+
+    // mouse events
+    const handleRippleHoverIn = () => {
+      Tone.Transport.pause()
+      sound.stop()
     }
-  }
 
-  handleRippleHover = () => {
-    // Schedule the Transport
+    const handleRippleHoverOut = () => {
+      Tone.Transport.start()
+      sound.start()
+    }
+
+    // events
+    svgCircles.on('mouseover', handleRippleHoverIn)
+    svgCircles.on('mouseout', handleRippleHoverOut)
+
+    /*
+    * Schedule the Transport
+    * This is the Tone.js equivalent of requestAnimationFrame
+    * */
     Tone.Transport.schedule((time) => {
-      const frequencyData = this.waveform.getValue()
-      const max: number = parseFloat(d3.max(frequencyData))
-      console.log(max);
-      this.svgCircles.attr('r', max * 10000)
+      const frequencyData = waveform.getValue()
+      const max: number = Math.abs(parseFloat(d3.max(frequencyData)))
+      const radius = () => (stat.id * 100) + (max * 100)
+      svgCircles.attr('r', radius)
     })
 
-    // Set Transport values
+    /*
+    * Set Transport params
+    * By setting loopEnd to 0 it runs like requestAnimationFrame
+    * */
     Tone.Transport.loopStart = 0
-    Tone.Transport.loopEnd = "1:0"
+    Tone.Transport.loopEnd = 0
     Tone.Transport.loop = true
 
-    // Start the transport
-    Tone.Transport.start('+0.05')
-  }
+    Tone.Transport.scheduleRepeat(time => {
+      // do something
+    }, '8n')
 
-  handleRippleHoverOut = () => {
-    Tone.Transport.pause()
+    /*
+    * Send the trasnsport with a 0.05s delay for syncing
+    * TODO: See if this is needed
+    * */
+    Tone.Transport.start('+0.05')
+
+    return {
+      start: () => setTimeout(() => sound.start(), 2000),
+      stop: () => sound.stop()
+    }
   }
 
   public render() {

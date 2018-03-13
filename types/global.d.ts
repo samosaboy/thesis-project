@@ -18,3 +18,8 @@ declare module "*.mp3" {
   const sound: any;
   export = sound;
 }
+
+declare module "*.wav" {
+  const sound: any;
+  export = sound;
+}
