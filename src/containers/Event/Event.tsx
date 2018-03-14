@@ -302,6 +302,7 @@ class EventContainer extends React.Component<Props, State> {
       const difference = d => (d.id * 100) + max
 
       circle.attr('r', d => difference(d))
+        .attr('stroke-width', d => ((10 / d.id) + (max/5)))
 
       text.text(d => Math.round(starter / 100) + ` ${d.type}`)
         .attr('transform', d => {
