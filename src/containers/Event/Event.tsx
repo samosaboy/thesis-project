@@ -109,7 +109,6 @@ class EventContainer extends React.Component<Props, State> {
       start: () => {
         this.backgroundSound.start()
         this.createRippleWave(stats)
-        this.loop.start(0)
       },
       stop: () => {
         this.createRippleWave(stats).destroy()
@@ -187,6 +186,7 @@ class EventContainer extends React.Component<Props, State> {
 
     stats.forEach(stat => {
       this.generateSound(stat.id)
+      this.loop.start(0)
     })
 
     return {
@@ -343,8 +343,9 @@ class EventContainer extends React.Component<Props, State> {
     // setTimeout(() => sound.start(), 2000)
   }
 
-  private handleClick() {
-    this.props.history.goBack()
+  private handleClick = () => {
+    console.log(this.props);
+    this.props.history.push('/')
   }
 
   public render() {
