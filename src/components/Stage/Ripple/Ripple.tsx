@@ -99,7 +99,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
 
     this.circle.setAttr('stroke', createStrokeGradient(['#e7b65c', '#c3246d'], this.circle))
     this.props.actions.addHelper({text: 'Click the ripple to explore!'})
-    this.props.actions.rippleActive({title: this.props.ripple.properties.title})
+    // this.props.actions.rippleActive({title: this.props.ripple.properties.title})
   }
 
   public resetHover = (): void => {
@@ -109,7 +109,7 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
 
     this.circle.setAttr('stroke', createStrokeGradient(['#000000', '#494443'], this.circle))
     this.props.actions.addHelper({text: null})
-    this.props.actions.rippleActive({title: null})
+    // this.props.actions.rippleActive({title: null})
   }
 
   public fillGradient = (): any => {

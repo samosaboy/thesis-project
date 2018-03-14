@@ -72,7 +72,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   }
 
   private showEventInfo = (item: any): any => {
-    this.props.actions.eventActive({data:item})
+    this.props.actions.eventActive({data: item})
     this.props.history.push({
       pathname: `/${item.id}`,
     })
@@ -91,9 +91,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
           y={item.properties.coordinates.y}
         >
           <Event
-            addHelper={this.props.actions.addHelper}
-            rippleActive={this.props.actions.rippleActive}
-            ripples={item.ripples}
+            stats={item.stats}
             importance={item.importance}
           />
         </Group>
@@ -107,7 +105,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
             width={150}
             ref={node => this.text = node}
             text={item.properties.title}
-            name={item.properties.geo.city}
+            name={item.properties.geo.map}
             fontSize={18}
           />
         }

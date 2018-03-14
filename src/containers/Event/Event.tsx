@@ -25,7 +25,7 @@ interface Props {
   history: any,
   location: any,
   actions?: typeof actions,
-  data: any,
+  event: any,
 }
 
 interface State {
@@ -52,6 +52,7 @@ class EventContainer extends React.Component<Props, State> {
 
   // audio setup
   private backgroundSound: any
+  private loop: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -78,9 +79,6 @@ class EventContainer extends React.Component<Props, State> {
       .attr('width', window.innerWidth)
       .attr('height', window.innerHeight)
 
-    // this.waveform = new Tone.Waveform(1024)
-    // this.fft = new Tone.FFT(32)
-
     this.backgroundSound = new Tone.Player({
       url: atmosphericDrone,
       autoStart: true,
@@ -91,18 +89,39 @@ class EventContainer extends React.Component<Props, State> {
     }).toMaster()
 
     setTimeout(() => {
-      this.backgroundSound.start()
+      this.control().start()
     }, 2000)
 
-    // TEMPORARY
-    data.forEach(event => {
-      // TODO: Figure out how to import mp3s inline in loop
-      // const { geo } = event.properties
-      // console.log(process.env.PUBLIC_URL);
-      // const filePath = `${process.env.PUBLIC_URL}/media/${geo.map.toLowerCase()}_${geo.location.toLowerCase()}/${stat.sound}`
-      // const sound = require(filePath)
-      this.createRippleWave(event.stats)
-    })
+    // // TEMPORARY
+    // data.forEach(event => {
+    //   // TODO: Figure out how to import mp3s inline in loop
+    //   // const { geo } = event.properties
+    //   // console.log(process.env.PUBLIC_URL);
+    //   // const filePath = `${process.env.PUBLIC_URL}/media/${geo.map.toLowerCase()}_${geo.location.toLowerCase()}/${stat.sound}`
+    //   // const sound = require(filePath)
+    //   this.createRippleWave(event.stats)
+    // })
+  }
+
+  public control = () => {
+    const { stats } = this.props.event.data
+    return {
+      start: () => {
+        this.backgroundSound.start()
+        this.createRippleWave(stats)
+        this.loop.start(0)
+      },
+      stop: () => {
+        this.createRippleWave(stats).destroy()
+        this.backgroundSound.stop()
+        this.loop.stop()
+        this.loop.dispose()
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.control().stop()
   }
 
   /*
@@ -169,6 +188,14 @@ class EventContainer extends React.Component<Props, State> {
     stats.forEach(stat => {
       this.generateSound(stat.id)
     })
+
+    return {
+      destroy: () => {
+        const now = Tone.now()
+        this.svgElement.remove()
+        Tone.Transport.stop(now)
+      }
+    }
   }
 
   public generateSound = (id) => {
@@ -205,7 +232,7 @@ class EventContainer extends React.Component<Props, State> {
       loop: false,
     }).fan(fft, waveform).connect(freeverb).toMaster()
 
-    const loop = new Tone.Loop({
+    this.loop = new Tone.Loop({
       'callback': (time) => {
         const now = Tone.now()
         sound.start(now).stop(now + 5)
@@ -213,10 +240,6 @@ class EventContainer extends React.Component<Props, State> {
       'interval': '4n',
       'probability': 0.001
     })
-
-    setTimeout(() => {
-      loop.start(0)
-    }, 3000)
 
     // Find by id param in svgContainer
     const group = this.svgElement.selectAll('g')
@@ -290,12 +313,12 @@ class EventContainer extends React.Component<Props, State> {
     // mouse events
     const handleRippleHoverIn = () => {
       Tone.Transport.pause()
-      loop.stop()
+      this.loop.stop()
     }
 
     const handleRippleHoverOut = () => {
       Tone.Transport.start()
-      loop.start()
+      this.loop.start()
     }
 
     // events
@@ -318,11 +341,6 @@ class EventContainer extends React.Component<Props, State> {
 
     // This starts all of them
     // setTimeout(() => sound.start(), 2000)
-
-    return {
-      start: () => setTimeout(() => sound.start(), 2000),
-      stop: () => sound.stop()
-    }
   }
 
   private handleClick() {

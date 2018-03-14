@@ -4,6 +4,10 @@ export const data = [
     "importance": 3,
     "type": "political",
     "properties": {
+      "coordinates": {
+        "x": 100,
+        "y": 100
+      },
       "title": "The Syrian Civil War",
       "description": "The ongoing civil war",
       "geo": {
