@@ -16,11 +16,7 @@ export const data = [
         "id": 1,
         "eventId": 1,
         "sound": "drums.wav",
-        "properties": {
-          "title": "Syrian regime bombs civilians in Eastern Ghouta",
-          "description": "A besieged area consisting of young families and children on the outskirts of Damascus has been under constant bombing. A child's scream generally reaches 115 decibels. A bomb exploding reaches 240 - 280 decibels.<br /><br />It has been estimated that 393,000 people have been trapped in this region since mid-November 2017.",
-          "location": "bottom"
-        },
+        "type": "refugees have died",
         "progression": {
           "type": "overtime, does it increase or decrease?",
           "value": 12,
@@ -34,11 +30,7 @@ export const data = [
         "id": 2,
         "eventId": 1,
         "sound": "drums.wav",
-        "properties": {
-          "title": "Syrian regime bombs civilians in Eastern Ghouta",
-          "description": "A besieged area consisting of young families and children on the outskirts of Damascus has been under constant bombing. A child's scream generally reaches 115 decibels. A bomb exploding reaches 240 - 280 decibels.<br /><br />It has been estimated that 393,000 people have been trapped in this region since mid-November 2017.",
-          "location": "bottom"
-        },
+        "type": "prisoners been captured",
         "progression": {
           "type": "overtime, does it increase or decrease?",
           "value": 12,
@@ -52,11 +44,7 @@ export const data = [
         "id": 3,
         "eventId": 1,
         "sound": "drums.wav",
-        "properties": {
-          "title": "Syrian regime bombs civilians in Eastern Ghouta",
-          "description": "A besieged area consisting of young families and children on the outskirts of Damascus has been under constant bombing. A child's scream generally reaches 115 decibels. A bomb exploding reaches 240 - 280 decibels.<br /><br />It has been estimated that 393,000 people have been trapped in this region since mid-November 2017.",
-          "location": "bottom"
-        },
+        "type": "civilians have fled the country",
         "progression": {
           "type": "overtime, does it increase or decrease?",
           "value": 12,

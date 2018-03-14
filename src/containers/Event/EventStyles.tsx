@@ -7,7 +7,7 @@ export default {
     width: window.innerWidth - (2*borderWidth),
     height: window.innerHeight - (2*borderWidth),
     backgroundColor: colors.darkBlue,
-    borderColor: colors.deepPurple,
+    borderColor: colors.mutedDarkBlue,
     borderWidth: borderWidth,
     borderStyle: 'solid'
   },

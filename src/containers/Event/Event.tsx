@@ -13,9 +13,13 @@ import * as CloseIcon from './closeicon.png'
 // Temporarily
 import {data} from '../../../public/data.js'
 import * as cello_a4 from '../../../public/media/syria_damascus/cello_A4.mp3'
+import * as viola_c5 from '../../../public/media/syria_damascus/viola_C5.mp3'
+import * as violin_as4 from '../../../public/media/syria_damascus/violin_As4.mp3'
 import * as cello_d4 from '../../../public/media/syria_damascus/cello_D4.mp3'
 import * as cello_d2 from '../../../public/media/syria_damascus/cello_D2.mp3'
 import * as drone from '../../../public/media/drone_01_sound.mp3'
+import * as drone2 from '../../../public/media/drone_02_sound.mp3'
+import * as atmosphericDrone from '../../../public/media/atmosphereic_drone_03.wav'
 
 interface Props {
   history: any,
@@ -42,18 +46,12 @@ const mapStateToProps = (state: RootState) => {
 
 @connect(mapStateToProps, mapDispatchToProps)
 class EventContainer extends React.Component<Props, State> {
-  private layer: any
-
   // svg setup
   private svgContainer: any
   private svgElement: any
 
   // audio setup
-  private analyser: any
   private backgroundSound: any
-  private sound: any
-  private fft: any
-  private waveform: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -74,11 +72,6 @@ class EventContainer extends React.Component<Props, State> {
   * */
 
   componentDidMount() {
-    if (this.layer) {
-      this.layer.setAttr('x', this.layer.getStage().width() / 2.35)
-      this.layer.setAttr('y', this.layer.getStage().height() / 2.4)
-    }
-
     // create svgElement
     this.svgElement = d3.select(this.svgContainer)
       .append('svg')
@@ -89,10 +82,12 @@ class EventContainer extends React.Component<Props, State> {
     // this.fft = new Tone.FFT(32)
 
     this.backgroundSound = new Tone.Player({
-      url: drone,
+      url: atmosphericDrone,
       autoStart: true,
-      volume: -20,
+      volume: -30,
       fadeIn: 2,
+      fadeOut: 5,
+      loop: true,
     }).toMaster()
 
     setTimeout(() => {
@@ -126,13 +121,50 @@ class EventContainer extends React.Component<Props, State> {
 
     group.attr('id', d => d.id)
 
+    const defs = group.append('defs')
+    const linearGradient = defs.append('linearGradient')
+      .attr("id", "animate-gradient") //unique id to reference the gradient by
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "100%")
+      .attr("y2", "0")
+      .attr("spreadMethod", "reflect")
+
+    const colours = ["#6911CB", "#2575FC", "#6911CB"]
+
+    linearGradient.selectAll('.stop')
+      .data(colours)
+      .enter().append("stop")
+      .attr("offset", (d, i) => i / (colours.length - 1))
+      .attr("stop-color", d => d)
+
+    linearGradient.append("animate")
+      .attr("attributeName", "x1")
+      .attr("values", "0%;100%")
+      .attr("dur", "2s")
+      .attr("repeatCount", "indefinite")
+
+    linearGradient.append("animate")
+      .attr("attributeName", "x2")
+      .attr("values", "100%;200%")
+      .attr("dur", "2s")
+      .attr("repeatCount", "indefinite")
+
     const circles = group.append('circle')
-      .attr('r', d => d.id * 100)
+    // d => d.id * 100
+      .attr('r', 0)
       .attr('cx', window.innerWidth / 2)
       .attr('cy', window.innerHeight / 2)
       .attr('fill', 'none')
-      .attr('stroke-width', 10)
-      .attr('stroke', 'white')
+      .attr("stroke-opacity", 0)
+      .attr('stroke-width', d => 10 / d.id)
+      .style('stroke', 'url(#animate-gradient)')
+      .transition()
+        .duration(d => 1000 * d.id)
+        .ease(d3.easeQuadIn)
+        .delay(d => d.id * 500)
+        .attr('r', d => d.id * 100)
+        .attr("stroke-opacity", 1)
 
     stats.forEach(stat => {
       this.generateSound(stat.id)
@@ -151,17 +183,19 @@ class EventContainer extends React.Component<Props, State> {
         volume = -20
         break
       case 2:
-        file = cello_d4
+        file = violin_as4
         volume = -30
         break
       case 3:
-        file = cello_a4
+        file = viola_c5
         volume = -35
         break
       default:
         break
     }
 
+    // const freeverb = new Tone.Freeverb(1, 1000).toMaster()
+    const freeverb = new Tone.JCReverb(0.9).toMaster()
     const sound = new Tone.Player({
       url: file,
       autoStart: true,
@@ -169,43 +203,99 @@ class EventContainer extends React.Component<Props, State> {
       volume: volume,
       retrigger: true,
       loop: false,
-    }).fan(fft, waveform).toMaster()
+    }).fan(fft, waveform).connect(freeverb).toMaster()
 
     const loop = new Tone.Loop({
       'callback': (time) => {
         const now = Tone.now()
         sound.start(now).stop(now + 5)
       },
-      'interval': '2n',
+      'interval': '4n',
       'probability': 0.001
     })
 
-    loop.start(0)
+    setTimeout(() => {
+      loop.start(0)
+    }, 3000)
+
+    // Find by id param in svgContainer
+    const group = this.svgElement.selectAll('g')
+      .filter(d => d.id === id)
+
+    const circle = group.select('circle')
+
+    group.append('text')
+      .attr('transform', d => {
+        const top = ((window.innerHeight / 2) - (100 * d.id)) + 50
+        return `translate(${window.innerWidth / 2}, ${top})`
+      })
+      .attr('id', d => d.id)
+      .attr('text-anchor', 'middle')
+      .attr('alignment-baseline', 'middle')
+      .style('font-size', d => 12 + 'px')
+      .attr('z-index', 1000)
+      .attr('fill-opacity', 0)
+      .attr('fill', '#6d98fc')
+      .text(d => `0 ${d.type}`)
+      .transition()
+        .duration(d => 1000 * d.id)
+        .ease(d3.easeQuadIn)
+        .delay(d => d.id * 1000)
+      .attr('fill-opacity', 1)
+
+    const text = group.select('text')
+
+    // This creates a circle that disappears after 2 seconds
+    // const rippleCircles = group.append('circle')
+    //   .classed('.innerCircles', true)
+    //   .attr("cx", window.innerWidth / 2)
+    //   .attr("cy", window.innerHeight / 2)
+    //   .attr("r", 0)
+    //   .attr('fill', 'none')
+    //   .style("stroke-width", 1)
+    //   .attr('stroke', 'white')
+    //   .transition()
+    //   .delay(Math.pow(2, 2.5) * 50)
+    //   .duration(2000)
+    //   .ease(d3.easeQuadIn)
+    //   .attr("r", 100)
+    //   .style("stroke-opacity", 0)
+    //   .on('end', () => {
+    //     console.log('test')
+    //   })
 
     /*
     * Schedule the Transport
     * This is the Tone.js equivalent of requestAnimationFrame
     * */
-    // Find by id param in svgContainer
-    const circle = this.svgElement.selectAll('g')
-      .filter(d => d.id === id)
-      .select('circle')
 
-    Tone.Transport.schedule((time) => {
+    let bob = 2
+    let starter = 0
+    Tone.Transport.schedule(() => {
       const frequencyData = waveform.getValue()
       const max: number = parseFloat(d3.max(frequencyData)) * 10000
-      circle.attr('r', d => (d.id * 100) + max)
+      starter = max > 0 ? starter + 0.5 : starter
+
+      const difference = d => (d.id * 100) + max
+
+      circle.attr('r', d => difference(d))
+
+      text.text(d => Math.round(starter / 100) + ` ${d.type}`)
+        .attr('transform', d => {
+          const top = (window.innerHeight / 2) + 50
+          return `translate(${window.innerWidth / 2}, ${top - difference(d)})`
+        })
     })
 
     // mouse events
     const handleRippleHoverIn = () => {
       Tone.Transport.pause()
-      sound.stop()
+      loop.stop()
     }
 
     const handleRippleHoverOut = () => {
       Tone.Transport.start()
-      sound.start()
+      loop.start()
     }
 
     // events
@@ -215,14 +305,14 @@ class EventContainer extends React.Component<Props, State> {
     /*
     * Set Transport params
     * By setting loopEnd to 0 it runs like requestAnimationFrame
+    *
+    * Tone.Transport.loopStart = 0
+    * Tone.Transport.loopEnd = 0
     * */
-    // Tone.Transport.loopStart = 0
-    // Tone.Transport.loopEnd = 0
     Tone.Transport.loop = true
 
     /*
-    * Send the trasnsport with a 0.05s delay for syncing
-    * TODO: See if this is needed
+    * Send the transport with a 0.05s delay for syncing
     * */
     Tone.Transport.start('+0.05')
 
@@ -249,7 +339,7 @@ class EventContainer extends React.Component<Props, State> {
             onClick={this.handleClick}
             style={styles.close}
           >
-            <img src={CloseIcon} />
+            <img src={CloseIcon}/>
           </button>
           <h1 style={styles.geoText}>
             {_event.properties.geo.location}, {_event.properties.geo.map}
