@@ -63,7 +63,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
         this.setState({loading: false})
         this.setClientRect()
         this.setState({textPlacement: true})
-      }, 0)
+      }, 500)
     }
   }
 

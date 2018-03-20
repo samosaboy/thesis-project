@@ -29,6 +29,7 @@ interface Props {
 }
 
 interface State {
+  mouseOver: boolean
 }
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -57,9 +58,8 @@ class EventContainer extends React.Component<Props, State> {
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
-      mouse: {x: 0, y: 0}
+      mouseOver: false
     }
-    this.handleClick = this.handleClick.bind(this)
   }
 
   /*
@@ -73,6 +73,7 @@ class EventContainer extends React.Component<Props, State> {
   * */
 
   componentDidMount() {
+    console.log('mounted')
     // create svgElement
     this.svgElement = d3.select(this.svgContainer)
       .append('svg')
@@ -104,22 +105,25 @@ class EventContainer extends React.Component<Props, State> {
   }
 
   public control = () => {
-    const { stats } = this.props.event.data
+    const {stats} = this.props.event.data
     return {
       start: () => {
         this.backgroundSound.start()
+        console.log('mounted backgroundSoun', this.backgroundSound);
         this.createRippleWave(stats)
       },
       stop: () => {
+        const now = Tone.now()
         this.createRippleWave(stats).destroy()
-        this.backgroundSound.stop()
-        this.loop.stop()
-        this.loop.dispose()
+        this.backgroundSound.stop(now)
+        this.loop.stop(now)
+        console.log('unmounted backgroundSound', this.backgroundSound)
       }
     }
   }
 
   componentWillUnmount() {
+    console.log('unmounted')
     this.control().stop()
   }
 
@@ -178,11 +182,11 @@ class EventContainer extends React.Component<Props, State> {
       .attr('stroke-width', d => 10 / d.id)
       .style('stroke', 'url(#animate-gradient)')
       .transition()
-        .duration(d => 1000 * d.id)
-        .ease(d3.easeQuadIn)
-        .delay(d => d.id * 500)
-        .attr('r', d => d.id * 100)
-        .attr("stroke-opacity", 1)
+      .duration(d => 1000 * d.id)
+      .ease(d3.easeQuadIn)
+      .delay(d => d.id * 500)
+      .attr('r', d => d.id * 100)
+      .attr("stroke-opacity", 1)
 
     stats.forEach(stat => {
       this.generateSound(stat.id)
@@ -261,9 +265,9 @@ class EventContainer extends React.Component<Props, State> {
       .attr('fill', '#6d98fc')
       .text(d => `0 ${d.type}`)
       .transition()
-        .duration(d => 1000 * d.id)
-        .ease(d3.easeQuadIn)
-        .delay(d => d.id * 1000)
+      .duration(d => 1000 * d.id)
+      .ease(d3.easeQuadIn)
+      .delay(d => d.id * 1000)
       .attr('fill-opacity', 1)
 
     const text = group.select('text')
@@ -302,7 +306,7 @@ class EventContainer extends React.Component<Props, State> {
       const difference = d => (d.id * 100) + max
 
       circle.attr('r', d => difference(d))
-        .attr('stroke-width', d => ((10 / d.id) + (max/5)))
+        .attr('stroke-width', d => ((10 / d.id) + (max / 5)))
 
       text.text(d => Math.round(starter / 100) + ` ${d.type}`)
         .attr('transform', d => {
@@ -345,7 +349,7 @@ class EventContainer extends React.Component<Props, State> {
   }
 
   private handleClick = () => {
-    console.log(this.props);
+    console.log('go back clicked');
     this.props.history.push('/')
   }
 
@@ -357,7 +361,13 @@ class EventContainer extends React.Component<Props, State> {
         <header style={styles.header}>
           <button
             onClick={this.handleClick}
-            style={styles.close}
+            onMouseOver={() => this.setState({mouseOver: true})}
+            onMouseOut={() => this.setState({mouseOver: false})}
+            style={{
+              transform: this.state.mouseOver ? 'scale(1)' : 'scale(0.8)',
+              cursor: this.state.mouseOver ? 'pointer' : 'normal',
+              ...styles.close
+            }}
           >
             <img src={CloseIcon}/>
           </button>

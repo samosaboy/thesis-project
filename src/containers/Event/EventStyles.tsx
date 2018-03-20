@@ -35,8 +35,10 @@ export default {
     // top: window.innerHeight / 4
   },
   close: {
+    display: 'block',
     zIndex: 9999,
     position: 'absolute' as 'absolute',
-    left: 20
+    left: 20,
+    transition: 'transform 0.5s',
   }
 }
