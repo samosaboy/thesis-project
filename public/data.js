@@ -18,45 +18,21 @@ export const data = [
     "stats": [
       {
         "id": 1,
-        "eventId": 1,
         "sound": "drums.wav",
-        "type": "refugees have died",
-        "progression": {
-          "type": "overtime, does it increase or decrease?",
-          "value": 12,
-          "rate": {
-            "type": "is it daily, monthly, per second?",
-            "value": 23
-          }
-        }
+        "type": "civilians have fled the country",
+        "interval": "8n"
       },
       {
         "id": 2,
-        "eventId": 1,
         "sound": "drums.wav",
-        "type": "prisoners been captured",
-        "progression": {
-          "type": "overtime, does it increase or decrease?",
-          "value": 12,
-          "rate": {
-            "type": "is it daily, monthly, per second?",
-            "value": 23
-          }
-        }
+        "type": "civilians have fled the country",
+        "interval": "4n"
       },
       {
         "id": 3,
-        "eventId": 1,
         "sound": "drums.wav",
         "type": "civilians have fled the country",
-        "progression": {
-          "type": "overtime, does it increase or decrease?",
-          "value": 12,
-          "rate": {
-            "type": "is it daily, monthly, per second?",
-            "value": 23
-          }
-        }
+        "interval": "1n"
       }
     ]
   }

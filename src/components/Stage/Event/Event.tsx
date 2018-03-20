@@ -14,7 +14,7 @@ export class Event extends React.PureComponent<Props, {}> {
 
       return (
         <Ripple
-          key={ripple.eventId + ripple.id}
+          key={ripple.id}
           ripple={ripple}
           radius={r}
         />

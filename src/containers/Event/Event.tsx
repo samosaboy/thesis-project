@@ -189,7 +189,7 @@ class EventContainer extends React.Component<Props, State> {
       .attr("stroke-opacity", 1)
 
     stats.forEach(stat => {
-      this.generateSound(stat.id)
+      this.generateSound(stat.id, stat.interval)
       this.loop.start(0)
     })
 
@@ -202,7 +202,7 @@ class EventContainer extends React.Component<Props, State> {
     }
   }
 
-  public generateSound = (id) => {
+  public generateSound = (id: Number, interval: Number) => {
     const waveform = new Tone.Waveform(1024)
     const fft = new Tone.FFT(32)
 
@@ -229,21 +229,27 @@ class EventContainer extends React.Component<Props, State> {
     const freeverb = new Tone.JCReverb(0.9).toMaster()
     const sound = new Tone.Player({
       url: file,
-      autoStart: true,
       // volume: -1,
       volume: volume,
-      retrigger: true,
-      loop: false,
     }).fan(fft, waveform).connect(freeverb).toMaster()
 
     this.loop = new Tone.Loop({
       'callback': (time) => {
         const now = Tone.now()
-        sound.start(now).stop(now + 5)
+        sound.start(now).stop(now + 0.05)
       },
       'interval': '4n',
-      'probability': 0.001
-    })
+      'probability': 0.8
+    }).start(0)
+
+    // this.loop = new Tone.Loop({
+    //   'callback': (time) => {
+    //     const now = Tone.now()
+    //     sound.start(now).stop(now + 5)
+    //   },
+    //   'interval': interval,
+    //   'probability': 0.01
+    // })
 
     // Find by id param in svgContainer
     const group = this.svgElement.selectAll('g')
