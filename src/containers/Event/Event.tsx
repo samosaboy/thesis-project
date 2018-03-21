@@ -130,7 +130,7 @@ class EventContainer extends React.Component<Props, State> {
     // })
   }
 
-  public generateRipples = (stat): any => {
+  public generateRipples = (stat?): any => {
     // ripple setup
     const circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3), new THREE.MeshBasicMaterial({
       color: 0x252A4D
@@ -140,6 +140,7 @@ class EventContainer extends React.Component<Props, State> {
     const listener = new THREE.AudioListener()
     const audioLoader = new THREE.AudioLoader()
     const sound = new THREE.PositionalAudio(listener)
+    const analyzer = new THREE.AudioAnalyser(sound, 32)
 
     this._camera.add(listener)
 
@@ -153,13 +154,58 @@ class EventContainer extends React.Component<Props, State> {
     })
 
     const stop = () => {
-      // need to clear interval
-      // need to stop the sound
+      // clear interval, stop audio
+    }
+
+    const handleMouseMove = (event): void => {
+      this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+      this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+      this._raycaster.setFromCamera(this._mouse, this._camera)
+      const intersects = this._raycaster.intersectObject(circle)
+
+      if (intersects.length) {
+        document.body.style.cursor = 'pointer'
+        this.setState({lastHoveredObj: intersects[0]})
+        // this.scaleAnimation(this.state.lastHoveredObj.object)
+      } else {
+        document.body.style.cursor = 'default'
+        if (this.state.lastHoveredObj) {
+          console.log('test')
+        }
+      }
+    }
+
+    const animate = () => {
+      const offset = analyzer.getAverageFrequency()
+      console.log(offset);
+      if (offset) {
+        new TWEEN.Tween(circle.scale)
+        .to({
+          x: offset / 30 > 1 ? offset / 30 : 1,
+          y: offset / 30 > 1 ? offset / 30 : 1,
+          z: offset / 30 > 1 ? offset / 30 : 1
+        }, 50)
+        .onComplete(() => {
+          new TWEEN.Tween(circle.scale)
+          .to({
+            x: 1,
+            y: 1,
+            z: 1
+          }, 100)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .start()
+        })
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .start()
+      }
     }
 
     return {
       start: () => start(),
-      stop: () => stop()
+      stop: () => stop(),
+      handleMouseMove: () => handleMouseMove,
+      animate: () => animate(),
     }
   }
 
@@ -180,7 +226,8 @@ class EventContainer extends React.Component<Props, State> {
   public animate = (): void => {
     requestAnimationFrame(this.animate)
     this._render()
-    this.manipulateShape()
+    this.generateRipples().animate()
+    // this.manipulateShape()
     TWEEN.update()
   }
 
@@ -216,7 +263,7 @@ class EventContainer extends React.Component<Props, State> {
     this.createScene()
     this.animate()
 
-    document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mousemove', this.generateRipples().handleMouseMove())
   }
 
   public handleMouseMove = (event): void => {
