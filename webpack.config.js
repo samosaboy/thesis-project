@@ -31,7 +31,9 @@ module.exports = {
     // https://github.com/Microsoft/TypeScript/issues/11677
     mainFields: ['module', 'browser', 'main'],
     alias: {
-      'three-examples': Path.join(__dirname, './node_modules/three/examples/js')
+      'three/water': Path.join(__dirname, 'node_modules/three/examples/js/objects/Water.js'),
+      'three/sky': Path.join(__dirname, 'node_modules/three/examples/js/objects/Sky.js'),
+      'three/canvasRenderer': Path.join(__dirname, 'node_modules/three/examples/js/renderers/CanvasRenderer.js')
     },
   },
   module: {

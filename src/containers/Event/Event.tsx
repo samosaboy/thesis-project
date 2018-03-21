@@ -1,21 +1,25 @@
 import * as React from 'react'
 import {withRouter} from 'react-router'
 import styles from './EventStyles'
-import RippleEventView from '../../components/Event/Ripple/Ripple'
+// import RippleEventView from '../../components/Event/Ripple/Ripple'
 import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
-import * as Tone from 'tone'
-import * as d3 from 'd3'
-import {Easing, Tween} from 'es6-tween'
+// import * as Tone from 'tone'
+// import * as d3 from 'd3'
 import * as CloseIcon from './closeicon.png'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
+import 'three/water'
+import 'three/sky'
+import 'three/canvasRenderer'
+
 // Temporarily
 import {data} from '../../../public/data.js'
+import * as water from '../../../public/waternormals.png'
 import * as cello_a4 from '../../../public/media/syria_damascus/cello_A4.mp3'
 import * as viola_c5 from '../../../public/media/syria_damascus/viola_C5.mp3'
 import * as violin_as4 from '../../../public/media/syria_damascus/violin_As4.mp3'
@@ -24,6 +28,7 @@ import * as cello_d2 from '../../../public/media/syria_damascus/cello_D2.mp3'
 import * as drone from '../../../public/media/drone_01_sound.mp3'
 import * as drone2 from '../../../public/media/drone_02_sound.mp3'
 import * as atmosphericDrone from '../../../public/media/atmosphereic_drone_03.wav'
+import {list} from "postcss";
 
 interface Props {
   history: any,
@@ -86,7 +91,7 @@ class EventContainer extends React.Component<Props, State> {
     this._material = new THREE.MeshBasicMaterial({
       color: 0x252A4D,
     })
-    this._circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3), this._material)
+    this._circle = new THREE.Mesh(new THREE.TorusGeometry(2, 0.5, 8, 100, 6.3), this._material)
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
 
@@ -94,18 +99,68 @@ class EventContainer extends React.Component<Props, State> {
     this._audioLoader = new THREE.AudioLoader()
     this._listener = new THREE.AudioListener()
     this._droneSound = new THREE.PositionalAudio(this._listener)
-    this._audioLoader.load(cello_a4, buffer => {
-      this._droneSound.setBuffer(buffer)
-      this._droneSound.setRefDistance(20)
-      this._droneSound.setLoop(true)
-      this._droneSound.setVolume(10)
-      this._droneSound.play()
-    })
     this._audioAnalyzer = new THREE.AudioAnalyser(this._droneSound, 32)
   }
 
   componentDidMount() {
     this.init()
+
+    const stat = [
+      {
+        id: 1,
+        sound: cello_d4,
+        type: 'Test',
+        interval: 3000
+      }
+    ]
+
+    stat.forEach(q => {
+      this.generateRipples(q).start()
+    })
+
+    // // interval sound
+    // this._audioLoader.load(cello_a4, buffer => {
+    //   this._droneSound.setBuffer(buffer)
+    //   this._droneSound.setRefDistance(20)
+    //   // this._droneSound.setLoop(true)
+    //   this._droneSound.setVolume(10)
+    //   // setInterval(() => {
+    //   //   this._droneSound.play()
+    //   // }, 2000)
+    // })
+  }
+
+  public generateRipples = (stat): any => {
+    // ripple setup
+    const circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3), new THREE.MeshBasicMaterial({
+      color: 0x252A4D
+    }))
+    this._scene.add(circle)
+    // audio setup
+    const listener = new THREE.AudioListener()
+    const audioLoader = new THREE.AudioLoader()
+    const sound = new THREE.PositionalAudio(listener)
+
+    this._camera.add(listener)
+
+    const start = () => audioLoader.load(cello_d2, buffer => {
+      sound.setBuffer(buffer)
+      sound.setRefDistance(20)
+      sound.setVolume(10)
+      setInterval(() => {
+        sound.play()
+      }, stat.interval)
+    })
+
+    const stop = () => {
+      // need to clear interval
+      // need to stop the sound
+    }
+
+    return {
+      start: () => start(),
+      stop: () => stop()
+    }
   }
 
   public createScene = (): void => {
@@ -114,12 +169,12 @@ class EventContainer extends React.Component<Props, State> {
     this.svgContainer.appendChild(this._renderer.domElement)
     this._light.position.set(100, 100, 100)
     this._scene.add(this._light)
-    this._scene.add(this._circle)
+    // this._scene.add(this._circle)
     this._camera.position.x = 0
     this._camera.position.y = 0
-    this._camera.position.z = 150
+    this._camera.position.z = 100
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
-    this._camera.add(this._listener)
+    // this._camera.add(this._listener)
   }
 
   public animate = (): void => {
@@ -134,16 +189,16 @@ class EventContainer extends React.Component<Props, State> {
     if (offset) {
       new TWEEN.Tween(this._circle.scale)
       .to({
-        x: offset / 50 > 0.5 ? offset / 50 : 0.5,
-        y: offset / 50 > 0.5 ? offset / 50 : 0.5,
-        z: offset / 50 > 0.5 ? offset / 50 : 0.5
+        x: offset / 30 > 1 ? offset / 30 : 1,
+        y: offset / 30 > 1 ? offset / 30 : 1,
+        z: offset / 30 > 1 ? offset / 30 : 1
       }, 50)
       .onComplete(() => {
         new TWEEN.Tween(this._circle.scale)
         .to({
-          x: 0.5,
-          y: 0.5,
-          z: 0.5
+          x: 1,
+          y: 1,
+          z: 1
         }, 100)
         .easing(TWEEN.Easing.Quadratic.InOut)
         .start()

@@ -20,19 +20,19 @@ export const data = [
         "id": 1,
         "sound": "drums.wav",
         "type": "civilians have fled the country",
-        "interval": "8n"
+        "interval": 9000
       },
       {
         "id": 2,
         "sound": "drums.wav",
         "type": "civilians have fled the country",
-        "interval": "4n"
+        "interval": 6000
       },
       {
         "id": 3,
         "sound": "drums.wav",
         "type": "civilians have fled the country",
-        "interval": "1n"
+        "interval": 3000
       }
     ]
   }
