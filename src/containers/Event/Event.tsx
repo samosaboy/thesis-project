@@ -8,7 +8,11 @@ import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
 import * as Tone from 'tone'
 import * as d3 from 'd3'
+import {Easing, Tween} from 'es6-tween'
 import * as CloseIcon from './closeicon.png'
+
+const THREE = require('three')
+const TWEEN = require('@tweenjs/tween.js')
 
 // Temporarily
 import {data} from '../../../public/data.js'
@@ -30,6 +34,7 @@ interface Props {
 
 interface State {
   mouseOver: boolean
+  lastHoveredObj: any
 }
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -49,315 +54,145 @@ const mapStateToProps = (state: RootState) => {
 class EventContainer extends React.Component<Props, State> {
   // svg setup
   private svgContainer: any
-  private svgElement: any
 
-  // audio setup
-  private backgroundSound: any
-  private loop: any
+  //three setup
+  private _scene: THREE.Scene
+  private _camera: THREE.PerspectiveCamera
+  private _renderer: THREE.WebGLRenderer
+  private _light: THREE.DirectionalLight
+  private _material: THREE.MeshBasicMaterial
+  private _circle: THREE.Mesh
+  private _mouse: THREE.Vector2
+  private _raycaster: THREE.Raycaster
+
+  // audio
+  private _audioLoader = THREE.AudioLoader
+  private _listener = THREE.AudioListener
+  private _droneSound = THREE.PositionalAudio
+  private _audioAnalyzer = THREE.AudioAnalyser
 
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
-      mouseOver: false
+      mouseOver: false,
+      lastHoveredObj: null
     }
-  }
 
-  /*
-  * Get audio samples and sort by frequency
-  * Load stats & statsData
-  * Show stats and increment according to statsData
-  * Every time it increments, run a function that generates audio
-  * Do this for all stats
-  *
-  * Play something in the background as well
-  * */
+    // three setup
+    this._scene = new THREE.Scene()
+    this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 1000)
+    this._renderer = new THREE.WebGLRenderer({antialias: true})
+    this._light = new THREE.DirectionalLight(0xffffff, 1.0)
+    this._material = new THREE.MeshBasicMaterial({
+      color: 0x252A4D,
+    })
+    this._circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3), this._material)
+    this._mouse = new THREE.Vector2()
+    this._raycaster = new THREE.Raycaster()
+
+    // audio
+    this._audioLoader = new THREE.AudioLoader()
+    this._listener = new THREE.AudioListener()
+    this._droneSound = new THREE.PositionalAudio(this._listener)
+    this._audioLoader.load(cello_a4, buffer => {
+      this._droneSound.setBuffer(buffer)
+      this._droneSound.setRefDistance(20)
+      this._droneSound.setLoop(true)
+      this._droneSound.setVolume(10)
+      this._droneSound.play()
+    })
+    this._audioAnalyzer = new THREE.AudioAnalyser(this._droneSound, 32)
+  }
 
   componentDidMount() {
-    console.log('mounted')
-    // create svgElement
-    this.svgElement = d3.select(this.svgContainer)
-      .append('svg')
-      .attr('width', window.innerWidth)
-      .attr('height', window.innerHeight)
-
-    this.backgroundSound = new Tone.Player({
-      url: atmosphericDrone,
-      autoStart: true,
-      volume: -30,
-      fadeIn: 2,
-      fadeOut: 5,
-      loop: true,
-    }).toMaster()
-
-    setTimeout(() => {
-      this.control().start()
-    }, 2000)
-
-    // // TEMPORARY
-    // data.forEach(event => {
-    //   // TODO: Figure out how to import mp3s inline in loop
-    //   // const { geo } = event.properties
-    //   // console.log(process.env.PUBLIC_URL);
-    //   // const filePath = `${process.env.PUBLIC_URL}/media/${geo.map.toLowerCase()}_${geo.location.toLowerCase()}/${stat.sound}`
-    //   // const sound = require(filePath)
-    //   this.createRippleWave(event.stats)
-    // })
+    this.init()
   }
 
-  public control = () => {
-    const {stats} = this.props.event.data
-    return {
-      start: () => {
-        this.backgroundSound.start()
-        console.log('mounted backgroundSoun', this.backgroundSound);
-        this.createRippleWave(stats)
-      },
-      stop: () => {
-        const now = Tone.now()
-        this.createRippleWave(stats).destroy()
-        this.backgroundSound.stop(now)
-        this.loop.stop(now)
-        console.log('unmounted backgroundSound', this.backgroundSound)
-      }
-    }
+  public createScene = (): void => {
+    this._renderer.setSize(window.innerWidth, window.innerHeight)
+    this._renderer.setClearColor(0x191D3E)
+    this.svgContainer.appendChild(this._renderer.domElement)
+    this._light.position.set(100, 100, 100)
+    this._scene.add(this._light)
+    this._scene.add(this._circle)
+    this._camera.position.x = 0
+    this._camera.position.y = 0
+    this._camera.position.z = 150
+    this._camera.lookAt(new THREE.Vector3(0, 0, 0))
+    this._camera.add(this._listener)
   }
 
-  componentWillUnmount() {
-    console.log('unmounted')
-    this.control().stop()
+  public animate = (): void => {
+    requestAnimationFrame(this.animate)
+    this._render()
+    this.manipulateShape()
+    TWEEN.update()
   }
 
-  /*
-  * Set Sound and tie that to its own fft and waveform
-  * Create an SVG of supplied radius
-  * Create mouseover and mouseout events
-  * Return an svg
-  * */
-
-  public createRippleWave = (stats) => {
-    const group = this.svgElement.selectAll('.circle')
-      .data(stats, d => d.id) // number of elements
-      .enter()
-      .append('g')
-      .classed('circle', true)
-
-    group.attr('id', d => d.id)
-
-    const defs = group.append('defs')
-    const linearGradient = defs.append('linearGradient')
-      .attr("id", "animate-gradient") //unique id to reference the gradient by
-      .attr("x1", "0%")
-      .attr("y1", "0%")
-      .attr("x2", "100%")
-      .attr("y2", "0")
-      .attr("spreadMethod", "reflect")
-
-    const colours = ["#6911CB", "#2575FC", "#6911CB"]
-
-    linearGradient.selectAll('.stop')
-      .data(colours)
-      .enter().append("stop")
-      .attr("offset", (d, i) => i / (colours.length - 1))
-      .attr("stop-color", d => d)
-
-    linearGradient.append("animate")
-      .attr("attributeName", "x1")
-      .attr("values", "0%;100%")
-      .attr("dur", "2s")
-      .attr("repeatCount", "indefinite")
-
-    linearGradient.append("animate")
-      .attr("attributeName", "x2")
-      .attr("values", "100%;200%")
-      .attr("dur", "2s")
-      .attr("repeatCount", "indefinite")
-
-    const circles = group.append('circle')
-    // d => d.id * 100
-      .attr('r', 0)
-      .attr('cx', window.innerWidth / 2)
-      .attr('cy', window.innerHeight / 2)
-      .attr('fill', 'none')
-      .attr("stroke-opacity", 0)
-      .attr('stroke-width', d => 10 / d.id)
-      .style('stroke', 'url(#animate-gradient)')
-      .transition()
-      .duration(d => 1000 * d.id)
-      .ease(d3.easeQuadIn)
-      .delay(d => d.id * 500)
-      .attr('r', d => d.id * 100)
-      .attr("stroke-opacity", 1)
-
-    stats.forEach(stat => {
-      this.generateSound(stat.id, stat.interval)
-      this.loop.start(0)
-    })
-
-    return {
-      destroy: () => {
-        const now = Tone.now()
-        this.svgElement.remove()
-        Tone.Transport.stop(now)
-      }
-    }
-  }
-
-  public generateSound = (id: Number, interval: Number) => {
-    const waveform = new Tone.Waveform(1024)
-    const fft = new Tone.FFT(32)
-
-    let file
-    let volume
-    switch (id) {
-      case 1:
-        file = cello_d2
-        volume = -20
-        break
-      case 2:
-        file = violin_as4
-        volume = -30
-        break
-      case 3:
-        file = viola_c5
-        volume = -35
-        break
-      default:
-        break
-    }
-
-    // const freeverb = new Tone.Freeverb(1, 1000).toMaster()
-    const freeverb = new Tone.JCReverb(0.9).toMaster()
-    const sound = new Tone.Player({
-      url: file,
-      // volume: -1,
-      volume: volume,
-    }).fan(fft, waveform).connect(freeverb).toMaster()
-
-    this.loop = new Tone.Loop({
-      'callback': (time) => {
-        const now = Tone.now()
-        sound.start(now).stop(now + 0.05)
-      },
-      'interval': '4n',
-      'probability': 0.8
-    }).start(0)
-
-    // this.loop = new Tone.Loop({
-    //   'callback': (time) => {
-    //     const now = Tone.now()
-    //     sound.start(now).stop(now + 5)
-    //   },
-    //   'interval': interval,
-    //   'probability': 0.01
-    // })
-
-    // Find by id param in svgContainer
-    const group = this.svgElement.selectAll('g')
-      .filter(d => d.id === id)
-
-    const circle = group.select('circle')
-
-    group.append('text')
-      .attr('transform', d => {
-        const top = ((window.innerHeight / 2) - (100 * d.id)) + 50
-        return `translate(${window.innerWidth / 2}, ${top})`
+  public manipulateShape = (): void => {
+    const offset = this._audioAnalyzer.getAverageFrequency()
+    if (offset) {
+      new TWEEN.Tween(this._circle.scale)
+      .to({
+        x: offset / 50 > 0.5 ? offset / 50 : 0.5,
+        y: offset / 50 > 0.5 ? offset / 50 : 0.5,
+        z: offset / 50 > 0.5 ? offset / 50 : 0.5
+      }, 50)
+      .onComplete(() => {
+        new TWEEN.Tween(this._circle.scale)
+        .to({
+          x: 0.5,
+          y: 0.5,
+          z: 0.5
+        }, 100)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .start()
       })
-      .attr('id', d => d.id)
-      .attr('text-anchor', 'middle')
-      .attr('alignment-baseline', 'middle')
-      .style('font-size', d => 12 + 'px')
-      .attr('z-index', 1000)
-      .attr('fill-opacity', 0)
-      .attr('fill', '#6d98fc')
-      .text(d => `0 ${d.type}`)
-      .transition()
-      .duration(d => 1000 * d.id)
-      .ease(d3.easeQuadIn)
-      .delay(d => d.id * 1000)
-      .attr('fill-opacity', 1)
-
-    const text = group.select('text')
-
-    // This creates a circle that disappears after 2 seconds
-    // const rippleCircles = group.append('circle')
-    //   .classed('.innerCircles', true)
-    //   .attr("cx", window.innerWidth / 2)
-    //   .attr("cy", window.innerHeight / 2)
-    //   .attr("r", 0)
-    //   .attr('fill', 'none')
-    //   .style("stroke-width", 1)
-    //   .attr('stroke', 'white')
-    //   .transition()
-    //   .delay(Math.pow(2, 2.5) * 50)
-    //   .duration(2000)
-    //   .ease(d3.easeQuadIn)
-    //   .attr("r", 100)
-    //   .style("stroke-opacity", 0)
-    //   .on('end', () => {
-    //     console.log('test')
-    //   })
-
-    /*
-    * Schedule the Transport
-    * This is the Tone.js equivalent of requestAnimationFrame
-    * */
-
-    let bob = 2
-    let starter = 0
-    Tone.Transport.schedule(() => {
-      const frequencyData = waveform.getValue()
-      const max: number = parseFloat(d3.max(frequencyData)) * 10000
-      starter = max > 0 ? starter + 0.5 : starter
-
-      const difference = d => (d.id * 100) + max
-
-      circle.attr('r', d => difference(d))
-        .attr('stroke-width', d => ((10 / d.id) + (max / 5)))
-
-      text.text(d => Math.round(starter / 100) + ` ${d.type}`)
-        .attr('transform', d => {
-          const top = (window.innerHeight / 2) + 50
-          return `translate(${window.innerWidth / 2}, ${top - difference(d)})`
-        })
-    })
-
-    // mouse events
-    const handleRippleHoverIn = () => {
-      Tone.Transport.pause()
-      this.loop.stop()
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .start()
     }
-
-    const handleRippleHoverOut = () => {
-      Tone.Transport.start()
-      this.loop.start()
-    }
-
-    // events
-    circle.on('mouseover', handleRippleHoverIn)
-    circle.on('mouseout', handleRippleHoverOut)
-
-    /*
-    * Set Transport params
-    * By setting loopEnd to 0 it runs like requestAnimationFrame
-    *
-    * Tone.Transport.loopStart = 0
-    * Tone.Transport.loopEnd = 0
-    * */
-    Tone.Transport.loop = true
-
-    /*
-    * Send the transport with a 0.05s delay for syncing
-    * */
-    Tone.Transport.start('+0.05')
-
-    // This starts all of them
-    // setTimeout(() => sound.start(), 2000)
   }
 
-  private handleClick = () => {
-    console.log('go back clicked');
-    this.props.history.push('/')
+  private _render = (): void => {
+    this._renderer.render(this._scene, this._camera)
   }
+
+  private init = (): void => {
+    this.createScene()
+    this.animate()
+
+    document.addEventListener('mousemove', this.handleMouseMove)
+  }
+
+  public handleMouseMove = (event): void => {
+    this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+    this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+    this._raycaster.setFromCamera(this._mouse, this._camera)
+    const intersects = this._raycaster.intersectObject(this._circle)
+
+    if (intersects.length) {
+      document.body.style.cursor = 'pointer'
+      this.setState({lastHoveredObj: intersects[0]})
+      this.scaleAnimation(this.state.lastHoveredObj.object)
+    } else {
+      document.body.style.cursor = 'default'
+      if (this.state.lastHoveredObj) {
+        new TWEEN.Tween(this.state.lastHoveredObj.object.scale)
+        .to({x: 1.0, y: 1.0, z: 1.0}, 200)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .start()
+      }
+    }
+  }
+
+  private scaleAnimation = (object): void => {
+    new TWEEN.Tween(object.scale)
+    .to({x: 1.1, y: 1.1, z: 1.1}, 200)
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .start()
+  }
+
 
   public render() {
     // FIX THIS AFTER
@@ -366,7 +201,6 @@ class EventContainer extends React.Component<Props, State> {
       <div style={styles.event}>
         <header style={styles.header}>
           <button
-            onClick={this.handleClick}
             onMouseOver={() => this.setState({mouseOver: true})}
             onMouseOut={() => this.setState({mouseOver: false})}
             style={{

@@ -59,6 +59,7 @@
     "@babel/preset-env": "^7.0.0-beta.39",
     "@tweenjs/tween.js": "^17.2.0",
     "@types/d3": "^5.0.0",
+    "@types/three": "^0.89.12",
     "babel-loader": "^8.0.0-beta.0",
     "classnames": "^2.2.5",
     "d3": "^4.13.0",
@@ -73,6 +74,7 @@
     "react-sound": "^1.1.0",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
+    "three": "^0.91.0",
     "tone": "^0.11.11"
   }
 }
