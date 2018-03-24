@@ -6,7 +6,7 @@ import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
-// import * as Tone from 'tone'
+import * as Tone from 'tone'
 // import * as d3 from 'd3'
 import * as CloseIcon from './closeicon.png'
 
@@ -71,10 +71,7 @@ class EventContainer extends React.Component<Props, State> {
   private _raycaster: THREE.Raycaster
 
   // audio
-  private _audioLoader = THREE.AudioLoader
-  private _listener = THREE.AudioListener
-  private _droneSound = THREE.PositionalAudio
-  private _audioAnalyzer = THREE.AudioAnalyser
+  private _backgroundSound: Tone.Player
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -95,16 +92,30 @@ class EventContainer extends React.Component<Props, State> {
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
 
+    Tone.Transport.loop = true
+    Tone.Transport.loopStart = 0
+    Tone.Transport.start('+0.1')
+
     // audio
-    this._audioLoader = new THREE.AudioLoader()
-    this._listener = new THREE.AudioListener()
-    this._droneSound = new THREE.PositionalAudio(this._listener)
-    this._audioAnalyzer = new THREE.AudioAnalyser(this._droneSound, 32)
+    this._backgroundSound = new Tone.Player({
+      url: drone,
+      autoStart: true,
+      fadeIn: 2,
+      fadeOut: 2,
+      loop: true,
+    }).toMaster()
+
+    const promise = new Promise(done => {
+      Tone.Buffer.on('load', done)
+    })
+
+    promise.then(() => {
+      this._backgroundSound.start()
+    })
   }
 
   componentDidMount() {
     this.init()
-
     const stat = [
       {
         id: 1,
@@ -113,49 +124,30 @@ class EventContainer extends React.Component<Props, State> {
         interval: 3000
       }
     ]
-
-    stat.forEach(q => {
-      this.generateRipples(q).start()
-    })
-
-    // // interval sound
-    // this._audioLoader.load(cello_a4, buffer => {
-    //   this._droneSound.setBuffer(buffer)
-    //   this._droneSound.setRefDistance(20)
-    //   // this._droneSound.setLoop(true)
-    //   this._droneSound.setVolume(10)
-    //   // setInterval(() => {
-    //   //   this._droneSound.play()
-    //   // }, 2000)
+    //
+    // stat.forEach(q => {
+    //   this.generateRipples(q).start()
     // })
   }
 
-  public generateRipples = (stat?): any => {
+  generateRipples = (stat?): any => {
     // ripple setup
     const circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3), new THREE.MeshBasicMaterial({
       color: 0x252A4D
     }))
     this._scene.add(circle)
+
     // audio setup
-    const listener = new THREE.AudioListener()
-    const audioLoader = new THREE.AudioLoader()
-    const sound = new THREE.PositionalAudio(listener)
-    const analyzer = new THREE.AudioAnalyser(sound, 32)
-
-    this._camera.add(listener)
-
-    const start = () => audioLoader.load(cello_d2, buffer => {
-      sound.setBuffer(buffer)
-      sound.setRefDistance(20)
-      sound.setVolume(10)
-      setInterval(() => {
-        sound.play()
-      }, stat.interval)
-    })
-
-    const stop = () => {
-      // clear interval, stop audio
-    }
+    const waveform = new Tone.Waveform(1024)
+    const fft = new Tone.FFT(32)
+    const freeverb = new Tone.JCReverb(0.9).toMaster()
+    const sound = new Tone.Player({
+      url: cello_d4,
+      autoStart: true,
+      volume: -30,
+      retrigger: true,
+      loop: false,
+    }).fan(fft, waveform).connect(freeverb).toMaster()
 
     const handleMouseMove = (event): void => {
       this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -171,14 +163,14 @@ class EventContainer extends React.Component<Props, State> {
       } else {
         document.body.style.cursor = 'default'
         if (this.state.lastHoveredObj) {
-          console.log('test')
+          // do something on hover
         }
       }
     }
 
     const animate = () => {
-      const offset = analyzer.getAverageFrequency()
-      console.log(offset);
+      const offset = waveform.getValue()
+      // console.log(offset);
       if (offset) {
         new TWEEN.Tween(circle.scale)
         .to({
@@ -202,7 +194,7 @@ class EventContainer extends React.Component<Props, State> {
     }
 
     return {
-      start: () => start(),
+      start: () => null,
       stop: () => stop(),
       handleMouseMove: () => handleMouseMove,
       animate: () => animate(),
@@ -215,12 +207,10 @@ class EventContainer extends React.Component<Props, State> {
     this.svgContainer.appendChild(this._renderer.domElement)
     this._light.position.set(100, 100, 100)
     this._scene.add(this._light)
-    // this._scene.add(this._circle)
     this._camera.position.x = 0
     this._camera.position.y = 0
     this._camera.position.z = 100
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
-    // this._camera.add(this._listener)
   }
 
   public animate = (): void => {
@@ -231,29 +221,28 @@ class EventContainer extends React.Component<Props, State> {
     TWEEN.update()
   }
 
-  public manipulateShape = (): void => {
-    const offset = this._audioAnalyzer.getAverageFrequency()
-    if (offset) {
-      new TWEEN.Tween(this._circle.scale)
-      .to({
-        x: offset / 30 > 1 ? offset / 30 : 1,
-        y: offset / 30 > 1 ? offset / 30 : 1,
-        z: offset / 30 > 1 ? offset / 30 : 1
-      }, 50)
-      .onComplete(() => {
-        new TWEEN.Tween(this._circle.scale)
-        .to({
-          x: 1,
-          y: 1,
-          z: 1
-        }, 100)
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .start()
-      })
-      .easing(TWEEN.Easing.Quadratic.InOut)
-      .start()
-    }
-  }
+  // public manipulateShape = (): void => {
+  //   if (offset) {
+  //     new TWEEN.Tween(this._circle.scale)
+  //     .to({
+  //       x: offset / 30 > 1 ? offset / 30 : 1,
+  //       y: offset / 30 > 1 ? offset / 30 : 1,
+  //       z: offset / 30 > 1 ? offset / 30 : 1
+  //     }, 50)
+  //     .onComplete(() => {
+  //       new TWEEN.Tween(this._circle.scale)
+  //       .to({
+  //         x: 1,
+  //         y: 1,
+  //         z: 1
+  //       }, 100)
+  //       .easing(TWEEN.Easing.Quadratic.InOut)
+  //       .start()
+  //     })
+  //     .easing(TWEEN.Easing.Quadratic.InOut)
+  //     .start()
+  //   }
+  // }
 
   private _render = (): void => {
     this._renderer.render(this._scene, this._camera)
