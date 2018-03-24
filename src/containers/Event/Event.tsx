@@ -66,11 +66,11 @@ class EventContainer extends React.Component<Props, State> {
   private _renderer: THREE.WebGLRenderer
   private _light: THREE.DirectionalLight
   private _material: THREE.MeshBasicMaterial
-  private _circle: THREE.Mesh
   private _mouse: THREE.Vector2
   private _raycaster: THREE.Raycaster
 
   // audio
+  private _bufferPromise: any
   private _backgroundSound: Tone.Player
 
   constructor(props?: any, context?: any) {
@@ -88,29 +88,26 @@ class EventContainer extends React.Component<Props, State> {
     this._material = new THREE.MeshBasicMaterial({
       color: 0x252A4D,
     })
-    this._circle = new THREE.Mesh(new THREE.TorusGeometry(2, 0.5, 8, 100, 6.3), this._material)
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
 
+    Tone.Transport.bpm.value = 120
     Tone.Transport.loop = true
+
+    // specify the number of measures
     Tone.Transport.loopStart = 0
-    Tone.Transport.start('+0.1')
+    Tone.Transport.loopEnd = '128m'
 
     // audio
     this._backgroundSound = new Tone.Player({
       url: drone,
-      autoStart: true,
       fadeIn: 2,
       fadeOut: 2,
       loop: true,
-    }).toMaster()
+    }).toMaster().sync()
 
-    const promise = new Promise(done => {
+    this._bufferPromise = new Promise(done => {
       Tone.Buffer.on('load', done)
-    })
-
-    promise.then(() => {
-      this._backgroundSound.start()
     })
   }
 
@@ -121,20 +118,19 @@ class EventContainer extends React.Component<Props, State> {
         id: 1,
         sound: cello_d4,
         type: 'Test',
-        interval: 3000
+        interval: 6
       }
     ]
-    //
-    // stat.forEach(q => {
-    //   this.generateRipples(q).start()
-    // })
+
+    stat.forEach(q => {
+      this.generateRipples(q).start()
+    })
   }
 
   generateRipples = (stat?): any => {
     // ripple setup
-    const circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3), new THREE.MeshBasicMaterial({
-      color: 0x252A4D
-    }))
+    const circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3),
+      new THREE.MeshBasicMaterial({color: 0x252A4D}))
     this._scene.add(circle)
 
     // audio setup
@@ -143,11 +139,33 @@ class EventContainer extends React.Component<Props, State> {
     const freeverb = new Tone.JCReverb(0.9).toMaster()
     const sound = new Tone.Player({
       url: cello_d4,
-      autoStart: true,
-      volume: -30,
-      retrigger: true,
-      loop: false,
-    }).fan(fft, waveform).connect(freeverb).toMaster()
+      volume: -10,
+      retrigger: false,
+      loop: true,
+    }).fan(fft, waveform).connect(freeverb).toMaster().sync()
+
+    /*
+    * The interval is based on the number of beats specified in the constructor
+    * I should figure out how fast etc I want my audio
+    * */
+    const loop = new Tone.Loop({
+      callback: time => {
+        // Queues for the next event
+        sound.start(time).stop(time + 0.85)
+      },
+      interval: stat.interval,
+      probability: 1
+    })
+
+    this._bufferPromise.then(() => {
+      Tone.Transport.start('+0.01')
+      loop.start()
+      this._backgroundSound.start()
+
+      Tone.Transport.schedule(() => {
+        console.log('test')
+      })
+    })
 
     const handleMouseMove = (event): void => {
       this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -168,36 +186,10 @@ class EventContainer extends React.Component<Props, State> {
       }
     }
 
-    const animate = () => {
-      const offset = waveform.getValue()
-      // console.log(offset);
-      if (offset) {
-        new TWEEN.Tween(circle.scale)
-        .to({
-          x: offset / 30 > 1 ? offset / 30 : 1,
-          y: offset / 30 > 1 ? offset / 30 : 1,
-          z: offset / 30 > 1 ? offset / 30 : 1
-        }, 50)
-        .onComplete(() => {
-          new TWEEN.Tween(circle.scale)
-          .to({
-            x: 1,
-            y: 1,
-            z: 1
-          }, 100)
-          .easing(TWEEN.Easing.Quadratic.InOut)
-          .start()
-        })
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .start()
-      }
-    }
-
     return {
       start: () => null,
       stop: () => stop(),
       handleMouseMove: () => handleMouseMove,
-      animate: () => animate(),
     }
   }
 
@@ -216,33 +208,8 @@ class EventContainer extends React.Component<Props, State> {
   public animate = (): void => {
     requestAnimationFrame(this.animate)
     this._render()
-    this.generateRipples().animate()
-    // this.manipulateShape()
     TWEEN.update()
   }
-
-  // public manipulateShape = (): void => {
-  //   if (offset) {
-  //     new TWEEN.Tween(this._circle.scale)
-  //     .to({
-  //       x: offset / 30 > 1 ? offset / 30 : 1,
-  //       y: offset / 30 > 1 ? offset / 30 : 1,
-  //       z: offset / 30 > 1 ? offset / 30 : 1
-  //     }, 50)
-  //     .onComplete(() => {
-  //       new TWEEN.Tween(this._circle.scale)
-  //       .to({
-  //         x: 1,
-  //         y: 1,
-  //         z: 1
-  //       }, 100)
-  //       .easing(TWEEN.Easing.Quadratic.InOut)
-  //       .start()
-  //     })
-  //     .easing(TWEEN.Easing.Quadratic.InOut)
-  //     .start()
-  //   }
-  // }
 
   private _render = (): void => {
     this._renderer.render(this._scene, this._camera)
@@ -252,38 +219,8 @@ class EventContainer extends React.Component<Props, State> {
     this.createScene()
     this.animate()
 
-    document.addEventListener('mousemove', this.generateRipples().handleMouseMove())
+    // document.addEventListener('mousemove', this.generateRipples().handleMouseMove())
   }
-
-  public handleMouseMove = (event): void => {
-    this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-    this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-    this._raycaster.setFromCamera(this._mouse, this._camera)
-    const intersects = this._raycaster.intersectObject(this._circle)
-
-    if (intersects.length) {
-      document.body.style.cursor = 'pointer'
-      this.setState({lastHoveredObj: intersects[0]})
-      this.scaleAnimation(this.state.lastHoveredObj.object)
-    } else {
-      document.body.style.cursor = 'default'
-      if (this.state.lastHoveredObj) {
-        new TWEEN.Tween(this.state.lastHoveredObj.object.scale)
-        .to({x: 1.0, y: 1.0, z: 1.0}, 200)
-        .easing(TWEEN.Easing.Quadratic.InOut)
-        .start()
-      }
-    }
-  }
-
-  private scaleAnimation = (object): void => {
-    new TWEEN.Tween(object.scale)
-    .to({x: 1.1, y: 1.1, z: 1.1}, 200)
-    .easing(TWEEN.Easing.Quadratic.InOut)
-    .start()
-  }
-
 
   public render() {
     // FIX THIS AFTER
