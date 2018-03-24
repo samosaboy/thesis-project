@@ -118,16 +118,18 @@ class EventContainer extends React.Component<Props, State> {
         id: 1,
         sound: cello_d4,
         type: 'Test',
+        volume: -10,
         interval: 6
       }
     ]
 
     stat.forEach(q => {
-      this.generateRipples(q).start()
+      this.generateRipples(q)
     })
   }
 
   generateRipples = (stat?): any => {
+    // TODO: Rework how stats are sent in this function, maybe we shouldn't need to do this
     // ripple setup
     const circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3),
       new THREE.MeshBasicMaterial({color: 0x252A4D}))
@@ -138,8 +140,8 @@ class EventContainer extends React.Component<Props, State> {
     const fft = new Tone.FFT(32)
     const freeverb = new Tone.JCReverb(0.9).toMaster()
     const sound = new Tone.Player({
-      url: cello_d4,
-      volume: -10,
+      url: viola_c5,
+      volume: stat.volume,
       retrigger: false,
       loop: true,
     }).fan(fft, waveform).connect(freeverb).toMaster().sync()
@@ -158,14 +160,15 @@ class EventContainer extends React.Component<Props, State> {
     })
 
     this._bufferPromise.then(() => {
-      Tone.Transport.start('+0.01')
+      Tone.Transport.start('+0.1')
       loop.start()
       this._backgroundSound.start()
-
-      Tone.Transport.schedule(() => {
-        console.log('test')
-      })
     })
+
+    Tone.Transport.scheduleRepeat(() => {
+      const frequencyData = waveform.getValue()
+      console.log(frequencyData);
+    }, stat.interval + 5)
 
     const handleMouseMove = (event): void => {
       this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
@@ -187,7 +190,6 @@ class EventContainer extends React.Component<Props, State> {
     }
 
     return {
-      start: () => null,
       stop: () => stop(),
       handleMouseMove: () => handleMouseMove,
     }
