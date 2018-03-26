@@ -7,7 +7,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {RootState} from '../../reducers/index'
 import * as Tone from 'tone'
-// import * as d3 from 'd3'
+import * as d3 from 'd3'
 import * as CloseIcon from './closeicon.png'
 
 const THREE = require('three')
@@ -39,7 +39,8 @@ interface Props {
 
 interface State {
   mouseOver: boolean
-  lastHoveredObj: any
+  lastHoveredObj: any,
+  data: any
 }
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -61,13 +62,13 @@ class EventContainer extends React.Component<Props, State> {
   private svgContainer: any
 
   //three setup
-  private _scene: THREE.Scene
+  private _scene: THREE.Scene | any
   private _camera: THREE.PerspectiveCamera
   private _renderer: THREE.WebGLRenderer
   private _light: THREE.DirectionalLight
-  private _material: THREE.MeshBasicMaterial
   private _mouse: THREE.Vector2
   private _raycaster: THREE.Raycaster
+  private _rippleArray: any
 
   // audio
   private _bufferPromise: any
@@ -77,17 +78,32 @@ class EventContainer extends React.Component<Props, State> {
     super(props, context)
     this.state = {
       mouseOver: false,
-      lastHoveredObj: null
+      lastHoveredObj: null,
+      data: [
+        {
+          id: 1,
+          sound: cello_d4,
+          type: 'Test',
+          volume: 0,
+          interval: 6
+        },
+        {
+          id: 2,
+          sound: cello_d2,
+          type: 'Test',
+          volume: 0,
+          interval: 7.5
+        }
+      ]
     }
+
+    this._rippleArray = []
 
     // three setup
     this._scene = new THREE.Scene()
     this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 1000)
     this._renderer = new THREE.WebGLRenderer({antialias: true})
     this._light = new THREE.DirectionalLight(0xffffff, 1.0)
-    this._material = new THREE.MeshBasicMaterial({
-      color: 0x252A4D,
-    })
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
 
@@ -113,85 +129,84 @@ class EventContainer extends React.Component<Props, State> {
 
   componentDidMount() {
     this.init()
-    const stat = [
-      {
-        id: 1,
-        sound: cello_d4,
-        type: 'Test',
-        volume: -10,
-        interval: 6
-      }
-    ]
-
-    stat.forEach(q => {
-      this.generateRipples(q)
-    })
   }
 
-  generateRipples = (stat?): any => {
-    // TODO: Rework how stats are sent in this function, maybe we shouldn't need to do this
-    // ripple setup
-    const circle = new THREE.Mesh(new THREE.TorusGeometry(10, 0.5, 8, 100, 6.3),
-      new THREE.MeshBasicMaterial({color: 0x252A4D}))
-    this._scene.add(circle)
+  generateRipples = (): any => {
+    this.state.data.forEach((stat, i) => {
+      // ripple setup
+      const circle = new THREE.Mesh(
+        new THREE.TorusBufferGeometry(stat.id * 10, 0.5, 8, 100),
+        new THREE.MeshBasicMaterial({color: 0x252A4D})
+      )
+      circle.name = `circle-${stat.id}`
+      this._scene.add(circle)
 
-    // audio setup
-    const waveform = new Tone.Waveform(1024)
-    const fft = new Tone.FFT(32)
-    const freeverb = new Tone.JCReverb(0.9).toMaster()
-    const sound = new Tone.Player({
-      url: viola_c5,
-      volume: stat.volume,
-      retrigger: false,
-      loop: true,
-    }).fan(fft, waveform).connect(freeverb).toMaster().sync()
+      // audio setup
+      const waveform = new Tone.Waveform(1024)
+      const fft = new Tone.FFT(32)
+      const freeverb = new Tone.JCReverb(0.9).toMaster()
+      const sound = new Tone.Player({
+        url: viola_c5,
+        volume: stat.volume,
+        retrigger: false,
+        loop: true,
+      }).fan(fft, waveform).connect(freeverb).toMaster().sync()
 
-    /*
-    * The interval is based on the number of beats specified in the constructor
-    * I should figure out how fast etc I want my audio
-    * */
-    const loop = new Tone.Loop({
-      callback: time => {
-        // Queues for the next event
-        sound.start(time).stop(time + 0.85)
-      },
-      interval: stat.interval,
-      probability: 1
+      /*
+      * The interval is based on the number of beats specified in the constructor
+      * I should figure out how fast etc I want my audio
+      * */
+      const loop = new Tone.Loop({
+        callback: time => {
+          // Queues for the next event
+          sound.start(time).stop(time + 0.85)
+        },
+        interval: stat.interval,
+        probability: 1
+      })
+
+      this._bufferPromise.then(() => {
+        Tone.Transport.start('+0.1')
+        loop.start()
+        this._backgroundSound.start()
+      })
+
+      this._rippleArray[i] = {
+        circle,
+        waveform,
+      }
     })
-
-    this._bufferPromise.then(() => {
-      Tone.Transport.start('+0.1')
-      loop.start()
-      this._backgroundSound.start()
-    })
-
-    Tone.Transport.scheduleRepeat(() => {
-      const frequencyData = waveform.getValue()
-      console.log(frequencyData);
-    }, stat.interval + 5)
 
     const handleMouseMove = (event): void => {
       this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
       this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
       this._raycaster.setFromCamera(this._mouse, this._camera)
-      const intersects = this._raycaster.intersectObject(circle)
 
-      if (intersects.length) {
-        document.body.style.cursor = 'pointer'
-        this.setState({lastHoveredObj: intersects[0]})
-        // this.scaleAnimation(this.state.lastHoveredObj.object)
-      } else {
-        document.body.style.cursor = 'default'
-        if (this.state.lastHoveredObj) {
-          // do something on hover
+      if (this._rippleArray.length) {
+        let intersects = []
+
+        this._rippleArray.forEach(ripple => {
+          const raycaster = this._raycaster.intersectObject(ripple.circle)
+          if (raycaster.length) {
+            intersects = this._raycaster.intersectObject(ripple.circle)
+          }
+        })
+
+        if (intersects.length) {
+          document.body.style.cursor = 'pointer'
+          this.setState({lastHoveredObj: intersects[0]})
+        } else {
+          document.body.style.cursor = 'default'
+          if (this.state.lastHoveredObj) {
+            // do something on hover
+          }
         }
       }
     }
 
     return {
-      stop: () => stop(),
-      handleMouseMove: () => handleMouseMove,
+      handleMouseMove: () => handleMouseMove
     }
   }
 
@@ -199,7 +214,7 @@ class EventContainer extends React.Component<Props, State> {
     this._renderer.setSize(window.innerWidth, window.innerHeight)
     this._renderer.setClearColor(0x191D3E)
     this.svgContainer.appendChild(this._renderer.domElement)
-    this._light.position.set(100, 100, 100)
+    this._light.position.set(0, 0, 0)
     this._scene.add(this._light)
     this._camera.position.x = 0
     this._camera.position.y = 0
@@ -210,7 +225,22 @@ class EventContainer extends React.Component<Props, State> {
   public animate = (): void => {
     requestAnimationFrame(this.animate)
     this._render()
+    this.animateRipple()
     TWEEN.update()
+  }
+
+  private animateRipple = (): void => {
+    Tone.Transport.schedule(() => {
+      this._rippleArray.forEach((q, i) => {
+        const frequencyData: any = q.waveform.getValue()
+        const max: number = parseFloat(d3.max(frequencyData)) * 100
+        const object = this._scene.getObjectByName(`circle-${i + 1}`)
+        const delta = max > 1 ? 1 * max : 1
+        object.scale.x = delta
+        object.scale.y = delta
+        object.scale.z = delta
+      })
+    })
   }
 
   private _render = (): void => {
@@ -220,8 +250,8 @@ class EventContainer extends React.Component<Props, State> {
   private init = (): void => {
     this.createScene()
     this.animate()
-
-    // document.addEventListener('mousemove', this.generateRipples().handleMouseMove())
+    this.generateRipples()
+    document.addEventListener('mousemove', this.generateRipples().handleMouseMove(event))
   }
 
   public render() {
