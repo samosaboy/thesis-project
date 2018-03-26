@@ -176,38 +176,6 @@ class EventContainer extends React.Component<Props, State> {
         waveform,
       }
     })
-
-    const handleMouseMove = (event): void => {
-      this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-      this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-      this._raycaster.setFromCamera(this._mouse, this._camera)
-
-      if (this._rippleArray.length) {
-        let intersects = []
-
-        this._rippleArray.forEach(ripple => {
-          const raycaster = this._raycaster.intersectObject(ripple.circle)
-          if (raycaster.length) {
-            intersects = this._raycaster.intersectObject(ripple.circle)
-          }
-        })
-
-        if (intersects.length) {
-          document.body.style.cursor = 'pointer'
-          this.setState({lastHoveredObj: intersects[0]})
-        } else {
-          document.body.style.cursor = 'default'
-          if (this.state.lastHoveredObj) {
-            // do something on hover
-          }
-        }
-      }
-    }
-
-    return {
-      handleMouseMove: () => handleMouseMove
-    }
   }
 
   public createScene = (): void => {
@@ -238,16 +206,44 @@ class EventContainer extends React.Component<Props, State> {
         const delta = max > 1 ? 1 * max : 1
 
         const tween = new TWEEN.Tween(object.scale)
-          .to({
-            x: delta,
-            y: delta,
-            z: delta,
-          }, 500)
-          .easing(TWEEN.Easing.Cubic.Out)
+        .to({
+          x: delta,
+          y: delta,
+          z: delta,
+        }, 500)
+        .easing(TWEEN.Easing.Cubic.Out)
 
         tween.start()
       })
     })
+  }
+
+  private handleMouseMove = (event) => {
+    this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+    this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+    this._raycaster.setFromCamera(this._mouse, this._camera)
+
+    if (this._rippleArray.length) {
+      let intersects = []
+
+      this._rippleArray.forEach(ripple => {
+        const raycaster = this._raycaster.intersectObject(ripple.circle)
+        if (raycaster.length) {
+          intersects = this._raycaster.intersectObject(ripple.circle)
+        }
+      })
+
+      if (intersects.length) {
+        document.body.style.cursor = 'pointer'
+        this.setState({lastHoveredObj: intersects[0]})
+      } else {
+        document.body.style.cursor = 'default'
+        if (this.state.lastHoveredObj) {
+          // do something on hover
+        }
+      }
+    }
   }
 
   private _render = (): void => {
@@ -258,7 +254,7 @@ class EventContainer extends React.Component<Props, State> {
     this.createScene()
     this.animate()
     this.generateRipples()
-    document.addEventListener('mousemove', this.generateRipples().handleMouseMove(event))
+    document.addEventListener('mousemove', this.handleMouseMove)
   }
 
   public render() {
