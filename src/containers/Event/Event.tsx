@@ -70,6 +70,7 @@ class EventContainer extends React.Component<Props, State> {
   private _raycaster: THREE.Raycaster
   private _rippleArray: any
   private _bubbleArray: any
+  private _pointCloud: any
 
   // audio
   private _bufferPromise: any
@@ -204,17 +205,48 @@ class EventContainer extends React.Component<Props, State> {
     this.svgContainer.appendChild(this._renderer.domElement)
     this._light.position.set(0, 0, 2)
     this._scene.add(this._light)
+
+    this._pointCloud = this.generatePointCloud(new THREE.Color(0, 1, 0), 100, 100)
+    this._pointCloud.rotation.set(Math.PI / 2, 0, 0)
+    this._pointCloud.scale.set(85, 85, 85)
+    this._pointCloud.position.set(4, 0, 0)
+    this._scene.add(this._pointCloud)
+
     this._camera.position.x = 0
     this._camera.position.y = 0
     this._camera.position.z = 100
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+  }
+
+  generatePointCloud = (color, width, length) => {
+    const geometry = new THREE.Geometry();
+    const colors = [];
+    let k = 0;
+    for (let i = 0; i < width; i++) {
+      for (let j = 0; j < length; j++) {
+        const u = i / width;
+        const v = j / length;
+        const x = u - 0.5;
+        const y = (Math.cos(u * Math.PI * 3) + Math.sin(v * Math.PI * 3)) / 20;
+        const z = v - 0.5;
+        geometry.vertices.push(new THREE.Vector3(x, y, z));
+        const intensity = (y + 0.1) * 7;
+        colors[k] = (color.clone().multiplyScalar(intensity));
+        k++;
+      }
+    }
+    geometry.colors = colors;
+    geometry.computeBoundingBox();
+    var material = new THREE.PointsMaterial({size: 0.45, vertexColors: THREE.VertexColors});
+    var pointcloud = new THREE.Points(geometry, material);
+    return pointcloud;
   }
 
   public animate = (): void => {
     requestAnimationFrame(this.animate)
     this._render()
     this.animateRipple()
-    this.animateBubbles()
     TWEEN.update()
   }
 
@@ -226,29 +258,26 @@ class EventContainer extends React.Component<Props, State> {
         const object = this._scene.getObjectByName(`circle-${i + 1}`)
         const delta = max > 1 ? 1 * max : 1
 
-        const tween = new TWEEN.Tween(object.scale)
+        const rippleTween = new TWEEN.Tween(object.scale)
         .to({
           x: delta,
           y: delta,
           // TODO: play with z-position
           z: delta,
         }, 500)
-        .easing(TWEEN.Easing.Cubic.Out)
+        .easing(TWEEN.Easing.Cubic.Out).start()
 
-        tween.start()
+        // this._pointCloud.traverse() ?
+
+        const pointCloudTween = new TWEEN.Tween(this._pointCloud.scale)
+          .to({
+            x: max > 1 ? 85 * max : 85,
+            y: max > 1 ? 85 * max : 85,
+            z: max > 1 ? 85 * max : 85,
+          }, 600)
+          .easing(TWEEN.Easing.Cubic.Out).start()
       })
     })
-  }
-
-  private animateBubbles = (): void => {
-    if (this._bubbleArray.length) {
-      this._bubbleArray.forEach(bubble => {
-        // const frequencyData: any = q.waveform.getValue()
-        // const max: number = parseFloat(d3.max(frequencyData)) * 100
-        bubble.position.x -= Math.random() * 0.0060
-        bubble.position.y -= Math.random() * 0.0060
-      })
-    }
   }
 
   private handleMouseMove = (event) => {
