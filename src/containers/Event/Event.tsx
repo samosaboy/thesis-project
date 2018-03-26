@@ -69,6 +69,7 @@ class EventContainer extends React.Component<Props, State> {
   private _mouse: THREE.Vector2
   private _raycaster: THREE.Raycaster
   private _rippleArray: any
+  private _bubbleArray: any
 
   // audio
   private _bufferPromise: any
@@ -98,6 +99,7 @@ class EventContainer extends React.Component<Props, State> {
     }
 
     this._rippleArray = []
+    this._bubbleArray = []
 
     // three setup
     this._scene = new THREE.Scene()
@@ -136,7 +138,11 @@ class EventContainer extends React.Component<Props, State> {
       // ripple setup
       const circle = new THREE.Mesh(
         new THREE.TorusBufferGeometry(stat.id * 10, 0.5, 8, 100),
-        new THREE.MeshBasicMaterial({color: 0x252A4D})
+        new THREE.MeshPhongMaterial({
+          color: 0x4C6F97,
+          shading: THREE.FlatShading,
+        })
+        // new THREE.MeshBasicMaterial({color: 0x252A4D})
       )
       circle.name = `circle-${stat.id}`
       this._scene.add(circle)
@@ -176,13 +182,27 @@ class EventContainer extends React.Component<Props, State> {
         waveform,
       }
     })
+
+    // for (var i = 0; i < 1000; i++) {
+    //   var mesh = new THREE.Mesh(new THREE.CircleBufferGeometry(1, 24), new THREE.MeshPhongMaterial({
+    //     color: 0x4C6F97
+    //   }))
+    //   mesh.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 1).normalize();
+    //   mesh.position.multiplyScalar(90 + (Math.random() * 100));
+    //   this._bubbleArray.push(mesh)
+    //   this._scene.add(mesh);
+    // }
+  }
+
+  generateOcean = () => {
+
   }
 
   public createScene = (): void => {
     this._renderer.setSize(window.innerWidth, window.innerHeight)
     this._renderer.setClearColor(0x191D3E)
     this.svgContainer.appendChild(this._renderer.domElement)
-    this._light.position.set(0, 0, 0)
+    this._light.position.set(0, 0, 2)
     this._scene.add(this._light)
     this._camera.position.x = 0
     this._camera.position.y = 0
@@ -194,6 +214,7 @@ class EventContainer extends React.Component<Props, State> {
     requestAnimationFrame(this.animate)
     this._render()
     this.animateRipple()
+    this.animateBubbles()
     TWEEN.update()
   }
 
@@ -209,6 +230,7 @@ class EventContainer extends React.Component<Props, State> {
         .to({
           x: delta,
           y: delta,
+          // TODO: play with z-position
           z: delta,
         }, 500)
         .easing(TWEEN.Easing.Cubic.Out)
@@ -216,6 +238,17 @@ class EventContainer extends React.Component<Props, State> {
         tween.start()
       })
     })
+  }
+
+  private animateBubbles = (): void => {
+    if (this._bubbleArray.length) {
+      this._bubbleArray.forEach(bubble => {
+        // const frequencyData: any = q.waveform.getValue()
+        // const max: number = parseFloat(d3.max(frequencyData)) * 100
+        bubble.position.x -= Math.random() * 0.0060
+        bubble.position.y -= Math.random() * 0.0060
+      })
+    }
   }
 
   private handleMouseMove = (event) => {
@@ -237,10 +270,17 @@ class EventContainer extends React.Component<Props, State> {
       if (intersects.length) {
         document.body.style.cursor = 'pointer'
         this.setState({lastHoveredObj: intersects[0]})
+        const object = this._scene.getObjectByName(this.state.lastHoveredObj.object.name)
+        if (object) {
+          Tone.Transport.pause()
+          object.material.color.setHex(0xffffff)
+        }
       } else {
         document.body.style.cursor = 'default'
+        Tone.Transport.start()
         if (this.state.lastHoveredObj) {
-          // do something on hover
+          const object = this._scene.getObjectByName(this.state.lastHoveredObj.object.name)
+          object.material.color.setHex(0x000000)
         }
       }
     }
