@@ -236,9 +236,16 @@ class EventContainer extends React.Component<Props, State> {
         const max: number = parseFloat(d3.max(frequencyData)) * 100
         const object = this._scene.getObjectByName(`circle-${i + 1}`)
         const delta = max > 1 ? 1 * max : 1
-        object.scale.x = delta
-        object.scale.y = delta
-        object.scale.z = delta
+
+        const tween = new TWEEN.Tween(object.scale)
+          .to({
+            x: delta,
+            y: delta,
+            z: delta,
+          }, 500)
+          .easing(TWEEN.Easing.Cubic.Out)
+
+        tween.start()
       })
     })
   }
