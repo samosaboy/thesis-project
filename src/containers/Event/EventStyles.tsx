@@ -26,10 +26,10 @@ export default {
     fontSize: fonts.description
   },
   svgContainer: {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: window.innerWidth - (2*borderWidth),
+    height: window.innerHeight - (2*borderWidth),
     position: 'absolute' as 'absolute',
-    zIndex: 999,
+    zIndex: 1,
   },
   close: {
     display: 'block',
@@ -49,5 +49,22 @@ export default {
     color: colors.eventHeadings,
     fontSize: fonts.toggle,
     margin: 7,
+  },
+  mainBody: {
+    color: colors.text,
+    position: 'absolute' as 'absolute',
+    top: window.innerHeight / 3,
+    width: window.innerWidth,
+    zIndex: 9999
+  },
+  left: {
+    position: 'absolute' as 'absolute',
+    zIndex: 9999,
+    left: 20,
+  },
+  right: {
+    position: 'absolute' as 'absolute',
+    zIndex: 9999,
+    right: 20,
   }
 }

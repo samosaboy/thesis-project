@@ -13,15 +13,10 @@ import * as CloseIcon from './closeicon.png'
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const TextSprite = require('three.textsprite')
-const helveticaRegular = require('./helvetiker_regular.typeface.json')
 
 import 'three/water'
 import 'three/sky'
 import 'three/canvasRenderer'
-
-// Temporarily
-import * as drone from '../../../public/media/drone_01_sound.mp3'
-import {colors} from "../../constants";
 
 interface Props {
   history: any,
@@ -109,7 +104,7 @@ class EventContainer extends React.Component<Props, State> {
 
     // audio
     this._backgroundSound = new Tone.Player({
-      url: drone,
+      url: require(`../../../public/media/${this.props.event.data.drone}`),
       fadeIn: 2,
       fadeOut: 2,
       loop: true,
@@ -121,7 +116,16 @@ class EventContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    console.log('component did mount')
     this.init()
+  }
+
+  componentWillUnmount() {
+    console.log('component will unmount')
+    Tone.Transport.stop()
+    // setTimeout(() => {
+    //   this.setState({mounted: false})
+    // }, 0)
   }
 
   generateRipples = (): any => {
@@ -132,6 +136,7 @@ class EventContainer extends React.Component<Props, State> {
         new THREE.MeshBasicMaterial({
           color: 0x4C6F97,
           shading: THREE.FlatShading,
+          map: this.generateSprite()
         })
         // new THREE.MeshBasicMaterial({color: 0x252A4D})
       )
@@ -176,7 +181,7 @@ class EventContainer extends React.Component<Props, State> {
       const loop = new Tone.Loop({
         callback: time => {
           // Queues for the next event
-          sound.start(now).stop(now + 0.85)
+          sound.start(time).stop(time + 0.85)
         },
         interval: stat.interval,
         probability: 1
@@ -198,10 +203,10 @@ class EventContainer extends React.Component<Props, State> {
   }
 
   public createScene = (): void => {
-    this._renderer.setSize(window.innerWidth, window.innerHeight)
+    this._renderer.setSize(window.innerWidth - (2 * 7.5), window.innerHeight - (2 * 7.5))
     this._renderer.setClearColor(0x191D3E)
     this.svgContainer.appendChild(this._renderer.domElement)
-    this._light.position.set(0, 0, 2)
+    this._light.position.set(0, 0, 1)
     this._scene.add(this._light)
 
     // this.generatePointCloud()
@@ -221,19 +226,16 @@ class EventContainer extends React.Component<Props, State> {
 
   // So you can actually create a texture out of a canvas
   generateSprite = () => {
+    const {colors} = this.props.event.data
     const canvas = document.createElement('canvas')
-    canvas.width = 40
-    canvas.height = 40
+    canvas.width = 16
+    canvas.height = 16
     const context = canvas.getContext('2d')
-    const gradient = context.createRadialGradient(
-      canvas.width / 2,
-      canvas.height / 2,
-      0, canvas.width / 2,
-      canvas.height / 2,
-      canvas.width / 2
+    const gradient = context.createLinearGradient(
+      -25, -25, 25, 25
     )
-    gradient.addColorStop(0, 'rgba(255,255,255,1)')
-    gradient.addColorStop(1, 'rgba(0,0,255,1)')
+    gradient.addColorStop(0, colors.cs0)
+    gradient.addColorStop(1, colors.cs50)
     context.fillStyle = gradient
     context.fillRect(0, 0, canvas.width, canvas.height)
     const texture = new THREE.Texture(canvas)
@@ -313,7 +315,7 @@ class EventContainer extends React.Component<Props, State> {
 
         this.setState({isPropogating: max > 1 && true})
 
-        const rippleTween = new TWEEN.Tween(object.scale)
+        new TWEEN.Tween(object.scale)
         .to({
           x: delta,
           y: delta,
@@ -321,6 +323,8 @@ class EventContainer extends React.Component<Props, State> {
           z: delta + 1,
         }, 500)
         .easing(TWEEN.Easing.Cubic.Out).start()
+
+        object.rotation.z += 0.10 / (i+1)
       })
 
       this._pointCloud.geometry.vertices.forEach(v => {
@@ -386,8 +390,8 @@ class EventContainer extends React.Component<Props, State> {
     const _event = this.props.event.data
     return (
       <div style={{
-        backgroundColor: _event.backgroundColor,
-        borderColor: _event.borderColor,
+        backgroundColor: _event.colors.backgroundColor,
+        borderColor: _event.colors.borderColor,
         ...styles.event
       }}>
         <div style={{
@@ -438,8 +442,14 @@ class EventContainer extends React.Component<Props, State> {
           <div style={{
             opacity: this.state.toggleText ? 1 : 0,
             transition: 'opacity 1s ease-in-out',
+            ...styles.mainBody
           }}>
-            More text goes here
+            <div style={styles.left}>
+              {_event.content.left}
+            </div>
+            <div style={styles.right}>
+              {_event.content.right}
+            </div>
           </div>
 
           <div

@@ -60,32 +60,6 @@ export class Ripple<T extends Props> extends React.PureComponent<T & Props, Stat
     })
   }
 
-  public createRippleEffect = (): void => {
-    const group = this.circle.getStage().find('.eventGroup')[0].children
-    const groupClone: any = [...group].reverse()
-
-    groupClone[0].to({
-      opacity: 1,
-      scaleX: group.length / this.props.ripple.id,
-      scaleY: group.length / this.props.ripple.id,
-      duration: 1.5 * this.props.ripple.id,
-      easing: Konva.Easings.EaseInOut,
-    })
-
-    setTimeout(() => {
-      // delete groupClone[0]
-      groupClone
-        .forEach((item, index) => {
-          item.to({
-            opacity: 1,
-            scaleX: group.length / (index),
-            scaleY: group.length / (index),
-            duration: 1.5 * this.props.ripple.id * 4,
-          })
-        })
-    }, 1.5 * this.props.ripple.id * 1000)
-  }
-
   public setZIndex = (array): void => {
     [...array]
       .sort((a, b): number => a.attrs.radius > b.attrs.radius ? 1 : -1)

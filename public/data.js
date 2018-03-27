@@ -3,8 +3,17 @@ export const data = [
     "id": 1,
     "importance": 3,
     "type": "political",
-    "backgroundColor": "#191D3E",
-    "borderColor": "#252A4D",
+    "colors": {
+      "backgroundColor": "#191D3E",
+      "borderColor": "#5c7fb0",
+      "cs0": "#0bb0ae",
+      "cs50": "#FFFFFF",
+    },
+    "content": {
+      "left": "bob the builder",
+      "right": "can he fix it?"
+    },
+    "drone": "drone_01_sound.mp3",
     "properties": {
       "coordinates": {
         "x": 100,
