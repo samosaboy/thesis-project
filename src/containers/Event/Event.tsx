@@ -71,6 +71,8 @@ class EventContainer extends React.Component<Props, State> {
   private _rippleArray: any
   private _bubbleArray: any
   private _pointCloud: any
+  private _outerSphereGeometry = THREE.SphereGeometry
+  private step: number
 
   // audio
   private _bufferPromise: any
@@ -99,6 +101,8 @@ class EventContainer extends React.Component<Props, State> {
       ]
     }
 
+    this.step = 0
+
     this._rippleArray = []
     this._bubbleArray = []
 
@@ -109,6 +113,19 @@ class EventContainer extends React.Component<Props, State> {
     this._light = new THREE.DirectionalLight(0xffffff, 1.0)
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
+
+    this._outerSphereGeometry = new THREE.SphereGeometry(100)
+
+    const _outerSphereMesh = new THREE.Mesh(
+      this._outerSphereGeometry,
+      new THREE.MeshBasicMaterial(
+        {
+          color: 0x000000,
+          wireframe: true
+        }
+      ))
+    _outerSphereMesh.position.set(0, 0, 0)
+    this._scene.add(_outerSphereMesh)
 
     Tone.Transport.bpm.value = 120
     Tone.Transport.loop = true
@@ -139,9 +156,10 @@ class EventContainer extends React.Component<Props, State> {
       // ripple setup
       const circle = new THREE.Mesh(
         new THREE.TorusBufferGeometry(stat.id * 10, 0.5, 8, 100),
-        new THREE.MeshPhongMaterial({
+        new THREE.MeshBasicMaterial({
           color: 0x4C6F97,
           shading: THREE.FlatShading,
+          map: this.generateSprite()
         })
         // new THREE.MeshBasicMaterial({color: 0x252A4D})
       )
@@ -183,20 +201,6 @@ class EventContainer extends React.Component<Props, State> {
         waveform,
       }
     })
-
-    // for (var i = 0; i < 1000; i++) {
-    //   var mesh = new THREE.Mesh(new THREE.CircleBufferGeometry(1, 24), new THREE.MeshPhongMaterial({
-    //     color: 0x4C6F97
-    //   }))
-    //   mesh.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 1).normalize();
-    //   mesh.position.multiplyScalar(90 + (Math.random() * 100));
-    //   this._bubbleArray.push(mesh)
-    //   this._scene.add(mesh);
-    // }
-  }
-
-  generateOcean = () => {
-
   }
 
   public createScene = (): void => {
@@ -206,6 +210,8 @@ class EventContainer extends React.Component<Props, State> {
     this._light.position.set(0, 0, 2)
     this._scene.add(this._light)
 
+    // this.generatePointCloud()
+
     this._pointCloud = this.generatePointCloud(new THREE.Color(0, 1, 0), 100, 100)
     this._pointCloud.rotation.set(Math.PI / 2, 0, 0)
     this._pointCloud.scale.set(85, 85, 85)
@@ -214,10 +220,61 @@ class EventContainer extends React.Component<Props, State> {
 
     this._camera.position.x = 0
     this._camera.position.y = 0
+    // this._camera.position.z = 1000
     this._camera.position.z = 100
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
-
   }
+
+  // So you can actually create a texture out of a canvas
+  generateSprite = () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 40
+    canvas.height = 40
+    const context = canvas.getContext('2d')
+    const gradient = context.createRadialGradient(
+      canvas.width / 2,
+      canvas.height / 2,
+      0, canvas.width / 2,
+      canvas.height / 2,
+      canvas.width / 2
+    )
+    gradient.addColorStop(0, 'rgba(255,255,255,1)')
+    gradient.addColorStop(1, 'rgba(0,0,255,1)')
+    context.fillStyle = gradient
+    context.fillRect(0, 0, canvas.width, canvas.height)
+    const texture = new THREE.Texture(canvas)
+    texture.needsUpdate = true
+    return texture
+  }
+
+  // generatePointCloud = () => {
+  //   const distance = 500
+  //   const geometry = new THREE.Geometry()
+  //
+  //   for (let i = 0; i < 1000; i++) {
+  //
+  //     const vertex = new THREE.Vector3()
+  //
+  //     const theta = THREE.Math.randFloatSpread(360)
+  //     const phi = THREE.Math.randFloatSpread(360)
+  //
+  //     vertex.x = distance * Math.sin(theta) * Math.cos(phi)
+  //     vertex.y = distance * Math.sin(theta) * Math.sin(phi)
+  //     vertex.z = distance * Math.cos(theta)
+  //
+  //     geometry.vertices.push(vertex)
+  //   }
+  //   this._pointCloud = new THREE.PointCloud(geometry, new THREE.PointCloudMaterial({
+  //     color: 0xffffff,
+  //     blending: THREE.AdditiveBlending,
+  //     transparent: true,
+  //     size: 1,
+  //     map: this.generateSprite()
+  //   }))
+  //   this._pointCloud.sortParticles = true
+  //
+  //   this._scene.add(this._pointCloud)
+  // }
 
   generatePointCloud = (color, width, length) => {
     const geometry = new THREE.Geometry();
@@ -235,8 +292,8 @@ class EventContainer extends React.Component<Props, State> {
         colors[k] = (color.clone().multiplyScalar(intensity));
         k++;
       }
+      geometry.colors = colors;
     }
-    geometry.colors = colors;
     geometry.computeBoundingBox();
     var material = new THREE.PointsMaterial({size: 0.45, vertexColors: THREE.VertexColors});
     var pointcloud = new THREE.Points(geometry, material);
@@ -252,6 +309,7 @@ class EventContainer extends React.Component<Props, State> {
 
   private animateRipple = (): void => {
     Tone.Transport.schedule(() => {
+      // There might be a better way than looping through to get q.waveform data
       this._rippleArray.forEach((q, i) => {
         const frequencyData: any = q.waveform.getValue()
         const max: number = parseFloat(d3.max(frequencyData)) * 100
@@ -269,14 +327,22 @@ class EventContainer extends React.Component<Props, State> {
 
         // this._pointCloud.traverse() ?
 
-        const pointCloudTween = new TWEEN.Tween(this._pointCloud.scale)
-          .to({
-            x: max > 1 ? 85 * max : 85,
-            y: max > 1 ? 85 * max : 85,
-            z: max > 1 ? 85 * max : 85,
-          }, 600)
-          .easing(TWEEN.Easing.Cubic.Out).start()
+        // const oceanObject = this._scene.getObjectByName('ocean', true)
+        // oceanObject.traverse(child => {
+        //   if (child instanceof THREE.Points) {
+        //     child.scale.set(1, 1, 1)
+        //   }
+        // })
       })
+
+      this.step += 0.005
+      this._pointCloud.geometry.vertices.forEach(v => {
+        v.y = (Math.sin((v.x / 2 + this.step) * Math.PI * 2)
+          + Math.cos((v.z / 2 + this.step * 2) * Math.PI)
+          + Math.sin((v.x + v.y + this.step * 2) / 4 * Math.PI)) / 2
+      })
+
+      this._pointCloud.geometry.verticesNeedUpdate = true
     })
   }
 
