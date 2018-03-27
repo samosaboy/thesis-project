@@ -20,17 +20,8 @@ import 'three/sky'
 import 'three/canvasRenderer'
 
 // Temporarily
-import {data} from '../../../public/data.js'
-import * as water from '../../../public/waternormals.png'
-import * as cello_a4 from '../../../public/media/syria_damascus/cello_A4.mp3'
-import * as viola_c5 from '../../../public/media/syria_damascus/viola_C5.mp3'
-import * as violin_as4 from '../../../public/media/syria_damascus/violin_As4.mp3'
-import * as cello_d4 from '../../../public/media/syria_damascus/cello_D4.mp3'
-import * as cello_d2 from '../../../public/media/syria_damascus/cello_D2.mp3'
 import * as drone from '../../../public/media/drone_01_sound.mp3'
-import * as drone2 from '../../../public/media/drone_02_sound.mp3'
-import * as atmosphericDrone from '../../../public/media/atmosphereic_drone_03.wav'
-import {list} from "postcss";
+import {colors} from "../../constants";
 
 interface Props {
   history: any,
@@ -42,8 +33,9 @@ interface Props {
 interface State {
   mouseOver: boolean
   lastHoveredObj: any,
-  data: any,
+  mounted: boolean,
   isPropogating: boolean,
+  toggleText: boolean,
   values: any
 }
 
@@ -88,23 +80,9 @@ class EventContainer extends React.Component<Props, State> {
     this.state = {
       mouseOver: false,
       lastHoveredObj: null,
-      data: [
-        {
-          id: 1,
-          sound: cello_d4,
-          text: ' have died',
-          volume: 0,
-          interval: 6
-        },
-        {
-          id: 2,
-          sound: cello_d2,
-          text: ' have walked',
-          volume: 0,
-          interval: 1
-        }
-      ],
       isPropogating: false,
+      mounted: false,
+      toggleText: false,
       values: {}
     }
 
@@ -147,7 +125,7 @@ class EventContainer extends React.Component<Props, State> {
   }
 
   generateRipples = (): any => {
-    this.state.data.forEach((stat, i) => {
+    this.props.event.data.stats.forEach((stat, i) => {
       // ripple setup
       const circle = new THREE.Mesh(
         new THREE.TorusGeometry(stat.id * 5, 0.2, 8, 100),
@@ -170,6 +148,7 @@ class EventContainer extends React.Component<Props, State> {
         },
         material: {
           color: 0xffffff,
+          opacity: 0
         }
       })
       sprite.name = `text-${stat.id}`
@@ -178,11 +157,12 @@ class EventContainer extends React.Component<Props, State> {
       this._scene.add(sprite)
 
       // audio setup
+      const audioFile = require(`../../../public/media/${stat.sound}`)
       const waveform = new Tone.Waveform(1024)
       const fft = new Tone.FFT(32)
       const freeverb = new Tone.JCReverb(0.9).toMaster()
       const sound = new Tone.Player({
-        url: viola_c5,
+        url: audioFile,
         volume: stat.volume,
         retrigger: false,
         loop: true,
@@ -192,18 +172,19 @@ class EventContainer extends React.Component<Props, State> {
       * The interval is based on the number of beats specified in the constructor
       * I should figure out how fast etc I want my audio
       * */
+      const now = Tone.now()
       const loop = new Tone.Loop({
         callback: time => {
           // Queues for the next event
-          sound.start(time).stop(time + 0.85)
+          sound.start(now).stop(now + 0.85)
         },
         interval: stat.interval,
         probability: 1
       })
 
       this._bufferPromise.then(() => {
-        Tone.Transport.start('+0.1')
-        loop.start()
+        Tone.Transport.start('+0.05')
+        loop.start('+0.2')
         this._backgroundSound.start()
       })
 
@@ -310,6 +291,20 @@ class EventContainer extends React.Component<Props, State> {
           textObject.material.map.text = q.value.toString() + ' ' + q.text
         }
 
+        if (this.state.toggleText) {
+          new TWEEN.Tween(textObject.material)
+          .to({
+            opacity: 1
+          }, 1000)
+          .easing(TWEEN.Easing.Cubic.Out).start()
+        } else {
+          new TWEEN.Tween(textObject.material)
+          .to({
+            opacity: 0
+          }, 1000)
+          .easing(TWEEN.Easing.Cubic.Out).start()
+        }
+
         new TWEEN.Tween(textObject.position)
         .to({
           y: (i + 1) * 5 * (max > 0 ? max : 1)
@@ -323,7 +318,7 @@ class EventContainer extends React.Component<Props, State> {
           x: delta,
           y: delta,
           // TODO: play with z-position
-          z: delta,
+          z: delta + 1,
         }, 500)
         .easing(TWEEN.Easing.Cubic.Out).start()
       })
@@ -332,7 +327,7 @@ class EventContainer extends React.Component<Props, State> {
         const delta = (Math.sin((v.x / 2 + this.step) * Math.PI * 2)
           + Math.cos((v.z / 2 + this.step * 2) * Math.PI)
           + Math.sin((v.x + v.y + this.step * 2) / 4 * Math.PI)) / 10
-        v.y = delta
+        v.y = delta * 2
       })
       this._pointCloud.geometry.verticesNeedUpdate = true
     })
@@ -381,38 +376,77 @@ class EventContainer extends React.Component<Props, State> {
     this.createScene()
     this.animate()
     this.generateRipples()
+    setTimeout(() => {
+      this.setState({mounted: true})
+    }, 0)
     document.addEventListener('mousemove', this.handleMouseMove)
   }
 
   public render() {
-    // FIX THIS AFTER
-    const _event = data[0]
+    const _event = this.props.event.data
     return (
-      <div style={styles.event}>
-        <header style={styles.header}>
-          <button
-            onMouseOver={() => this.setState({mouseOver: true})}
-            onMouseOut={() => this.setState({mouseOver: false})}
-            style={{
-              transform: this.state.mouseOver ? 'scale(1)' : 'scale(0.8)',
-              cursor: this.state.mouseOver ? 'pointer' : 'normal',
-              ...styles.close
-            }}
-          >
-            <img src={CloseIcon}/>
-          </button>
-          <h1 style={styles.geoText}>
-            {_event.properties.geo.location}, {_event.properties.geo.map}
-          </h1>
-          <span style={styles.description}>
-            {_event.properties.description}
-          </span>
-        </header>
+      <div style={{
+        backgroundColor: _event.backgroundColor,
+        borderColor: _event.borderColor,
+        ...styles.event
+      }}>
+        <div style={{
+          opacity: this.state.mounted ? 1 : 0,
+          transition: 'opacity 2s ease-in-out',
+        }}>
+          <header style={styles.header}>
+            <button
+              onMouseDown={() => this.props.history.goBack()}
+              onMouseOver={() => this.setState({mouseOver: true})}
+              onMouseOut={() => this.setState({mouseOver: false})}
+              style={{
+                transform: this.state.mouseOver ? 'scale(1)' : 'scale(0.8)',
+                cursor: this.state.mouseOver ? 'pointer' : 'normal',
+                ...styles.close
+              }}
+            >
+              <img src={CloseIcon}/>
+            </button>
+            <div>
+              <button
+                style={{
+                  cursor: this.state.mouseOver ? 'pointer' : 'normal',
+                  ...styles.toggleButton
+                }}
+                onMouseDown={() => this.setState({toggleText: !this.state.toggleText})}
+                onMouseOver={() => this.setState({mouseOver: true})}
+                onMouseOut={() => this.setState({mouseOver: false})}
+              >
+                <h2 style={styles.toggleText}>Toggle Information</h2>
+              </button>
+            </div>
+            <div style={{
+              opacity: this.state.toggleText ? 1 : 0,
+              transition: 'opacity 1s ease-in-out',
+              marginTop: 10
+            }}>
+              <h1 style={styles.geoText}>
+                {_event.properties.geo.location}, {_event.properties.geo.map}
+              </h1>
+              <span style={styles.description}>
+                {_event.properties.description}
+              </span>
+            </div>
 
-        <div
-          style={styles.svgContainer}
-          ref={node => this.svgContainer = node}
-        />
+          </header>
+
+          <div style={{
+            opacity: this.state.toggleText ? 1 : 0,
+            transition: 'opacity 1s ease-in-out',
+          }}>
+            More text goes here
+          </div>
+
+          <div
+            style={styles.svgContainer}
+            ref={node => this.svgContainer = node}
+          />
+        </div>
 
       </div>
     )

@@ -3,6 +3,8 @@ export const data = [
     "id": 1,
     "importance": 3,
     "type": "political",
+    "backgroundColor": "#191D3E",
+    "borderColor": "#252A4D",
     "properties": {
       "coordinates": {
         "x": 100,
@@ -18,21 +20,24 @@ export const data = [
     "stats": [
       {
         "id": 1,
-        "sound": "drums.wav",
-        "type": "civilians have fled the country",
-        "interval": 9000
+        "sound": "syria_damascus/viola_C5.mp3",
+        "text": "have perished",
+        "volume": 0,
+        "interval": 10
       },
       {
         "id": 2,
-        "sound": "drums.wav",
-        "type": "civilians have fled the country",
-        "interval": 6000
+        "sound": "syria_damascus/cello_A4.mp3",
+        "text": "people have been dislocated",
+        "volume": -20,
+        "interval": 6
       },
       {
         "id": 3,
-        "sound": "drums.wav",
-        "type": "civilians have fled the country",
-        "interval": 3000
+        "sound": "syria_damascus/cello_D2.mp3",
+        "text": "footsteps have been heard",
+        "volume": -5,
+        "interval": 1
       }
     ]
   }
