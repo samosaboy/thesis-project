@@ -1,5 +1,2 @@
 export { Header } from './Utils/Header/Header'
-export { Event } from './Stage/Event/Event'
 export { Ripple, Props } from './Stage/Ripple/Ripple'
-export { Map } from './Event/Map/Map'
-export { Hover } from './Utils/Hover/Hover'
