@@ -12,6 +12,8 @@ import * as CloseIcon from './closeicon.png'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
+const TextSprite = require('three.textsprite')
+const helveticaRegular = require('./helvetiker_regular.typeface.json')
 
 import 'three/water'
 import 'three/sky'
@@ -40,7 +42,9 @@ interface Props {
 interface State {
   mouseOver: boolean
   lastHoveredObj: any,
-  data: any
+  data: any,
+  isPropogating: boolean,
+  values: any
 }
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -71,6 +75,8 @@ class EventContainer extends React.Component<Props, State> {
   private _rippleArray: any
   private _bubbleArray: any
   private _pointCloud: any
+  private _loader: THREE.FontLoader
+
   private step: number
 
   // audio
@@ -86,18 +92,20 @@ class EventContainer extends React.Component<Props, State> {
         {
           id: 1,
           sound: cello_d4,
-          type: 'Test',
+          text: ' have died',
           volume: 0,
           interval: 6
         },
         {
           id: 2,
           sound: cello_d2,
-          type: 'Test',
+          text: ' have walked',
           volume: 0,
-          interval: 7.5
+          interval: 1
         }
-      ]
+      ],
+      isPropogating: false,
+      values: {}
     }
 
     this.step = 0
@@ -112,6 +120,7 @@ class EventContainer extends React.Component<Props, State> {
     this._light = new THREE.DirectionalLight(0xffffff, 1.0)
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
+    this._loader = new THREE.FontLoader
 
     Tone.Transport.bpm.value = 120
     Tone.Transport.loop = true
@@ -141,16 +150,32 @@ class EventContainer extends React.Component<Props, State> {
     this.state.data.forEach((stat, i) => {
       // ripple setup
       const circle = new THREE.Mesh(
-        new THREE.TorusBufferGeometry(stat.id * 10, 0.5, 8, 100),
+        new THREE.TorusGeometry(stat.id * 5, 0.2, 8, 100),
         new THREE.MeshBasicMaterial({
           color: 0x4C6F97,
           shading: THREE.FlatShading,
-          map: this.generateSprite()
         })
         // new THREE.MeshBasicMaterial({color: 0x252A4D})
       )
       circle.name = `circle-${stat.id}`
       this._scene.add(circle)
+
+      // text setup
+      const sprite = new TextSprite({
+        textSize: 1,
+        redrawInterval: 250,
+        texture: {
+          text: '0 ' + stat.text,
+          fontFamily: 'Arial'
+        },
+        material: {
+          color: 0xffffff,
+        }
+      })
+      sprite.name = `text-${stat.id}`
+      sprite.position.set(0, stat.id * 5, 1)
+
+      this._scene.add(sprite)
 
       // audio setup
       const waveform = new Tone.Waveform(1024)
@@ -185,6 +210,8 @@ class EventContainer extends React.Component<Props, State> {
       this._rippleArray[i] = {
         circle,
         waveform,
+        text: stat.text,
+        value: 0
       }
     })
   }
@@ -198,7 +225,7 @@ class EventContainer extends React.Component<Props, State> {
 
     // this.generatePointCloud()
 
-    this._pointCloud = this.generatePointCloud(new THREE.Color(0, 1, 0), 100, 100)
+    this._pointCloud = this.generatePointCloud(new THREE.Color(0x5D6BC1), 100, 100)
     this._pointCloud.rotation.set(Math.PI / 2, 0, 0)
     this._pointCloud.scale.set(85, 85, 85)
     this._pointCloud.position.set(4, 0, 0)
@@ -206,7 +233,7 @@ class EventContainer extends React.Component<Props, State> {
 
     this._camera.position.x = 0
     this._camera.position.y = 0
-    // this._camera.position.z = 1000
+    // this._camera.position.z = 400
     this._camera.position.z = 100
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
   }
@@ -237,13 +264,16 @@ class EventContainer extends React.Component<Props, State> {
     const geometry = new THREE.Geometry()
     const colors = []
     let k = 0
+    // this sets the dimensions (n, n square)
+    const widthVariation = 5
+    const heightVariation = 5
     for (let i = 0; i < width; i++) {
       for (let j = 0; j < length; j++) {
-        const u = i / width
-        const v = j / length
-        const x = u - 0.5
-        const y = 0.5
-        const z = v - 0.5
+        const u = i / (width / widthVariation)
+        const v = j / (length / heightVariation)
+        const x = u - (widthVariation / 2)
+        const y = 0
+        const z = v - (heightVariation / 2)
         geometry.vertices.push(new THREE.Vector3(x, y, z))
         const intensity = (y + 0.1) * 7
         colors[k] = (color.clone().multiplyScalar(intensity))
@@ -265,12 +295,28 @@ class EventContainer extends React.Component<Props, State> {
 
   private animateRipple = (): void => {
     Tone.Transport.schedule(() => {
+      this.step += 0.0005
       // There might be a better way than looping through to get q.waveform data
       this._rippleArray.forEach((q, i) => {
         const frequencyData: any = q.waveform.getValue()
-        const max: number = parseFloat(d3.max(frequencyData)) * 100
+        const max: number = Number(d3.max(frequencyData)) * 100
         const object = this._scene.getObjectByName(`circle-${i + 1}`)
-        const delta = max > 1 ? 1 * max : 1
+        const textObject = this._scene.getObjectByName(`text-${i + 1}`)
+        const delta = max > 1 ? max : 1
+
+        if (max > 1) {
+          // console.log(max)
+          q.value++
+          textObject.material.map.text = q.value.toString() + ' ' + q.text
+        }
+
+        new TWEEN.Tween(textObject.position)
+        .to({
+          y: (i + 1) * 5 * (max > 0 ? max : 1)
+        }, 1000)
+        .easing(TWEEN.Easing.Cubic.Out).start()
+
+        this.setState({isPropogating: max > 1 && true})
 
         const rippleTween = new TWEEN.Tween(object.scale)
         .to({
@@ -282,13 +328,12 @@ class EventContainer extends React.Component<Props, State> {
         .easing(TWEEN.Easing.Cubic.Out).start()
       })
 
-      this.step += 0.0005
-      // this._pointCloud.geometry.vertices.forEach(v => {
-      //   v.y = (Math.sin((v.x / 2 + this.step) * Math.PI * 2)
-      //     + Math.cos((v.z / 2 + this.step * 2) * Math.PI)
-      //     + Math.sin((v.x + v.y + this.step * 2) / 4 * Math.PI)) / 2
-      // })
-
+      this._pointCloud.geometry.vertices.forEach(v => {
+        const delta = (Math.sin((v.x / 2 + this.step) * Math.PI * 2)
+          + Math.cos((v.z / 2 + this.step * 2) * Math.PI)
+          + Math.sin((v.x + v.y + this.step * 2) / 4 * Math.PI)) / 10
+        v.y = delta
+      })
       this._pointCloud.geometry.verticesNeedUpdate = true
     })
   }
@@ -322,7 +367,7 @@ class EventContainer extends React.Component<Props, State> {
         Tone.Transport.start()
         if (this.state.lastHoveredObj) {
           const object = this._scene.getObjectByName(this.state.lastHoveredObj.object.name)
-          object.material.color.setHex(0x000000)
+          object.material.color.setHex(0x4C6F97)
         }
       }
     }
