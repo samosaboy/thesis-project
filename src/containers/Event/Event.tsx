@@ -13,10 +13,14 @@ import * as CloseIcon from './closeicon.png'
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const TextSprite = require('three.textsprite')
+const dat = require('three/gui')
 
-import 'three/water'
-import 'three/sky'
-import 'three/canvasRenderer'
+import 'three/effectcomposer'
+import 'three/copyshader'
+import 'three/bokehpass'
+import 'three/renderpass'
+import 'three/shaderpass'
+import 'three/bokehshader'
 
 interface Props {
   history: any,
@@ -63,6 +67,7 @@ class EventContainer extends React.Component<Props, State> {
   private _bubbleArray: any
   private _pointCloud: any
   private _loader: THREE.FontLoader
+  private _composer: THREE.EffectComposer
 
   private step: number
 
@@ -94,6 +99,8 @@ class EventContainer extends React.Component<Props, State> {
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
     this._loader = new THREE.FontLoader
+    this._scene.matrixAutoUpdate = false
+    this._renderer.autoClear = true
 
     Tone.Transport.bpm.value = 120
     Tone.Transport.loop = true
@@ -116,16 +123,7 @@ class EventContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    console.log('component did mount')
     this.init()
-  }
-
-  componentWillUnmount() {
-    console.log('component will unmount')
-    Tone.Transport.stop()
-    // setTimeout(() => {
-    //   this.setState({mounted: false})
-    // }, 0)
   }
 
   generateRipples = (): any => {
@@ -324,7 +322,7 @@ class EventContainer extends React.Component<Props, State> {
         }, 500)
         .easing(TWEEN.Easing.Cubic.Out).start()
 
-        object.rotation.z += 0.10 / (i+1)
+        object.rotation.z += 0.10 / (i + 1)
       })
 
       this._pointCloud.geometry.vertices.forEach(v => {

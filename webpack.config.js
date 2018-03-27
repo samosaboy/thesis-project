@@ -31,9 +31,13 @@ module.exports = {
     // https://github.com/Microsoft/TypeScript/issues/11677
     mainFields: ['module', 'browser', 'main'],
     alias: {
-      'three/water': Path.join(__dirname, 'node_modules/three/examples/js/objects/Water.js'),
-      'three/sky': Path.join(__dirname, 'node_modules/three/examples/js/objects/Sky.js'),
-      'three/canvasRenderer': Path.join(__dirname, 'node_modules/three/examples/js/renderers/CanvasRenderer.js')
+      'three/bokehpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/BokehPass.js'),
+      'three/effectcomposer': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/EffectComposer.js'),
+      'three/renderpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/RenderPass.js'),
+      'three/shaderpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/ShaderPass.js'),
+      'three/bokehshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/BokehShader.js'),
+      'three/copyshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/CopyShader.js'),
+      'three/gui': Path.join(__dirname, 'node_modules/three/examples/js/libs/dat.gui.min.js'),
     },
   },
   module: {
