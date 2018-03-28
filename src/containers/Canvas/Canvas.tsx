@@ -438,7 +438,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   private showEventInfo = (item: any): any => {
     this.props.actions.eventActive({data: item})
     this.props.history.push({
-      pathname: `/${item.id}`,
+      pathname: `/event/${item.id}`,
     })
   }
 
