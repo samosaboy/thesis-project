@@ -16,8 +16,8 @@ export const data = [
     "drone": "drone_01_sound.mp3",
     "properties": {
       "coordinates": {
-        "x": -80,
-        "y": 80
+        "x": 0,
+        "y": 0
       },
       "title": "The Syrian Civil War",
       "description": "The ongoing civil war",

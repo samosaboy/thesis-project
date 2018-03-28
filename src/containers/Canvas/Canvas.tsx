@@ -65,13 +65,14 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
     this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 3000)
     this._camera.position.z = 300
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
-    this._renderer = new THREE.WebGLRenderer({antialias: true})
+    this._renderer = new THREE.WebGLRenderer({antialias: false})
     this._light = new THREE.SpotLight(0xffffff)
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
     this._controls = new THREE.TrackballControls(this._camera)
     this._scene.updateMatrixWorld()
     this._clock = new THREE.Clock()
+    this._clock.autoStart = false
 
     // plane setup
     this._plane = new THREE.Mesh(
@@ -299,10 +300,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   }
 
   componentWillUnmount() {
-    clearInterval(this.setInterval._id)
-
-    // do I really have to do this tho?
-    this.animate = null
+    this._clock.stop()
   }
 
   private init = (): void => {
@@ -330,18 +328,21 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
       this._scene.add(sphere)
 
       const sprite = new TextSprite({
-        textSize: 5,
-        redrawInterval: false,
+        textSize: 10,
+        redrawInterval: 250,
         texture: {
+          antialias: true,
           text: event.properties.title,
-          fontFamily: 'Lora'
+          fontFamily: 'Lora',
         },
         material: {
           color: "#6b6b6b",
+          generateMipmaps: false
         }
       })
+      sprite.material.generateMipmaps = false
       // sprite.name = `text-${stat.id}`
-      sprite.position.set(0, -15, 5)
+      sprite.position.set(0, -20, 5)
 
       group.add(sprite)
       group.add(sphere)
@@ -359,24 +360,20 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
 
     if (!this.state.mouseDown) {
       this._camera.reset()
-      this.interval = 0
-      if (this.setInterval) {
-        clearInterval(this.setInterval._id)
-      }
     } else {
-      if (this.interval > 0) {
+      console.log(this._clock.getElapsedTime());
+      if (this._clock.getElapsedTime() > 0.5) {
         this._camera.zoom(this.state.lastHoveredEvent.object)
 
-        if (this.interval > 1) {
+        if (this._clock.getElapsedTime() > 3) {
           this._camera.fullZoom(this.state.lastHoveredEvent.object)
           const name = this.state.lastHoveredEvent.object.parent.name
           const id = name.replace('Event', '')
           const item = this.state.data.filter(q => q.id === Number(id))
-          this.showEventInfo(item[0])
 
-          // if (this.interval > 5) {
-          //   this.showEventInfo(item[0])
-          // }
+          if (this._clock.getElapsedTime() > 5) {
+            this.showEventInfo(item[0])
+          }
         }
       }
     }
@@ -430,18 +427,12 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
 
   private handleMouseDown = (event) => {
     if (this.state.lastHoveredEvent) {
-      this.setState({mouseDown: true}, () => {
-        this.setInterval = setInterval(() => {
-          this.interval++
-        }, 1000)
-      })
+      this.setState({mouseDown: true}, () => this._clock.start())
     }
   }
 
   private handleMouseUp = (event) => {
-    this.setState({mouseDown: false})
-    clearInterval(this.setInterval._id)
-    this.interval = 0
+    this.setState({mouseDown: false}, () => this._clock.stop())
   }
 
   private showEventInfo = (item: any): any => {
@@ -465,13 +456,23 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
       <div>
         <span style={{
           position: 'absolute' as 'absolute',
+          top: 50,
+          width: window.innerWidth,
+          textAlign: 'center',
+          color: '#000000',
+          zIndex: 10,
+          opacity: this.state.mouseDown ? 0 : 1,
+          transition: 'opacity 1.5s ease-in-out',
+        }}>Click on an event and hold.</span>
+        <span style={{
+          position: 'absolute' as 'absolute',
           top: 150,
           width: window.innerWidth,
           textAlign: 'center',
           color: '#000000',
           zIndex: 10,
           opacity: this.state.mouseDown ? 1 : 0,
-          transition: 'opacity 4s ease-in-out',
+          transition: 'opacity 1.5s ease-in-out',
         }}>Keep holding the button.</span>
         <div
           style={styles.svgContainer}

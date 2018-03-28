@@ -396,7 +396,7 @@ class EventContainer extends React.Component<Props, State> {
         }}>
           <header style={styles.header}>
             <button
-              onMouseDown={() => this.props.history.goBack()}
+              onMouseDown={() => window.location.href = 'http://localhost:3000/'}
               onMouseOver={() => this.setState({mouseOver: true})}
               onMouseOut={() => this.setState({mouseOver: false})}
               style={{
