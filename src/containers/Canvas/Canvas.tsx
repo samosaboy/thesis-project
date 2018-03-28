@@ -13,9 +13,7 @@ export namespace Canvas {
 
   export interface State {
     data: any,
-    props: any,
     loading: boolean,
-    textPlacement: boolean,
   }
 }
 
@@ -31,9 +29,7 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
     super(props, context)
     this.state = {
       data: [],
-      props: {},
       loading: true,
-      textPlacement: false,
     }
   }
 
@@ -42,10 +38,6 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
       this.setState({data: data})
       this.setState({loading: false})
     }
-  }
-
-  componentWillUnmount() {
-    this.setState({loading: true})
   }
 
   private showEventInfo = (item: any): any => {
