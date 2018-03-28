@@ -58,13 +58,16 @@ export default {
     zIndex: 9999
   },
   left: {
+    width: window.innerWidth / 4,
     position: 'absolute' as 'absolute',
     zIndex: 9999,
-    left: 20,
+    left: 50,
   },
   right: {
+    textAlign: 'right',
+    width: window.innerWidth / 4,
     position: 'absolute' as 'absolute',
     zIndex: 9999,
-    right: 20,
+    right: 50,
   }
 }

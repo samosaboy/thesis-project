@@ -367,15 +367,16 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
       if (this.interval > 0) {
         this._camera.zoom(this.state.lastHoveredEvent.object)
 
-        if (this.interval > 3) {
+        if (this.interval > 1) {
           this._camera.fullZoom(this.state.lastHoveredEvent.object)
           const name = this.state.lastHoveredEvent.object.parent.name
           const id = name.replace('Event', '')
           const item = this.state.data.filter(q => q.id === Number(id))
+          this.showEventInfo(item[0])
 
-          if (this.interval > 5) {
-            this.showEventInfo(item[0])
-          }
+          // if (this.interval > 5) {
+          //   this.showEventInfo(item[0])
+          // }
         }
       }
     }

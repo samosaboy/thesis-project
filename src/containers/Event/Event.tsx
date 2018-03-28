@@ -192,7 +192,8 @@ class EventContainer extends React.Component<Props, State> {
         circle,
         waveform,
         text: stat.text,
-        value: 0
+        value: 0,
+        starting: stat.starting
       }
     })
   }
@@ -439,11 +440,16 @@ class EventContainer extends React.Component<Props, State> {
             transition: 'opacity 1s ease-in-out',
             ...styles.mainBody
           }}>
-            <div style={styles.left}>
-              {_event.content.left}
-            </div>
+            <div style={styles.left} dangerouslySetInnerHTML={{__html: _event.content.left}}/>
             <div style={styles.right}>
-              {_event.content.right}
+              {
+                this._rippleArray.map(q => (
+                  <span style={{display: 'block', marginBottom: 5}}>
+                    <span style={{display: 'block', fontSize: 28, fontWeight: 'bold'}}>{q.starting + q.value}</span>
+                    {q.text}
+                    </span>
+                ))
+              }
             </div>
           </div>
 
