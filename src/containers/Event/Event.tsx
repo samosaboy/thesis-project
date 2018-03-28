@@ -66,8 +66,6 @@ class EventContainer extends React.Component<Props, State> {
   private _rippleArray: any
   private _bubbleArray: any
   private _pointCloud: any
-  private _loader: THREE.FontLoader
-  private _composer: THREE.EffectComposer
 
   private step: number
 
@@ -98,7 +96,6 @@ class EventContainer extends React.Component<Props, State> {
     this._light = new THREE.DirectionalLight(0xffffff, 1.0)
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
-    this._loader = new THREE.FontLoader
     this._scene.matrixAutoUpdate = false
     this._renderer.autoClear = true
 

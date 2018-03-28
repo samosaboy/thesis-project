@@ -38,6 +38,7 @@ module.exports = {
       'three/bokehshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/BokehShader.js'),
       'three/copyshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/CopyShader.js'),
       'three/gui': Path.join(__dirname, 'node_modules/three/examples/js/libs/dat.gui.min.js'),
+      'three/trackballcontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.js'),
     },
   },
   module: {
