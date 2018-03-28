@@ -21,7 +21,8 @@ export namespace Canvas {
   export interface State {
     data: any,
     loading: boolean,
-    lastHoveredEvent: any
+    lastHoveredEvent: any,
+    mouseDown: boolean
   }
 }
 
@@ -44,19 +45,24 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   private _mouse: THREE.Vector2
   private _raycaster: THREE.Raycaster
   private _controls: THREE.TrackballControls
+  private _clock = THREE.Clock
+
+  private interval: any
+  private setInterval: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
       data: [],
       loading: true,
-      lastHoveredEvent: {}
+      lastHoveredEvent: {},
+      mouseDown: false
     }
 
     // three setup
     this._scene = new THREE.Scene()
-    this._camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight)
-    this._camera.position.z = 150
+    this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 3000)
+    this._camera.position.z = 300
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
     this._renderer = new THREE.WebGLRenderer({antialias: true})
     this._light = new THREE.DirectionalLight(0xffffff, 1.0)
@@ -65,6 +71,9 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
     this._raycaster = new THREE.Raycaster()
     this._controls = new THREE.TrackballControls(this._camera)
     this._scene.updateMatrixWorld()
+    this._clock = new THREE.Clock()
+
+    this.interval = 0
 
     // Trackball Controls
     this._controls.rotateSpeed = 3.6
@@ -74,31 +83,45 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
     this._controls.noZoom = false
     this._controls.noPan = false
 
+    const cameraSpeed = 1
+
     // Camera Controls
     this._camera.reset = () => {
-      const speed = 1
       new TWEEN.Tween(this._camera.position)
       .to({
         x: 0,
         y: 0,
-        z: 150
-      }, speed * 1000)
+        z: 300
+      }, cameraSpeed * 1000)
       .easing(TWEEN.Easing.Cubic.Out).start()
     }
 
     this._camera.zoom = object => {
-      const position = new THREE.Vector3()
-      position.setFromMatrixPosition(object.matrixWorld)
-
-      const speed = 1
-
       if (object instanceof THREE.Mesh) {
+        const position = new THREE.Vector3()
+        position.setFromMatrixPosition(object.matrixWorld)
+
         new TWEEN.Tween(this._camera.position)
         .to({
           x: position.x,
           y: position.y,
-          z: 50
-        }, speed * 1000)
+          z: 30
+        }, cameraSpeed * 1000)
+        .easing(TWEEN.Easing.Cubic.Out).start()
+      }
+    }
+
+    this._camera.fullZoom = object => {
+      if (object instanceof THREE.Mesh) {
+        const position = new THREE.Vector3()
+        position.setFromMatrixPosition(object.matrixWorld)
+
+        new TWEEN.Tween(this._camera.position)
+        .to({
+          x: position.x,
+          y: position.y,
+          z: 10
+        }, cameraSpeed * 3000)
         .easing(TWEEN.Easing.Cubic.Out).start()
       }
     }
@@ -119,54 +142,88 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
   componentDidMount() {
     this.init()
     if (!this.state.data.length) {
-      this.setState({data: data})
-      this.setState({loading: false})
+      this.setState({data: data},
+        () => {
+          this.createEvents()
+        })
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.setInterval._id)
+
+    // do I really have to do this tho?
+    this.animate = null
   }
 
   private init = (): void => {
     this.createScene()
     this.animate()
-    this.createEvents()
     document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mousedown', this.handleMouseDown)
+    document.addEventListener('mouseup', this.handleMouseUp)
   }
 
   createEvents = () => {
-    const group = new THREE.Group()
-    const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(10, 32, 32),
-      new THREE.MeshBasicMaterial({
-        color: 0x000000,
+    this.state.data.forEach(event => {
+      const group = new THREE.Group()
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(10, 64, 64),
+        new THREE.MeshBasicMaterial({
+          color: event.colors.backgroundColor,
+        })
+      )
+      sphere.position.set(0, 0, 0)
+      this._scene.add(sphere)
+
+      const sprite = new TextSprite({
+        textSize: 5,
+        redrawInterval: false,
+        texture: {
+          text: event.properties.title,
+          fontFamily: 'Lora'
+        },
+        material: {
+          color: event.colors.backgroundColor,
+        }
       })
-    )
-    sphere.position.set(0, 0, 0)
-    this._scene.add(sphere)
+      // sprite.name = `text-${stat.id}`
+      sprite.position.set(0, -15, 0)
 
-    const sprite = new TextSprite({
-      textSize: 5,
-      redrawInterval: 250,
-      texture: {
-        text: 'This is an event',
-        fontFamily: 'Lora'
-      },
-      material: {
-        color: 0x000000,
-      }
+      group.add(sprite)
+      group.add(sphere)
+      group.name = `Event${event.id}`
+      group.position.set(event.properties.coordinates.x, event.properties.coordinates.y, 0)
+      this._scene.add(group)
     })
-    // sprite.name = `text-${stat.id}`
-    sprite.position.set(0, -15, 0)
-
-    group.add(sprite)
-    group.add(sphere)
-    group.name = 'Event'
-    group.position.set(-30, 30, 0)
-    this._scene.add(group)
   }
 
   public animate = (): void => {
     requestAnimationFrame(this.animate)
     this._render()
     TWEEN.update()
+
+    console.log(this.interval)
+
+    if (!this.state.mouseDown) {
+      this._camera.reset()
+      this.interval = 0
+    } else {
+      if (this.interval > 0) {
+        this._camera.zoom(this.state.lastHoveredEvent.object)
+
+        if (this.interval > 3) {
+          this._camera.fullZoom(this.state.lastHoveredEvent.object)
+          const name = this.state.lastHoveredEvent.object.parent.name
+          const id = name.replace('Event', '')
+          const item = this.state.data.filter(q => q.id === Number(id))
+
+          if (this.interval > 5) {
+            this.showEventInfo(item[0])
+          }
+        }
+      }
+    }
   }
 
   private handleMouseMove = (event) => {
@@ -177,7 +234,11 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
 
     if (this.state.data.length) {
       let intersects = []
-      const group = this._scene.getObjectByName('Event')
+      let group: any = {}
+      this.state.data.forEach(event => {
+        group = this._scene.getObjectByName(`Event${event.id}`)
+      })
+
       const raycaster = this._raycaster.intersectObject(group, true)
       if (raycaster.length) {
         intersects = raycaster
@@ -189,7 +250,6 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
         group.traverse(child => {
           if (child instanceof THREE.Mesh || child instanceof THREE.Sprite) {
             child.material.color = new THREE.Color('#767676')
-            this._camera.zoom(intersects[0].object)
           }
         })
       } else {
@@ -197,13 +257,28 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
         if (this.state.lastHoveredEvent) {
           group.traverse(child => {
             if (child instanceof THREE.Mesh || child instanceof THREE.Sprite) {
-              this._camera.reset()
               child.material.color = new THREE.Color('#000000')
             }
           })
         }
       }
     }
+  }
+
+  private handleMouseDown = (event) => {
+    if (this.state.lastHoveredEvent) {
+      this.setState({mouseDown: true}, () => {
+        this.setInterval = setInterval(() => {
+          this.interval++
+        }, 1000)
+      })
+    }
+  }
+
+  private handleMouseUp = (event) => {
+    this.setState({mouseDown: false})
+    clearInterval(this.setInterval._id)
+    this.interval = 0
   }
 
   private showEventInfo = (item: any): any => {
@@ -224,10 +299,23 @@ class Canvas extends React.PureComponent<Canvas.Props, Canvas.State> {
     //   </div>
     // ))
     return (
-      <div
-        style={styles.svgContainer}
-        ref={node => this.svgContainer = node}
-      />
+      <div>
+        <span style={{
+          position: 'absolute' as 'absolute',
+          top: 150,
+          width: window.innerWidth,
+          textAlign: 'center',
+          color: '#FFFFFF',
+          zIndex: 10,
+          opacity: this.state.mouseDown ? 1 : 0,
+          transition: 'opacity 4s ease-in-out',
+        }}>Keep holding the button.</span>
+        <div
+          style={styles.svgContainer}
+          ref={node => this.svgContainer = node}
+        />
+      </div>
+
     )
   }
 }

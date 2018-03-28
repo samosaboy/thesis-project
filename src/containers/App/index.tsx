@@ -37,14 +37,15 @@ export class App extends React.Component<App.Props, App.State> {
 
         <Switch>
           <Route
-            key={'eventId'}
-            path={'/:eventId'}
-            component={EventContainer}
-          />
-          <Route
+            exact
             key={'homePage'}
             path={'/'}
             component={MainStage}
+          />
+          <Route
+            key={'eventId'}
+            path={'/:eventId'}
+            component={EventContainer}
           />
         </Switch>
 
