@@ -31,7 +31,14 @@ module.exports = {
     // https://github.com/Microsoft/TypeScript/issues/11677
     mainFields: ['module', 'browser', 'main'],
     alias: {
-      'three-examples': Path.join(__dirname, './node_modules/three/examples/js')
+      'three/bokehpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/BokehPass.js'),
+      'three/effectcomposer': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/EffectComposer.js'),
+      'three/renderpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/RenderPass.js'),
+      'three/shaderpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/ShaderPass.js'),
+      'three/bokehshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/BokehShader.js'),
+      'three/copyshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/CopyShader.js'),
+      'three/gui': Path.join(__dirname, 'node_modules/three/examples/js/libs/dat.gui.min.js'),
+      'three/trackballcontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.js'),
     },
   },
   module: {
@@ -98,9 +105,10 @@ module.exports = {
       },
       // static assets
       { test: /\.html$/, use: 'html-loader' },
-      { test: /\.png$/, use: 'url-loader?limit=10000' },
+      { test: /\.png$/, use: 'file-loader' },
       { test: /\.jpg$/, use: 'file-loader' },
-      { test: /\.mp3$/, use: 'file-loader' }
+      { test: /\.mp3$/, use: 'file-loader' },
+      { test: /\.wav$/, use: 'file-loader' },
     ]
   },
   plugins: [

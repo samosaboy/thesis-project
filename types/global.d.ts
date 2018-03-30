@@ -14,7 +14,17 @@ declare module "*.svg" {
   export default content;
 }
 
+declare module "*.png" {
+  const image: any;
+  export = image;
+}
+
 declare module "*.mp3" {
+  const sound: any;
+  export = sound;
+}
+
+declare module "*.wav" {
   const sound: any;
   export = sound;
 }

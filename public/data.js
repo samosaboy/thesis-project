@@ -3,73 +3,53 @@ export const data = [
     "id": 1,
     "importance": 3,
     "type": "political",
+    "colors": {
+      "backgroundColor": "#191D3E",
+      "borderColor": "#5c7fb0",
+      "cs0": "#0bb0ae",
+      "cs50": "#FFFFFF",
+    },
+    "content": {
+      "left": "The Syrian Civil War has been an ongoing conflict since 2011 between the government and the people, between religions and between countries. <br /><br /><b>The sound of footsteps:</b><br />The 2253 walk to Serbia, the closest safe haven. <br /><br /><b>The sound of dislocation:</b><br />People being forced from their homes as a result of the violence. <br /><br /><b>The sound of an end:</b><br />A life coming to a halt.",
+      "right": "can he fix it?"
+    },
+    "drone": "drone_01_sound.mp3",
     "properties": {
+      "coordinates": {
+        "x": 0,
+        "y": 0
+      },
       "title": "The Syrian Civil War",
       "description": "The ongoing civil war",
       "geo": {
         "location": "Damascus",
         "map": "Syria"
       },
-      "coordinates": {
-        "x": 700,
-        "y": 200
-      }
     },
-    "ripples": [
-      {
-        "id": 1,
-        "type": "ripple type i.e. paths, single event",
-        "type_properties": {
-          "coordinates": {
-            "x": 0.01,
-            "y": 0.05
-          },
-          "color": "red"
-        },
-        "media": {
-          "id": 1,
-          "type": "video",
-          "file": "video",
-          "extension": "ogv",
-          "volume": 50,
-          "allow_drag": true,
-          "allow_click": false,
-          "auto_close": true,
-          "auto_play": true
-        },
-        "properties": {
-          "title": "Syrian regime bombs civilians in Eastern Ghouta",
-          "description": "A besieged area consisting of young families and children on the outskirts of Damascus has been under constant bombing. A child's scream generally reaches 115 decibels. A bomb exploding reaches 240 - 280 decibels.<br /><br />It has been estimated that 393,000 people have been trapped in this region since mid-November 2017.",
-          "location": "bottom"
-        },
-        "content": [
-          {
-            "media_id": 1,
-            "coordinates": {
-              "x": 0.015,
-              "y": 0.02
-            },
-            "interval": 420,
-            "properties": {
-              "title": "content title",
-              "text": "content information"
-            }
-          }
-        ]
-      }
-    ],
     "stats": [
       {
-        "type": "stat type i.e. deaths",
-        "value": 12312,
-        "progression": {
-          "type": "overtime, does it increase or decrease?",
-          "value": 12,
-          "rate": {
-            "type": "is it daily, monthly, per second?",
-            "value": 23
-          }
-        }
+        "id": 1,
+        "sound": "syria_damascus/viola_C5.mp3",
+        "text": "have perished",
+        "volume": 0,
+        "interval": 10,
+        "starting": 44203
+      },
+      {
+        "id": 2,
+        "sound": "syria_damascus/cello_A4.mp3",
+        "text": "people have been dislocated",
+        "volume": -20,
+        "interval": 6,
+        "starting": 5524333
+      },
+      {
+        "id": 3,
+        "sound": "syria_damascus/cello_D2.mp3",
+        "text": "footsteps have been heard",
+        "volume": -5,
+        "interval": 1,
+        "starting": 183012
       }
     ]
   }
