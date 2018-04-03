@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {withRouter} from 'react-router'
 import styles from './EventStyles'
-// import RippleEventView from '../../components/Event/Ripple/Ripple'
 import * as actions from '../../actions/actions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -46,8 +45,6 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    event: state.eventActive,
-    ripple: state.eventRippleActive
   }
 }
 

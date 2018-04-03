@@ -1,22 +1,10 @@
-import { combineReducers, Reducer } from "redux"
-import helper from './helper'
-import rippleActive from './rippleActive'
-import position from './position'
-import eventActive from './eventActive'
-import eventRippleActive from './eventRippleActive'
+import { combineReducers } from 'redux'
+import threeData from './threeData'
 
 export interface RootState {
-  helper: helperConfig,
-  rippleActive: rippleActiveConfig
-  position: pointerPositionConfig,
-  eventActive: eventActiveConfig,
-  eventRippleActive: eventRippleActiveConfig,
+  threeData: threeDataConfig
 }
 
 export default combineReducers<RootState>({
-  helper,
-  rippleActive,
-  position,
-  eventActive,
-  eventRippleActive
+  threeData,
 })

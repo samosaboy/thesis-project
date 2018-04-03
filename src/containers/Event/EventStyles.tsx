@@ -1,4 +1,4 @@
-import {fonts, colors} from "../../constants";
+import {fonts, colors} from '../../constants'
 
 const borderWidth = 7.5
 
@@ -14,16 +14,16 @@ export default {
     position: 'absolute' as 'absolute',
     width: window.innerWidth,
     textAlign: 'center',
-    zIndex: 9999
+    zIndex: 9999,
   },
   geoText: {
     margin: 0,
     color: colors.eventHeadings,
-    fontSize: fonts.title
+    fontSize: fonts.title,
   },
   description: {
     color: colors.eventText,
-    fontSize: fonts.description
+    fontSize: fonts.description,
   },
   svgContainer: {
     width: window.innerWidth - (2*borderWidth),
@@ -43,7 +43,7 @@ export default {
     borderWidth: 1,
     borderColor: colors.eventHeadings,
     opacity: 0.5,
-    transform: 'scale(0.8)'
+    transform: 'scale(0.8)',
   },
   toggleText: {
     color: colors.eventHeadings,
@@ -55,7 +55,7 @@ export default {
     position: 'absolute' as 'absolute',
     top: window.innerHeight / 3,
     width: window.innerWidth,
-    zIndex: 9999
+    zIndex: 9999,
   },
   left: {
     width: window.innerWidth / 4,
@@ -69,5 +69,5 @@ export default {
     position: 'absolute' as 'absolute',
     zIndex: 9999,
     right: 50,
-  }
+  },
 }
