@@ -1,5 +1,7 @@
 import { createAction } from 'redux-actions'
 import * as Actions from '../constants/actions'
 
-// THREE stuff
-export const addThreeAnimate = createAction<threeDataConfig>(Actions.THREE_ANIMATE_ADD)
+// Mouse Event Stuff
+export const addMouseEvent = createAction<mouseDataConfig>(Actions.ADD_MOUSE_EVENT)
+export const resetMouseEvent = createAction<mouseDataConfig>(Actions.RESET_MOUSE_EVENT)
+export const addLastHoveredObject = createAction<mouseDataConfig>(Actions.ADD_LAST_HOVERED_OBJ)

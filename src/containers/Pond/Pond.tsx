@@ -31,7 +31,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    threeData: state.threeData,
+    mouseData: state.mouseData,
   }
 }
 
@@ -39,7 +39,7 @@ const mapStateToProps = (state: RootState) => {
 class Pond extends React.PureComponent<Pond.Props, Pond.State> {
   private pondElement: any
   private title: any
-  private continue: any
+  private subtitle: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -61,7 +61,7 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
     this.title = new TextLabel({
       parent: sphere,
       camera: this.props.camera,
-      text: 'The Ripple Project',
+      text: 'The Ripple Effect',
       style: {
         font: 'Lato',
         weight: 600,
@@ -71,8 +71,8 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
     })
 
     this.title.start()
+
     this.props.animate.push(this.title.update)
-    // this.title.update()
 
     // console.log(this.props.clock.getElapsedTime())
 

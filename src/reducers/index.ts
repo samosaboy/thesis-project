@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux'
-import threeData from './threeData'
+import mouseData from './mouseData'
 
 export interface RootState {
-  threeData: threeDataConfig
+  mouseData: mouseDataConfig
 }
 
 export default combineReducers<RootState>({
-  threeData,
+  mouseData,
 })

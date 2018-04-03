@@ -17,18 +17,23 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    threeData: state.threeData,
+    mouseData: state.mouseData,
   }
 }
 
 export namespace App {
+  export interface Props {
+    actions?: typeof actions,
+    mouseData?: any
+  }
+
   export interface State {
     prevObject: any,
   }
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-class App extends React.Component<any, App.State> {
+class App extends React.Component<App.Props, App.State> {
   // svg setup
   private svgContainer: any
 
@@ -52,6 +57,13 @@ class App extends React.Component<any, App.State> {
     this.state = {
       prevObject: {}, // the last object we hovered over
     }
+
+    /*
+     * Mouse events
+     * */
+    document.addEventListener('mousemove', this.handleMouseMove)
+    // document.addEventListener('mousedown', this.handleMouseDown)
+    // document.addEventListener('mouseup', this.handleMouseUp)
 
     /*
      * Animate Array
@@ -172,10 +184,12 @@ class App extends React.Component<any, App.State> {
     this._intersects = this._raycaster.intersectObjects(this._scene.children, true)
 
     if (this._intersects.length) {
+      this.props.actions.addLastHoveredObject({ object: this._intersects[0] })
       if (this._intersects[0].object.name === 'sphere') {
         window.document.body.style.cursor = 'pointer'
       }
     } else {
+      this.props.actions.resetMouseEvent({})
       window.document.body.style.cursor = 'default'
     }
   }
@@ -183,7 +197,6 @@ class App extends React.Component<any, App.State> {
   private init = (): void => {
     this.createScene()
     this.animate()
-    document.addEventListener('mousemove', this.handleMouseMove)
     this.animateArray.push(this._controls.update, this._render)
   }
 
@@ -191,17 +204,58 @@ class App extends React.Component<any, App.State> {
     this.init()
   }
 
+  private handleMouseDown = () => {
+    this.props.actions.addMouseEvent({
+      event: 'mousedown',
+      object: this._intersects[0],
+    })
+    this._clock.start()
+  }
+
+  private handleMouseUp = () => {
+    this.props.actions.addMouseEvent({
+      event: 'mouseout',
+    })
+    this._clock.elapsedTime = 0
+    this._clock.stop()
+  }
+
+
   private animate = (): any => {
     requestAnimationFrame(this.animate)
-    // this._render()
-    // this._controls.update()
     this.animateArray.forEach(fn => fn.call())
     TWEEN.update()
+
+    /*
+     * Deal with mouse down events
+     * */
+    console.log(this._clock.getElapsedTime())
+
+    if (this.props.mouseData.event === 'mousedown') {
+      if (this.props.mouseData.object) {
+        this._camera.zoom(this.props.mouseData.object.object)
+      }
+    } else {
+      this._camera.reset()
+    }
   }
 
   public render() {
     return (
       <main>
+
+        <div
+          onMouseDown={this.handleMouseDown}
+          onMouseUp={this.handleMouseUp}
+          style={{
+            position: 'absolute' as 'absolute',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            zIndex: 999,
+            top: 0,
+            left: 0,
+          }}
+        />
 
         <div
           style={{

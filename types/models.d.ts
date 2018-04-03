@@ -1,5 +1,6 @@
-declare interface threeData {
-  data: any
+declare interface mouseData {
+  event?: string,
+  object?: any
 }
 
-declare type threeDataConfig = threeData
+declare type mouseDataConfig = mouseData
