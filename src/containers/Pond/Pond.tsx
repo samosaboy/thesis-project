@@ -46,9 +46,7 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
 
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(20, 16, 16),
-      new THREE.MeshStandardMaterial({
-        color: 0xFFFFFF,
-      })
+      new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
     )
     sphere.name = 'sphere'
     sphere.position.set(0, 0, 0)
@@ -57,8 +55,18 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
     this.text = new TextLabel({
       parent: sphere,
       camera: this.props.camera,
-      text: 'Test',
+      text: 'The Ripple Project',
+      style: {
+        font: 'Lato',
+        weight: 600,
+        size: 80,
+        color: '#FFFFFF',
+      },
     })
+
+    setTimeout(() => {
+      this.text.start()
+    }, 2000)
 
     this.text.updatePosition()
 
@@ -83,7 +91,7 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
 
   public render() {
     return (
-      <div ref={node => this.pondElement = node} />
+      <div ref={node => this.pondElement = node}/>
     )
   }
 }
