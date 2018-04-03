@@ -1,25 +1,24 @@
 import * as React from 'react'
-import {withRouter} from 'react-router'
+import { withRouter } from 'react-router'
 import styles from './EventStyles'
 import * as actions from '../../actions/actions'
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import {RootState} from '../../reducers/index'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { RootState } from '../../reducers/index'
 import * as Tone from 'tone'
 import * as d3 from 'd3'
 import * as CloseIcon from './closeicon.png'
-
-const THREE = require('three')
-const TWEEN = require('@tweenjs/tween.js')
-const TextSprite = require('three.textsprite')
-const dat = require('three/gui')
-
 import 'three/effectcomposer'
 import 'three/copyshader'
 import 'three/bokehpass'
 import 'three/renderpass'
 import 'three/shaderpass'
 import 'three/bokehshader'
+
+const THREE = require('three')
+const TWEEN = require('@tweenjs/tween.js')
+const TextSprite = require('three.textsprite')
+const dat = require('three/gui')
 
 interface Props {
   history: any,
@@ -39,13 +38,12 @@ interface State {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    actions: bindActionCreators(actions as any, dispatch)
+    actions: bindActionCreators(actions as any, dispatch),
   }
 }
 
 const mapStateToProps = (state: RootState) => {
-  return {
-  }
+  return {}
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -78,7 +76,7 @@ class EventContainer extends React.Component<Props, State> {
       isPropogating: false,
       mounted: false,
       toggleText: false,
-      values: {}
+      values: {},
     }
 
     this.step = 0
@@ -89,7 +87,7 @@ class EventContainer extends React.Component<Props, State> {
     // three setup
     this._scene = new THREE.Scene()
     this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 1000)
-    this._renderer = new THREE.WebGLRenderer({antialias: true})
+    this._renderer = new THREE.WebGLRenderer({ antialias: true })
     this._light = new THREE.DirectionalLight(0xffffff, 1.0)
     this._mouse = new THREE.Vector2()
     this._raycaster = new THREE.Raycaster()
@@ -128,8 +126,8 @@ class EventContainer extends React.Component<Props, State> {
         new THREE.MeshBasicMaterial({
           color: 0x4C6F97,
           shading: THREE.FlatShading,
-          map: this.generateSprite()
-        })
+          map: this.generateSprite(),
+        }),
         // new THREE.MeshBasicMaterial({color: 0x252A4D})
       )
       circle.name = `circle-${stat.id}`
@@ -141,12 +139,12 @@ class EventContainer extends React.Component<Props, State> {
         redrawInterval: 250,
         texture: {
           text: '0 ' + stat.text,
-          fontFamily: 'Arial'
+          fontFamily: 'Arial',
         },
         material: {
           color: 0xffffff,
-          opacity: 0
-        }
+          opacity: 0,
+        },
       })
       sprite.name = `text-${stat.id}`
       sprite.position.set(0, stat.id * 5, 1)
@@ -166,9 +164,9 @@ class EventContainer extends React.Component<Props, State> {
       }).fan(fft, waveform).connect(freeverb).toMaster().sync()
 
       /*
-      * The interval is based on the number of beats specified in the constructor
-      * I should figure out how fast etc I want my audio
-      * */
+       * The interval is based on the number of beats specified in the constructor
+       * I should figure out how fast etc I want my audio
+       * */
       const now = Tone.now()
       const loop = new Tone.Loop({
         callback: time => {
@@ -176,7 +174,7 @@ class EventContainer extends React.Component<Props, State> {
           sound.start(time).stop(time + 0.85)
         },
         interval: stat.interval,
-        probability: 1
+        probability: 1,
       })
 
       this._bufferPromise.then(() => {
@@ -190,7 +188,7 @@ class EventContainer extends React.Component<Props, State> {
         waveform,
         text: stat.text,
         value: 0,
-        starting: stat.starting
+        starting: stat.starting,
       }
     })
   }
@@ -219,13 +217,13 @@ class EventContainer extends React.Component<Props, State> {
 
   // So you can actually create a texture out of a canvas
   generateSprite = () => {
-    const {colors} = this.props.event.data
+    const { colors } = this.props.event.data
     const canvas = document.createElement('canvas')
     canvas.width = 16
     canvas.height = 16
     const context = canvas.getContext('2d')
     const gradient = context.createLinearGradient(
-      -25, -25, 25, 25
+      -25, -25, 25, 25,
     )
     gradient.addColorStop(0, colors.cs0)
     gradient.addColorStop(1, colors.cs50)
@@ -258,7 +256,10 @@ class EventContainer extends React.Component<Props, State> {
       geometry.colors = colors
     }
     geometry.computeBoundingBox()
-    const material = new THREE.PointsMaterial({size: 0.45, vertexColors: THREE.VertexColors})
+    const material = new THREE.PointsMaterial({
+      size: 0.45,
+      vertexColors: THREE.VertexColors,
+    })
     return new THREE.Points(geometry, material)
   }
 
@@ -288,34 +289,34 @@ class EventContainer extends React.Component<Props, State> {
 
         if (this.state.toggleText) {
           new TWEEN.Tween(textObject.material)
-          .to({
-            opacity: 1
-          }, 1000)
-          .easing(TWEEN.Easing.Cubic.Out).start()
+            .to({
+              opacity: 1,
+            }, 1000)
+            .easing(TWEEN.Easing.Cubic.Out).start()
         } else {
           new TWEEN.Tween(textObject.material)
-          .to({
-            opacity: 0
-          }, 1000)
-          .easing(TWEEN.Easing.Cubic.Out).start()
+            .to({
+              opacity: 0,
+            }, 1000)
+            .easing(TWEEN.Easing.Cubic.Out).start()
         }
 
         new TWEEN.Tween(textObject.position)
-        .to({
-          y: (i + 1) * 5 * (max > 0 ? max : 1)
-        }, 1000)
-        .easing(TWEEN.Easing.Cubic.Out).start()
+          .to({
+            y: (i + 1) * 5 * (max > 0 ? max : 1),
+          }, 1000)
+          .easing(TWEEN.Easing.Cubic.Out).start()
 
-        this.setState({isPropogating: max > 1 && true})
+        this.setState({ isPropogating: max > 1 && true })
 
         new TWEEN.Tween(object.scale)
-        .to({
-          x: delta,
-          y: delta,
-          // TODO: play with z-position
-          z: delta + 1,
-        }, 500)
-        .easing(TWEEN.Easing.Cubic.Out).start()
+          .to({
+            x: delta,
+            y: delta,
+            // TODO: play with z-position
+            z: delta + 1,
+          }, 500)
+          .easing(TWEEN.Easing.Cubic.Out).start()
 
         object.rotation.z += 0.10 / (i + 1)
       })
@@ -348,7 +349,7 @@ class EventContainer extends React.Component<Props, State> {
 
       if (intersects.length) {
         document.body.style.cursor = 'pointer'
-        this.setState({lastHoveredObj: intersects[0]})
+        this.setState({ lastHoveredObj: intersects[0] })
         const object = this._scene.getObjectByName(this.state.lastHoveredObj.object.name)
         if (object) {
           Tone.Transport.pause()
@@ -374,7 +375,7 @@ class EventContainer extends React.Component<Props, State> {
     this.animate()
     this.generateRipples()
     setTimeout(() => {
-      this.setState({mounted: true})
+      this.setState({ mounted: true })
     }, 0)
     document.addEventListener('mousemove', this.handleMouseMove)
   }
@@ -385,7 +386,7 @@ class EventContainer extends React.Component<Props, State> {
       <div style={{
         backgroundColor: _event.colors.backgroundColor,
         borderColor: _event.colors.borderColor,
-        ...styles.event
+        ...styles.event,
       }}>
         <div style={{
           opacity: this.state.mounted ? 1 : 0,
@@ -394,12 +395,12 @@ class EventContainer extends React.Component<Props, State> {
           <header style={styles.header}>
             <button
               onMouseDown={() => window.location.href = 'http://localhost:3000/'}
-              onMouseOver={() => this.setState({mouseOver: true})}
-              onMouseOut={() => this.setState({mouseOver: false})}
+              onMouseOver={() => this.setState({ mouseOver: true })}
+              onMouseOut={() => this.setState({ mouseOver: false })}
               style={{
                 transform: this.state.mouseOver ? 'scale(1)' : 'scale(0.8)',
                 cursor: this.state.mouseOver ? 'pointer' : 'normal',
-                ...styles.close
+                ...styles.close,
               }}
             >
               <img src={CloseIcon}/>
@@ -408,11 +409,11 @@ class EventContainer extends React.Component<Props, State> {
               <button
                 style={{
                   cursor: this.state.mouseOver ? 'pointer' : 'normal',
-                  ...styles.toggleButton
+                  ...styles.toggleButton,
                 }}
-                onMouseDown={() => this.setState({toggleText: !this.state.toggleText})}
-                onMouseOver={() => this.setState({mouseOver: true})}
-                onMouseOut={() => this.setState({mouseOver: false})}
+                onMouseDown={() => this.setState({ toggleText: !this.state.toggleText })}
+                onMouseOver={() => this.setState({ mouseOver: true })}
+                onMouseOut={() => this.setState({ mouseOver: false })}
               >
                 <h2 style={styles.toggleText}>Toggle Information</h2>
               </button>
@@ -420,7 +421,7 @@ class EventContainer extends React.Component<Props, State> {
             <div style={{
               opacity: this.state.toggleText ? 1 : 0,
               transition: 'opacity 1s ease-in-out',
-              marginTop: 10
+              marginTop: 10,
             }}>
               <h1 style={styles.geoText}>
                 {_event.properties.geo.location}, {_event.properties.geo.map}
@@ -435,14 +436,21 @@ class EventContainer extends React.Component<Props, State> {
           <div style={{
             opacity: this.state.toggleText ? 1 : 0,
             transition: 'opacity 1s ease-in-out',
-            ...styles.mainBody
+            ...styles.mainBody,
           }}>
-            <div style={styles.left} dangerouslySetInnerHTML={{__html: _event.content.left}}/>
+            <div style={styles.left} dangerouslySetInnerHTML={{ __html: _event.content.left }}/>
             <div style={styles.right}>
               {
                 this._rippleArray.map(q => (
-                  <span style={{display: 'block', marginBottom: 5}}>
-                    <span style={{display: 'block', fontSize: 28, fontWeight: 'bold'}}>{q.starting + q.value}</span>
+                  <span style={{
+                    display: 'block',
+                    marginBottom: 5,
+                  }}>
+                    <span style={{
+                      display: 'block',
+                      fontSize: 28,
+                      fontWeight: 'bold',
+                    }}>{q.starting + q.value}</span>
                     {q.text}
                     </span>
                 ))

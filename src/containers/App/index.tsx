@@ -1,20 +1,13 @@
 import * as React from 'react'
-// import {
-//   Route,
-//   Switch,
-// } from 'react-router'
-// import EventContainer from '../Event/Event'
 import Pond from '../Pond/Pond'
 import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
-// import { history } from '../../index'
 import { RootState } from '../../reducers/index'
 import 'three/trackballcontrols'
 import { bindActionCreators } from 'redux'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
-const TextSprite = require('three.textsprite')
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -28,8 +21,14 @@ const mapStateToProps = (state: RootState) => {
   }
 }
 
+export namespace App {
+  export interface State {
+    prevObject: any,
+  }
+}
+
 @connect(mapStateToProps, mapDispatchToProps)
-class App extends React.Component<any, any> {
+class App extends React.Component<any, App.State> {
   // svg setup
   private svgContainer: any
 
@@ -40,31 +39,36 @@ class App extends React.Component<any, any> {
   private _light: THREE.DirectionalLight
   private _mouse: THREE.Vector2
   private _raycaster: THREE.Raycaster
+  private _vector: THREE.Vector3
+  private _intersects: any
   private _controls: THREE.TrackballControls
   private _clock: THREE.Clock
-  private _animate: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
+    this.state = {
+      prevObject: {}, // the last object we hovered over
+    }
 
-    // three setup
+    /*
+     * Basic THREE setup
+     * */
     this._scene = new THREE.Scene()
     this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 3000)
-    this._camera.position.z = 300
+    this._camera.position.set(0, 0, 300)
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
-    this._renderer = new THREE.WebGLRenderer({ antialias: false })
-    this._light = new THREE.SpotLight(0xffffff)
+    this._renderer = new THREE.WebGLRenderer({ antialias: true })
+    this._light = new THREE.SpotLight(0xFFFFFF)
     this._mouse = new THREE.Vector2()
-    this._raycaster = new THREE.Raycaster()
     this._controls = new THREE.TrackballControls(this._camera)
     this._scene.updateMatrixWorld()
+    this._camera.updateMatrixWorld()
     this._clock = new THREE.Clock()
     this._clock.autoStart = false
 
-    // Props stuff
-    this._animate = []
-
-    // Trackball Controls
+    /*
+     * Trackball Params
+     * */
     this._controls.rotateSpeed = 3.6
     this._controls.zoomSpeed = 0.8
     this._controls.panSpeed = 1
@@ -74,7 +78,9 @@ class App extends React.Component<any, any> {
 
     const cameraSpeed = 1
 
-    // Camera Controls
+    /*
+     * Additional camera functionality
+     * */
     this._camera.reset = () => {
       new TWEEN.Tween(this._camera.position)
         .to({
@@ -122,10 +128,7 @@ class App extends React.Component<any, any> {
 
   public createScene = (): void => {
     this._renderer.setSize(window.innerWidth, window.innerHeight)
-    this._renderer.setClearColor('#FFF')
-
-    // this._renderer.enableScissorTest(true)
-
+    this._renderer.setClearColor(0x000000)
     this.svgContainer.appendChild(this._renderer.domElement)
     this._light.position.set(0, 0, 150)
     this._light.castShadow = true
@@ -133,7 +136,6 @@ class App extends React.Component<any, any> {
     this._light.shadow.mapSize.width = 512
     this._light.shadow.camera.near = 0
     this._light.shadow.camera.far = 250
-
     this._scene.add(this._light)
   }
 
@@ -145,13 +147,28 @@ class App extends React.Component<any, any> {
     this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
     this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
-    this._raycaster.setFromCamera(this._mouse, this._camera)
+    this._vector = new THREE.Vector3(this._mouse.x, this._mouse.y, 0).unproject(this._camera)
+    this._raycaster = new THREE.Raycaster(this._camera.position, this._vector.sub(this._camera.position).normalize())
+
+    /*
+    * This gives us an array of objects that intersect with the scene children
+    * We can match the object name to trigger events
+    * */
+    this._intersects = this._raycaster.intersectObjects(this._scene.children, true)
+
+    if (this._intersects.length) {
+      if (this._intersects[0].object.name === 'sphere') {
+        window.document.body.style.cursor = 'pointer'
+      }
+    } else {
+      window.document.body.style.cursor = 'default'
+    }
   }
 
   private init = (): void => {
     this.createScene()
     this.animate()
-    // document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mousemove', this.handleMouseMove)
   }
 
   componentDidMount() {
@@ -172,35 +189,17 @@ class App extends React.Component<any, any> {
           style={{
             width: window.innerWidth,
             height: window.innerHeight,
+            overflow: 'hidden',
           }}
           ref={node => this.svgContainer = node}
         />
 
-        <Pond
-          scene={this._scene}
-        />
-
-        {/*<Switch>*/}
-          {/*<Route*/}
-            {/*key={'mainStage'}*/}
-            {/*path={'/pond'}*/}
-            {/*render={() => <MainStage*/}
-              {/*scene={this._scene}*/}
-            {/*/>}*/}
-          {/*/>*/}
-          {/*<Route*/}
-            {/*key={'eventId'}*/}
-            {/*path={'/event/:eventId'}*/}
-            {/*component={EventContainer}*/}
-          {/*/>*/}
-          {/*<Route*/}
-            {/*exact*/}
-            {/*path={'/'}*/}
-            {/*render={() => <button onClick={() => history.push('/pond')}>*/}
-              {/*Go!*/}
-            {/*</button>}*/}
-          {/*/>*/}
-        {/*</Switch>*/}
+        <div id={'pond'}>
+          <Pond
+            scene={this._scene}
+            camera={this._camera}
+          />
+        </div>
 
       </main>
     )
