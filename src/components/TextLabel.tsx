@@ -6,7 +6,7 @@ interface TextLabelParams {
   camera?: THREE.Camera,
   position?: THREE.Vector3,
   text: string,
-  style: any
+  style?: any
 }
 
 export default class TextLabel {
@@ -23,9 +23,9 @@ export default class TextLabel {
     this.span = document.createElement('span')
     this.span.className = 'text-label'
     this.span.style.color = params.style.color || '#FFFFFF'
-    this.span.style['font-family'] = params.style.font
+    this.span.style['font-family'] = params.style.font || 'Lora'
     this.span.style['font-size'] = `${params.style.size}px` || '20px'
-    this.span.style['font-weight'] = params.style.weight
+    this.span.style['font-weight'] = params.style.weight || 400
     this.span.style.position = 'absolute'
     this.span.style.opacity = 0
     this.span.innerHTML = params.text
@@ -56,7 +56,7 @@ export default class TextLabel {
 
   public stop = () => this.animate.stop()
 
-  public updatePosition = () => {
+  public update = () => {
     if (this.parent) {
       this.position.copy(this.parent.position)
     }

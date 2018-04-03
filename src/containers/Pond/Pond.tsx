@@ -14,6 +14,8 @@ export namespace Pond {
   export interface Props {
     scene: THREE.Scene,
     camera: THREE.Camera,
+    clock: THREE.Clock,
+    animate: Array<any>
   }
 
   export interface State {
@@ -36,7 +38,8 @@ const mapStateToProps = (state: RootState) => {
 @connect(mapStateToProps, mapDispatchToProps)
 class Pond extends React.PureComponent<Pond.Props, Pond.State> {
   private pondElement: any
-  private text: any
+  private title: any
+  private continue: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -52,7 +55,10 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
     sphere.position.set(0, 0, 0)
     this.props.scene.add(sphere)
 
-    this.text = new TextLabel({
+    this.props.scene.background = new THREE.Color('#111111')
+    this.props.scene.fog = new THREE.FogExp2(0x595959, 0.0025 )
+
+    this.title = new TextLabel({
       parent: sphere,
       camera: this.props.camera,
       text: 'The Ripple Project',
@@ -64,11 +70,11 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
       },
     })
 
-    setTimeout(() => {
-      this.text.start()
-    }, 2000)
+    this.title.start()
+    this.props.animate.push(this.title.update)
+    // this.title.update()
 
-    this.text.updatePosition()
+    // console.log(this.props.clock.getElapsedTime())
 
     // So we discovered that we can actually add scenes!
 
@@ -85,7 +91,7 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
 
   componentDidMount() {
     if (this.pondElement) {
-      this.pondElement.appendChild(this.text.getElement())
+      this.pondElement.appendChild(this.title.getElement())
     }
   }
 

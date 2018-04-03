@@ -44,11 +44,19 @@ class App extends React.Component<any, App.State> {
   private _controls: THREE.TrackballControls
   private _clock: THREE.Clock
 
+  // animate array setup
+  private animateArray: Array<any>
+
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
       prevObject: {}, // the last object we hovered over
     }
+
+    /*
+     * Animate Array
+     * */
+    this.animateArray = []
 
     /*
      * Basic THREE setup
@@ -60,21 +68,10 @@ class App extends React.Component<any, App.State> {
     this._renderer = new THREE.WebGLRenderer({ antialias: true })
     this._light = new THREE.SpotLight(0xFFFFFF)
     this._mouse = new THREE.Vector2()
-    this._controls = new THREE.TrackballControls(this._camera)
     this._scene.updateMatrixWorld()
     this._camera.updateMatrixWorld()
     this._clock = new THREE.Clock()
     this._clock.autoStart = false
-
-    /*
-     * Trackball Params
-     * */
-    this._controls.rotateSpeed = 3.6
-    this._controls.zoomSpeed = 0.8
-    this._controls.panSpeed = 1
-
-    this._controls.noZoom = false
-    this._controls.noPan = false
 
     const cameraSpeed = 1
 
@@ -120,16 +117,34 @@ class App extends React.Component<any, App.State> {
           .easing(TWEEN.Easing.Cubic.Out).start()
       }
     }
-
-    this._controls.staticMoving = false
-    this._controls.dynamicDampingFactor = 0.12
-    this._controls.enabled = true
   }
 
   public createScene = (): void => {
     this._renderer.setSize(window.innerWidth, window.innerHeight)
     this._renderer.setClearColor(0x000000)
     this.svgContainer.appendChild(this._renderer.domElement)
+
+    /*
+     * Instantiate Trackball
+     * */
+    this._controls = new THREE.TrackballControls(this._camera, this._renderer.domElement)
+
+    /*
+     * Trackball Params
+     * */
+    this._controls.rotateSpeed = 0
+    this._controls.zoomSpeed = 0.8
+    this._controls.panSpeed = 1
+    this._controls.staticMoving = true
+    this._controls.dynamicDampingFactor = 0.12
+    this._controls.enabled = true
+
+    this._controls.noZoom = false
+    this._controls.noPan = false
+
+    /*
+     * Light Params
+     * */
     this._light.position.set(0, 0, 150)
     this._light.castShadow = true
     this._light.shadow.mapSize.height = 512
@@ -151,9 +166,9 @@ class App extends React.Component<any, App.State> {
     this._raycaster = new THREE.Raycaster(this._camera.position, this._vector.sub(this._camera.position).normalize())
 
     /*
-    * This gives us an array of objects that intersect with the scene children
-    * We can match the object name to trigger events
-    * */
+     * This gives us an array of objects that intersect with the scene children
+     * We can match the object name to trigger events
+     * */
     this._intersects = this._raycaster.intersectObjects(this._scene.children, true)
 
     if (this._intersects.length) {
@@ -169,15 +184,18 @@ class App extends React.Component<any, App.State> {
     this.createScene()
     this.animate()
     document.addEventListener('mousemove', this.handleMouseMove)
+    this.animateArray.push(this._controls.update, this._render)
   }
 
   componentDidMount() {
     this.init()
   }
 
-  public animate = (): any => {
+  private animate = (): any => {
     requestAnimationFrame(this.animate)
-    this._render()
+    // this._render()
+    // this._controls.update()
+    this.animateArray.forEach(fn => fn.call())
     TWEEN.update()
   }
 
@@ -198,6 +216,8 @@ class App extends React.Component<any, App.State> {
           <Pond
             scene={this._scene}
             camera={this._camera}
+            clock={this._clock}
+            animate={this.animateArray}
           />
         </div>
 
