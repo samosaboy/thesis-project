@@ -29,7 +29,7 @@ export default class TextLabel {
     this.position = params.position || new THREE.Vector3(0, 0, 0)
   }
 
-  private get2DCords = () => {
+  private projectTo2D = () => {
     const vector = this.position.project(this.camera)
 
     vector.x = (vector.x + 1) / 2 * window.innerWidth
@@ -42,9 +42,9 @@ export default class TextLabel {
     if (this.parent) {
       this.position.copy(this.parent.position)
     }
-    const coords = this.get2DCords()
-    this.span.style.left = `${coords.x}px`
-    this.span.style.top = `${coords.y}px`
+    const coordinates = this.projectTo2D()
+    this.span.style.left = `${coordinates.x}px`
+    this.span.style.top = `${coordinates.y}px`
   }
 
   public getElement = () => this.span
