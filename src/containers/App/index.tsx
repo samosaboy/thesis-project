@@ -1,14 +1,17 @@
 import * as React from 'react'
 import Pond from '../Pond/Pond'
-import Test from '../Test/Test'
 import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
 import 'three/trackballcontrols'
 import { bindActionCreators } from 'redux'
 
+
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
+const Stats = require('three/stats')
+const Scene = require('three/crossfadeScene')
+const Transition = require('three/crossfadeTransition')
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -19,13 +22,15 @@ const mapDispatchToProps = (dispatch: any) => {
 const mapStateToProps = (state: RootState) => {
   return {
     mouseData: state.mouseData,
+    sceneData: state.sceneData,
   }
 }
 
 export namespace App {
   export interface Props {
     actions?: typeof actions,
-    mouseData?: any
+    mouseData?: any,
+    sceneData?: any
   }
 
   export interface State {
@@ -50,6 +55,12 @@ class App extends React.Component<App.Props, App.State> {
   private _intersects: any
   private _controls: THREE.TrackballControls
   private _clock: THREE.Clock
+
+  //stats
+  private stats: any
+
+  // transition
+  private transition: any
 
   // animate array setup
   private animateArray: Array<any>
@@ -139,6 +150,11 @@ class App extends React.Component<App.Props, App.State> {
     this._renderer.setClearColor(0x000000)
     this.svgContainer.appendChild(this._renderer.domElement)
 
+    // Stats
+    this.stats = new Stats()
+    this.stats.showPanel(0)
+    document.body.appendChild(this.stats.dom)
+
     /*
      * Instantiate Trackball
      * */
@@ -167,10 +183,15 @@ class App extends React.Component<App.Props, App.State> {
     this._light.shadow.camera.near = 0
     this._light.shadow.camera.far = 250
     this._scene.add(this._light)
-  }
 
-  public _render = (): void => {
-    this._renderer.render(this._scene, this._camera)
+    /* Test */
+    this._scene.add(new THREE.Mesh(
+      new THREE.SphereGeometry(20, 16, 16),
+      new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
+    ))
+    this.props.actions.addToSceneList({ scene: this._scene })
+    this.props.actions.setCurrentScene({ name: 'mainScene' })
+    /* End Test */
   }
 
   private handleMouseMove = (event) => {
@@ -224,6 +245,7 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   private animate = (): any => {
+    this.stats.update()
     requestAnimationFrame(this.animate)
     this.animateArray.forEach(fn => fn.call())
     TWEEN.update()
@@ -231,11 +253,20 @@ class App extends React.Component<App.Props, App.State> {
     if (this.props.mouseData.event === 'mousedown') {
       if (this.props.mouseData.object) {
         this._camera.zoom(this.props.mouseData.object.object)
+
+        if (this._clock.getElapsedTime() > 3) {
+          this.props.actions.setCurrentScene({ name: 'pondScene' })
+        }
       }
     } else {
       this._camera.reset()
     }
   }
+
+  public _render = (): void => {
+    this._renderer.render(this.props.sceneData.currentScene, this._camera)
+  }
+
 
   public render() {
     return (
@@ -264,17 +295,9 @@ class App extends React.Component<App.Props, App.State> {
         />
 
         <Pond
-          scene={this._scene}
           camera={this._camera}
           clock={this._clock}
-          animate={this.animateArray}
-        />
-
-        <Test
-          scene={this._scene}
-          camera={this._camera}
-          clock={this._clock}
-          animate={this.animateArray}
+          animateArray={this.animateArray}
         />
 
       </main>

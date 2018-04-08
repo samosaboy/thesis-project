@@ -4,6 +4,7 @@ declare interface mouseData {
 }
 
 declare interface sceneDataIndex {
+  name: string,
   scenes: any,
 }
 
@@ -11,11 +12,11 @@ declare interface sceneDataAdd {
   scene: object
 }
 
-declare interface sceneDataDelete {
+declare interface sceneDataSetCurrent {
   name: string
 }
 
 declare type mouseDataConfig = mouseData
 declare type sceneDataAddConfig = sceneDataAdd
 declare type sceneDataIndexConfig = sceneDataIndex
-declare type sceneDataDeleteConfig = sceneDataDelete
+declare type sceneDataSetCurrentConfig = sceneDataSetCurrent
