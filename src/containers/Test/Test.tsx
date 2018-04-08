@@ -10,7 +10,7 @@ import TextLabel from '../../components/TextLabel'
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
-export namespace Pond {
+export namespace Test {
   export interface Props {
     actions?: typeof actions,
     scene: THREE.Scene,
@@ -37,10 +37,7 @@ const mapStateToProps = (state: RootState) => {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-class Pond extends React.PureComponent<Pond.Props, Pond.State> {
-  private pondElement: any
-  private title: any
-
+class Test extends React.PureComponent<Test.Props, Test.State> {
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
@@ -62,7 +59,7 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
     const pondGroup = new THREE.Group()
 
     const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(20, 16, 16),
+      new THREE.SphereGeometry(50, 16, 16),
       new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
     )
     sphere.name = 'sphere'
@@ -71,30 +68,11 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
     pondGroup.add(sphere)
     pondScene.add(pondGroup)
 
-    pondScene.name = 'pondScene'
+    pondScene.name = 'testScene'
 
     /* Add them to the parent scene */
     // this.props.scene.add(pondScene)
     this.props.scene.add(pondScene)
-
-    this.props.scene.background = new THREE.Color('#111111')
-    this.props.scene.fog = new THREE.FogExp2(0x595959, 0.0025 )
-
-    this.title = new TextLabel({
-      parent: sphere,
-      camera: this.props.camera,
-      text: 'The Ripple Effect',
-      style: {
-        font: 'Lato',
-        weight: 600,
-        size: 80,
-        color: '#FFFFFF',
-      },
-    })
-
-    this.title.start()
-
-    this.props.animate.push(this.title.update)
 
     // console.log(this.props.clock.getElapsedTime())
 
@@ -111,17 +89,9 @@ class Pond extends React.PureComponent<Pond.Props, Pond.State> {
     // texture.dispose();
   }
 
-  componentDidMount() {
-    if (this.pondElement) {
-      this.pondElement.appendChild(this.title.getElement())
-    }
-  }
-
   public render() {
-    return (
-      <div ref={node => this.pondElement = node}/>
-    )
+    return null
   }
 }
 
-export default withRouter(Pond)
+export default withRouter(Test)

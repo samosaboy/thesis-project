@@ -1,5 +1,6 @@
 import * as React from 'react'
 import Pond from '../Pond/Pond'
+import Test from '../Test/Test'
 import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
@@ -32,6 +33,7 @@ export namespace App {
   }
 }
 
+// TODO: Check if @connect rerenders this entire component on every redux change
 @connect(mapStateToProps, mapDispatchToProps)
 class App extends React.Component<App.Props, App.State> {
   // svg setup
@@ -74,6 +76,7 @@ class App extends React.Component<App.Props, App.State> {
      * Basic THREE setup
      * */
     this._scene = new THREE.Scene()
+    this._scene.name = 'mainScene'
     this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 3000)
     this._camera.position.set(0, 0, 300)
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -220,16 +223,10 @@ class App extends React.Component<App.Props, App.State> {
     this._clock.stop()
   }
 
-
   private animate = (): any => {
     requestAnimationFrame(this.animate)
     this.animateArray.forEach(fn => fn.call())
     TWEEN.update()
-
-    /*
-     * Deal with mouse down events
-     * */
-    console.log(this._clock.getElapsedTime())
 
     if (this.props.mouseData.event === 'mousedown') {
       if (this.props.mouseData.object) {
@@ -266,14 +263,19 @@ class App extends React.Component<App.Props, App.State> {
           ref={node => this.svgContainer = node}
         />
 
-        <div id={'pond'}>
-          <Pond
-            scene={this._scene}
-            camera={this._camera}
-            clock={this._clock}
-            animate={this.animateArray}
-          />
-        </div>
+        <Pond
+          scene={this._scene}
+          camera={this._camera}
+          clock={this._clock}
+          animate={this.animateArray}
+        />
+
+        <Test
+          scene={this._scene}
+          camera={this._camera}
+          clock={this._clock}
+          animate={this.animateArray}
+        />
 
       </main>
     )

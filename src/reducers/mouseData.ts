@@ -3,24 +3,24 @@ import * as Actions from '../constants/actions'
 
 const initialState: mouseData = {
   event: '',
-  object: null
+  object: null,
 }
 
 export default handleActions<mouseDataConfig, mouseData>(
   {
-    [Actions.ADD_MOUSE_EVENT]: (state, action) => {
+    [Actions.MOUSE_EVENT_ADD]: (state, action) => {
       return {
         ...state,
         event: action.payload.event,
         object: action.payload.object,
       }
     },
-    [Actions.RESET_MOUSE_EVENT]: () => {
+    [Actions.MOUSE_EVENT_RESET]: () => {
       return {
-        ...initialState
+        ...initialState,
       }
     },
-    [Actions.ADD_LAST_HOVERED_OBJ]: (state, action) => {
+    [Actions.MOUSE_EVENT_LAST_HOVERED_OBJECT]: (state, action) => {
       return {
         ...state,
         object: action.payload.object,
