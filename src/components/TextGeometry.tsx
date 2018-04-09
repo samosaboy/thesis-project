@@ -79,8 +79,7 @@ export class TextGeometry {
     // Group is exposed, mesh is animated
     this.group = new THREE.Object3D()
     this.mesh = new THREE.Mesh(geometry, material)
-    this.mesh.position.y = -20
-    // this.mesh.position.y = 0
+    this.mesh.position.y = 20
     this.group.add(this.mesh)
     this.group.visible = false
 

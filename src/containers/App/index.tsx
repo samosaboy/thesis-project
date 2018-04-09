@@ -6,12 +6,11 @@ import { RootState } from '../../reducers/index'
 import 'three/trackballcontrols'
 import { bindActionCreators } from 'redux'
 import { TextGeometry } from '../../components/TextGeometry'
+import { BackgroundParticles } from '../../components/BackgroundParticles'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
-const Scene = require('three/crossfadeScene')
-const Transition = require('three/crossfadeTransition')
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -221,9 +220,19 @@ class App extends React.Component<App.Props, App.State> {
         color: '#FFFFFF'
       },
     })
-    setTimeout(() => text.in(), 2000)
-    text.getElement().position.set(0, 0, 100)
+    text.in()
     this._scene.add(text.getElement())
+
+    const particles = new BackgroundParticles({
+      count: 1000,
+      particleSize: 0.1,
+      rangeY: [
+        -100,
+        100
+      ]
+    })
+
+    this._scene.add(particles.getElement())
   }
 
   private handleMouseDown = () => {
