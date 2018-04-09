@@ -7,7 +7,7 @@ export class BackgroundParticles {
   private group: any
 
   constructor(params?: any) {
-    const material = new THREE.PointCloudMaterial({
+    const material = new THREE.PointsMaterial({
       size: params.particleSize,
     })
 
@@ -24,7 +24,7 @@ export class BackgroundParticles {
     }
 
     this.group = new THREE.Object3D()
-    this.group.add(new THREE.PointCloud(geometry, material))
+    this.group.add(new THREE.Points(geometry, material))
   }
 
   public getElement = () => this.group

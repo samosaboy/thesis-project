@@ -7,6 +7,8 @@ import 'three/trackballcontrols'
 import { bindActionCreators } from 'redux'
 import { TextGeometry, BackgroundParticles } from '../../components'
 
+import 'three/flycontrols'
+
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
@@ -53,7 +55,7 @@ class App extends React.Component<App.Props, App.State> {
   private _vector: THREE.Vector3
   private _intersects: any
   private _clock: THREE.Clock
-  private _controls: THREE.TrackballControls
+  private _controls: any
 
   //stats
   private stats: any
@@ -88,12 +90,14 @@ class App extends React.Component<App.Props, App.State> {
     this._camera.updateMatrixWorld()
     this._camera.updateProjectionMatrix()
     this._clock = new THREE.Clock()
-    this._clock.autoStart = false
+    this._clock.autoStart = true // used to be false
 
-    this._controls = new THREE.TrackballControls(this._camera)
-    this._controls.noRotate = true
-
-    this._controls.addEventListener('change', this._render)
+    // this._controls = new THREE.FlyControls(this._camera)
+    // this._controls.movementSpeed = 25
+    // this._controls.domElement = this._renderer.domElement
+    // this._controls.rollSpeed = Math.PI / 24
+    // this._controls.autoForward = false
+    // this._controls.dragToLook = false
 
     const cameraSpeed = 1
 
@@ -168,30 +172,6 @@ class App extends React.Component<App.Props, App.State> {
     this.props.actions.setCurrentScene({ name: 'mainScene' })
   }
 
-  private handleMouseMove = (event) => {
-    this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-    this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-    this._vector = new THREE.Vector3(this._mouse.x, this._mouse.y, 0).unproject(this._camera)
-    this._raycaster = new THREE.Raycaster(this._camera.position, this._vector.sub(this._camera.position).normalize())
-
-    /*
-     * This gives us an array of objects that intersect with the scene children
-     * We can match the object name to trigger events
-     * */
-    this._intersects = this._raycaster.intersectObjects(this.props.sceneData.currentScene.children, true)
-
-    if (this._intersects.length) {
-      this.props.actions.addLastHoveredObject({ object: this._intersects[0] })
-      if (this._intersects[0].object.name === '') {
-        window.document.body.style.cursor = 'pointer'
-        // this.setState({ lastMousePosition: this._camera.position })
-      }
-    } else {
-      this.props.actions.resetMouseEvent({ object: null })
-      window.document.body.style.cursor = 'default'
-    }
-  }
 
   private init = (): void => {
     this.createScene()
@@ -234,6 +214,34 @@ class App extends React.Component<App.Props, App.State> {
     this._scene.add(particles.getElement())
   }
 
+  private handleMouseMove = (event) => {
+    this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+    this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+    this._mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
+    this._mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
+
+    this._vector = new THREE.Vector3(this._mouse.x, this._mouse.y, 0).unproject(this._camera)
+    this._raycaster = new THREE.Raycaster(this._camera.position, this._vector.sub(this._camera.position).normalize())
+
+    /*
+     * This gives us an array of objects that intersect with the scene children
+     * We can match the object name to trigger events
+     * */
+    this._intersects = this._raycaster.intersectObjects(this.props.sceneData.currentScene.children, true)
+
+    if (this._intersects.length) {
+      this.props.actions.addLastHoveredObject({ object: this._intersects[0] })
+      if (this._intersects[0].object.name === '') {
+        window.document.body.style.cursor = 'pointer'
+        // this.setState({ lastMousePosition: this._camera.position })
+      }
+    } else {
+      this.props.actions.resetMouseEvent({ object: null })
+      window.document.body.style.cursor = 'default'
+    }
+  }
+
   private handleMouseDown = () => {
     this.props.actions.addMouseEvent({
       event: 'mousedown',
@@ -253,7 +261,6 @@ class App extends React.Component<App.Props, App.State> {
   private animate = (): any => {
     // https://stackoverflow.com/questions/31282318/is-there-a-way-to-cancel-requestanimationframe-without-a-global-variable
     this.stats.update()
-    this._controls.update()
     TWEEN.update()
     requestAnimationFrame(this.animate)
 
@@ -278,6 +285,9 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   public _render = (): void => {
+    this._camera.position.x += (this._mouse.mouseX - this._camera.position.x) * 0.01
+    this._camera.position.y += (-this._mouse.mouseY - this._camera.position.y) * 0.01
+    this._camera.lookAt(this.props.sceneData.currentScene.position)
     this._renderer.render(this.props.sceneData.currentScene, this._camera)
   }
 
