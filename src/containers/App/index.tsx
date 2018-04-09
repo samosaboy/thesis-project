@@ -90,7 +90,7 @@ class App extends React.Component<App.Props, App.State> {
     this._camera.updateMatrixWorld()
     this._camera.updateProjectionMatrix()
     this._clock = new THREE.Clock()
-    this._clock.autoStart = true // used to be false
+    this._clock.autoStart = false
 
     // this._controls = new THREE.FlyControls(this._camera)
     // this._controls.movementSpeed = 25
@@ -107,9 +107,9 @@ class App extends React.Component<App.Props, App.State> {
     this._camera.reset = () => {
       new TWEEN.Tween(this._camera.position)
         .to({
-          x: this.state.lastMousePosition.x,
-          y: this.state.lastMousePosition.y,
-          z: this.state.lastMousePosition.z,
+          x: 0,
+          y: 0,
+          z: 300,
         }, cameraSpeed * 1000)
         .easing(TWEEN.Easing.Cubic.Out).start()
     }
@@ -182,8 +182,8 @@ class App extends React.Component<App.Props, App.State> {
      * Mouse events
      * */
     document.addEventListener('mousemove', this.handleMouseMove)
-    document.addEventListener('mousedown', this.handleMouseDown)
-    document.addEventListener('mouseup', this.handleMouseUp)
+    // document.addEventListener('mousedown', this.handleMouseDown)
+    // document.addEventListener('mouseup', this.handleMouseUp)
   }
 
   componentDidMount() {
@@ -200,6 +200,7 @@ class App extends React.Component<App.Props, App.State> {
       },
     })
     text.in()
+    text.setName('to:pondScene')
     this._scene.add(text.getElement())
 
     const particles = new BackgroundParticles({
@@ -232,7 +233,7 @@ class App extends React.Component<App.Props, App.State> {
 
     if (this._intersects.length) {
       this.props.actions.addLastHoveredObject({ object: this._intersects[0] })
-      if (this._intersects[0].object.name === '') {
+      if (this._intersects[0].object.clickable) {
         window.document.body.style.cursor = 'pointer'
         // this.setState({ lastMousePosition: this._camera.position })
       }
@@ -243,18 +244,19 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   private handleMouseDown = () => {
-    this.props.actions.addMouseEvent({
-      event: 'mousedown',
-      object: this._intersects[0],
-    })
-    this._clock.start()
+    if (this._intersects.length) {
+      this.props.actions.addMouseEvent({
+        event: 'mousedown',
+        object: this._intersects[0],
+      })
+      this._clock.start()
+    }
   }
 
   private handleMouseUp = () => {
     this.props.actions.addMouseEvent({
       event: 'mouseout',
     })
-    this._clock.elapsedTime = 0
     this._clock.stop()
   }
 
@@ -270,12 +272,21 @@ class App extends React.Component<App.Props, App.State> {
      * */
     this.animateArray.forEach(fn => fn.call())
 
+    // console.log(this._clock.getElapsedTime(), this.props.sceneData)
+
     if (this.props.mouseData.event === 'mousedown') {
       if (this.props.mouseData.object) {
-        this._camera.zoom(this.props.mouseData.object.object)
-
-        if (this._clock.getElapsedTime() > 3) {
+        if (this.props.mouseData.object.object.name === 'to:pondScene' &&
+          this.props.sceneData.currentScene.name === 'mainScene') {
+          //this._clock.getElapsedTime() > 0
+          // Here we should be using stuff like scene.in() and have visible; false, opacity: 1 etc for fade transitions
+          // this._camera.zoom(this.props.mouseData.object.object)
           this.props.actions.setCurrentScene({ name: 'pondScene' })
+          // this._camera.reset()
+        } else if (this.props.mouseData.object.object.name === 'to:mainScene' &&
+          this.props.sceneData.currentScene.name === 'pondScene') {
+          this.props.actions.setCurrentScene({ name: 'mainScene' })
+          // this._camera.reset()
         }
       }
     } else {
@@ -288,7 +299,8 @@ class App extends React.Component<App.Props, App.State> {
     if (this._mouse.mouseX && this._mouse.mouseY) {
       this._camera.position.x += (this._mouse.mouseX - this._camera.position.x) * 0.01
       this._camera.position.y += (-this._mouse.mouseY - this._camera.position.y) * 0.01
-      this._camera.lookAt(this.props.sceneData.currentScene.position)
+      this._camera.lookAt(new THREE.Vector3(0, 0, 0))
+      // this._camera.lookAt(this.props.sceneData.currentScene.position)
     }
     this._renderer.render(this.props.sceneData.currentScene, this._camera)
   }

@@ -48,9 +48,11 @@ class Pond extends React.PureComponent<Pond.Props, any> {
       new THREE.MeshStandardMaterial({ color: 0xfff900 })
     )
     sphere.position.set(0, 0, 0)
+    sphere.name = 'to:mainScene'
+    sphere.clickable = true
     pondScene.add(sphere)
 
-    pondScene.updateMatrixWorld()
+    // pondScene.updateMatrixWorld()
     pondScene.name = 'pondScene'
 
     const light = new THREE.SpotLight(0xFFFFFF)

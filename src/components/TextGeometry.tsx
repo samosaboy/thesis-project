@@ -106,5 +106,10 @@ export class TextGeometry {
       .start()
   }
 
+  public setName = name => {
+    this.mesh.name = name
+    this.mesh.clickable = true
+  }
+
   public getElement = () => this.group
 }
