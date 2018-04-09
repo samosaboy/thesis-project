@@ -5,8 +5,7 @@ import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
 import 'three/trackballcontrols'
 import { bindActionCreators } from 'redux'
-import { TextGeometry } from '../../components/TextGeometry'
-import { BackgroundParticles } from '../../components/BackgroundParticles'
+import { TextGeometry, BackgroundParticles } from '../../components'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
@@ -34,6 +33,7 @@ export namespace App {
 
   export interface State {
     prevObject: any,
+    lastMousePosition: any
   }
 }
 
@@ -53,6 +53,7 @@ class App extends React.Component<App.Props, App.State> {
   private _vector: THREE.Vector3
   private _intersects: any
   private _clock: THREE.Clock
+  private _controls: THREE.TrackballControls
 
   //stats
   private stats: any
@@ -64,14 +65,8 @@ class App extends React.Component<App.Props, App.State> {
     super(props, context)
     this.state = {
       prevObject: {}, // the last object we hovered over
+      lastMousePosition: {}
     }
-
-    /*
-     * Mouse events
-     * */
-    document.addEventListener('mousemove', this.handleMouseMove)
-    document.addEventListener('mousedown', this.handleMouseDown)
-    document.addEventListener('mouseup', this.handleMouseUp)
 
     /*
      * Animate Array
@@ -95,6 +90,11 @@ class App extends React.Component<App.Props, App.State> {
     this._clock = new THREE.Clock()
     this._clock.autoStart = false
 
+    this._controls = new THREE.TrackballControls(this._camera)
+    this._controls.noRotate = true
+
+    this._controls.addEventListener('change', this._render)
+
     const cameraSpeed = 1
 
     /*
@@ -103,9 +103,9 @@ class App extends React.Component<App.Props, App.State> {
     this._camera.reset = () => {
       new TWEEN.Tween(this._camera.position)
         .to({
-          x: 0,
-          y: 0,
-          z: 300,
+          x: this.state.lastMousePosition.x,
+          y: this.state.lastMousePosition.y,
+          z: this.state.lastMousePosition.z,
         }, cameraSpeed * 1000)
         .easing(TWEEN.Easing.Cubic.Out).start()
     }
@@ -156,7 +156,7 @@ class App extends React.Component<App.Props, App.State> {
     /*
      * Light Params
      * */
-    this._light.position.set(0, 0, 150)
+    this._light.position.set(0, 0, 300)
     this._light.castShadow = true
     this._light.shadow.mapSize.height = 512
     this._light.shadow.mapSize.width = 512
@@ -164,22 +164,13 @@ class App extends React.Component<App.Props, App.State> {
     this._light.shadow.camera.far = 250
     this._scene.add(this._light)
 
-    /* Test */
-    this._scene.add(new THREE.Mesh(
-      new THREE.SphereGeometry(20, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0xFFFFFF }),
-    ))
     this.props.actions.addToSceneList({ scene: this._scene })
     this.props.actions.setCurrentScene({ name: 'mainScene' })
-    /* End Test */
   }
 
   private handleMouseMove = (event) => {
     this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
     this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-    this._mouse.mouseX = event.clientX - (window.innerWidth / 2)
-    this._mouse.mouseY = event.clientY - (window.innerHeight / 2)
 
     this._vector = new THREE.Vector3(this._mouse.x, this._mouse.y, 0).unproject(this._camera)
     this._raycaster = new THREE.Raycaster(this._camera.position, this._vector.sub(this._camera.position).normalize())
@@ -194,6 +185,7 @@ class App extends React.Component<App.Props, App.State> {
       this.props.actions.addLastHoveredObject({ object: this._intersects[0] })
       if (this._intersects[0].object.name === '') {
         window.document.body.style.cursor = 'pointer'
+        // this.setState({ lastMousePosition: this._camera.position })
       }
     } else {
       this.props.actions.resetMouseEvent({ object: null })
@@ -205,19 +197,26 @@ class App extends React.Component<App.Props, App.State> {
     this.createScene()
     this.animate()
     this.animateArray.push(this._render)
+
+    /*
+     * Mouse events
+     * */
+    document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mousedown', this.handleMouseDown)
+    document.addEventListener('mouseup', this.handleMouseUp)
   }
 
   componentDidMount() {
     this.init()
     const text = new TextGeometry({
-      text: 'T E S T \n 1 2 3 4',
+      text: 'T H E \n R I P P L E \n E F F E C T',
       options: {
         align: 'left',
         size: 500,
         lineSpacing: 20,
         font: 'Lato',
         style: 'Bold',
-        color: '#FFFFFF'
+        color: '#FFFFFF',
       },
     })
     text.in()
@@ -228,8 +227,8 @@ class App extends React.Component<App.Props, App.State> {
       particleSize: 0.1,
       rangeY: [
         -100,
-        100
-      ]
+        100,
+      ],
     })
 
     this._scene.add(particles.getElement())
@@ -252,7 +251,9 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   private animate = (): any => {
+    // https://stackoverflow.com/questions/31282318/is-there-a-way-to-cancel-requestanimationframe-without-a-global-variable
     this.stats.update()
+    this._controls.update()
     TWEEN.update()
     requestAnimationFrame(this.animate)
 
@@ -271,15 +272,13 @@ class App extends React.Component<App.Props, App.State> {
         }
       }
     } else {
-      this._camera.reset()
+      // running this messes with the controls...
+      // this._camera.reset()
     }
   }
 
   public _render = (): void => {
     this._renderer.render(this.props.sceneData.currentScene, this._camera)
-    // this._camera.position.x += (this._mouse.mouseX - this._camera.position.x) * 0.02
-    // this._camera.position.y += (-this._mouse.mouseY + 200 - this._camera.position.y) * 0.02
-    // this._camera.lookAt(this.props.sceneData.currentScene.position)
   }
 
 

@@ -1,6 +1,6 @@
 declare interface mouseData {
   event?: string,
-  object?: any
+  object?: any,
 }
 
 declare interface sceneDataIndex {

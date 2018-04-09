@@ -41,7 +41,7 @@ module.exports = {
       'three/stats': Path.join(__dirname, 'node_modules/three/examples/js/libs/stats.min.js'),
       'three/crossfadeScene': Path.join(__dirname, 'node_modules/three/examples/js/crossfade/scenes.js'),
       'three/crossfadeTransition': Path.join(__dirname, 'node_modules/three/examples/js/crossfade/transition.js'),
-      'three/trackballcontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.js'),
+      'three/trackballcontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.tsx'),
       'three/flycontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/FlyControls.js'),
       'three/firstpersoncontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/FirstPersonControls.js'),
     },
