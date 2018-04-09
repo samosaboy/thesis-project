@@ -35,7 +35,6 @@ export namespace App {
 
   export interface State {
     prevObject: any,
-    lastMousePosition: any
   }
 }
 
@@ -45,7 +44,7 @@ class App extends React.Component<App.Props, App.State> {
   // svg setup
   private svgContainer: any
 
-  //three setup
+  // three setup
   private _scene: THREE.Scene | any
   private _camera: THREE.PerspectiveCamera | any
   private _renderer: THREE.WebGLRenderer
@@ -55,10 +54,13 @@ class App extends React.Component<App.Props, App.State> {
   private _vector: THREE.Vector3
   private _intersects: any
   private _clock: THREE.Clock
-  private _controls: any
+  // private _controls: any
 
-  //stats
+  // stats
   private stats: any
+
+  // scene controls
+  public toName: string
 
   // animate array setup
   private animateArray: Array<any>
@@ -67,7 +69,6 @@ class App extends React.Component<App.Props, App.State> {
     super(props, context)
     this.state = {
       prevObject: {}, // the last object we hovered over
-      lastMousePosition: {}
     }
 
     /*
@@ -234,8 +235,9 @@ class App extends React.Component<App.Props, App.State> {
     if (this._intersects.length) {
       this.props.actions.addLastHoveredObject({ object: this._intersects[0] })
       if (this._intersects[0].object.clickable) {
+        // Simplify for our animate
+        this.toName = this.props.mouseData.object.object.name
         window.document.body.style.cursor = 'pointer'
-        // this.setState({ lastMousePosition: this._camera.position })
       }
     } else {
       this.props.actions.resetMouseEvent({ object: null })
@@ -244,6 +246,7 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   private handleMouseDown = () => {
+    // We also need a way to track if you are holding and which event type you are holding for
     if (this._intersects.length) {
       this.props.actions.addMouseEvent({
         event: 'mousedown',
@@ -272,21 +275,18 @@ class App extends React.Component<App.Props, App.State> {
      * */
     this.animateArray.forEach(fn => fn.call())
 
-    // console.log(this._clock.getElapsedTime(), this.props.sceneData)
-
     if (this.props.mouseData.event === 'mousedown') {
       if (this.props.mouseData.object) {
-        if (this.props.mouseData.object.object.name === 'to:pondScene' &&
-          this.props.sceneData.currentScene.name === 'mainScene') {
+        if (this.toName === 'to:pondScene') {
           //this._clock.getElapsedTime() > 0
           // Here we should be using stuff like scene.in() and have visible; false, opacity: 1 etc for fade transitions
-          // this._camera.zoom(this.props.mouseData.object.object)
+          this._camera.zoom(this.props.mouseData.object.object)
           this.props.actions.setCurrentScene({ name: 'pondScene' })
-          // this._camera.reset()
-        } else if (this.props.mouseData.object.object.name === 'to:mainScene' &&
-          this.props.sceneData.currentScene.name === 'pondScene') {
+          this._camera.reset()
+        } else if (this.toName === 'to:mainScene') {
           this.props.actions.setCurrentScene({ name: 'mainScene' })
-          // this._camera.reset()
+          this._camera.zoom(this.props.mouseData.object.object)
+          this._camera.reset()
         }
       }
     } else {
