@@ -3,8 +3,7 @@ import * as actions from '../../actions/actions'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { RootState } from '../../reducers'
-
-import TextLabel from '../../components/TextLabel'
+import { TextGeometry } from '../../components/TextGeometry'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
@@ -60,35 +59,7 @@ class Pond extends React.PureComponent<Pond.Props, any> {
     pondScene.add(light)
 
     this.props.actions.addToSceneList({ scene: pondScene })
-
-    // const title = new TextLabel({
-    //   parent: sphere,
-    //   camera: camera,
-    //   text: 'The Ripple Effect',
-    //   style: {
-    //     font: 'Lato',
-    //     weight: 600,
-    //     size: 80,
-    //     color: '#FFFFFF',
-    //   },
-    // })
-    //
-    // title.start()
-    // animateArray.push(title.update)
-
-    // So we discovered that we can actually add scenes!
-
-    // To remove scenes:
-    //scene.remove( mesh );
-    // this.props.scene.remove(scene2)
-    //
-    // // clean up
-    //
-    // geometry.dispose();
-    // material.dispose();
-    // texture.dispose();
   }
-
 
   render() {
     return null

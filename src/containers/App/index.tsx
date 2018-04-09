@@ -5,7 +5,7 @@ import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
 import 'three/trackballcontrols'
 import { bindActionCreators } from 'redux'
-
+import { TextGeometry } from '../../components/TextGeometry'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
@@ -49,18 +49,14 @@ class App extends React.Component<App.Props, App.State> {
   private _camera: THREE.PerspectiveCamera | any
   private _renderer: THREE.WebGLRenderer
   private _light: THREE.DirectionalLight
-  private _mouse: THREE.Vector2
+  private _mouse: THREE.Vector2 | any
   private _raycaster: THREE.Raycaster
   private _vector: THREE.Vector3
   private _intersects: any
-  private _controls: THREE.TrackballControls
   private _clock: THREE.Clock
 
   //stats
   private stats: any
-
-  // transition
-  private transition: any
 
   // animate array setup
   private animateArray: Array<any>
@@ -75,8 +71,8 @@ class App extends React.Component<App.Props, App.State> {
      * Mouse events
      * */
     document.addEventListener('mousemove', this.handleMouseMove)
-    // document.addEventListener('mousedown', this.handleMouseDown)
-    // document.addEventListener('mouseup', this.handleMouseUp)
+    document.addEventListener('mousedown', this.handleMouseDown)
+    document.addEventListener('mouseup', this.handleMouseUp)
 
     /*
      * Animate Array
@@ -88,7 +84,7 @@ class App extends React.Component<App.Props, App.State> {
      * */
     this._scene = new THREE.Scene()
     this._scene.name = 'mainScene'
-    this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 2, 3000)
+    this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
     this._camera.position.set(0, 0, 300)
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
     this._renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -96,6 +92,7 @@ class App extends React.Component<App.Props, App.State> {
     this._mouse = new THREE.Vector2()
     this._scene.updateMatrixWorld()
     this._camera.updateMatrixWorld()
+    this._camera.updateProjectionMatrix()
     this._clock = new THREE.Clock()
     this._clock.autoStart = false
 
@@ -150,28 +147,12 @@ class App extends React.Component<App.Props, App.State> {
     this._renderer.setClearColor(0x000000)
     this.svgContainer.appendChild(this._renderer.domElement)
 
-    // Stats
+    /*
+     * Instantiate Stats for Development
+     * */
     this.stats = new Stats()
     this.stats.showPanel(0)
     document.body.appendChild(this.stats.dom)
-
-    /*
-     * Instantiate Trackball
-     * */
-    this._controls = new THREE.TrackballControls(this._camera, this._renderer.domElement)
-
-    /*
-     * Trackball Params
-     * */
-    this._controls.rotateSpeed = 0
-    this._controls.zoomSpeed = 0.8
-    this._controls.panSpeed = 1
-    this._controls.staticMoving = true
-    this._controls.dynamicDampingFactor = 0.12
-    this._controls.enabled = true
-
-    this._controls.noZoom = false
-    this._controls.noPan = false
 
     /*
      * Light Params
@@ -187,7 +168,7 @@ class App extends React.Component<App.Props, App.State> {
     /* Test */
     this._scene.add(new THREE.Mesh(
       new THREE.SphereGeometry(20, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
+      new THREE.MeshStandardMaterial({ color: 0xFFFFFF }),
     ))
     this.props.actions.addToSceneList({ scene: this._scene })
     this.props.actions.setCurrentScene({ name: 'mainScene' })
@@ -198,6 +179,9 @@ class App extends React.Component<App.Props, App.State> {
     this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1
     this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
+    this._mouse.mouseX = event.clientX - (window.innerWidth / 2)
+    this._mouse.mouseY = event.clientY - (window.innerHeight / 2)
+
     this._vector = new THREE.Vector3(this._mouse.x, this._mouse.y, 0).unproject(this._camera)
     this._raycaster = new THREE.Raycaster(this._camera.position, this._vector.sub(this._camera.position).normalize())
 
@@ -205,15 +189,15 @@ class App extends React.Component<App.Props, App.State> {
      * This gives us an array of objects that intersect with the scene children
      * We can match the object name to trigger events
      * */
-    this._intersects = this._raycaster.intersectObjects(this._scene.children, true)
+    this._intersects = this._raycaster.intersectObjects(this.props.sceneData.currentScene.children, true)
 
     if (this._intersects.length) {
       this.props.actions.addLastHoveredObject({ object: this._intersects[0] })
-      if (this._intersects[0].object.name === 'sphere') {
+      if (this._intersects[0].object.name === '') {
         window.document.body.style.cursor = 'pointer'
       }
     } else {
-      this.props.actions.resetMouseEvent({})
+      this.props.actions.resetMouseEvent({ object: null })
       window.document.body.style.cursor = 'default'
     }
   }
@@ -221,11 +205,25 @@ class App extends React.Component<App.Props, App.State> {
   private init = (): void => {
     this.createScene()
     this.animate()
-    this.animateArray.push(this._controls.update, this._render)
+    this.animateArray.push(this._render)
   }
 
   componentDidMount() {
     this.init()
+    const text = new TextGeometry({
+      text: 'T E S T \n 1 2 3 4',
+      options: {
+        align: 'left',
+        size: 500,
+        lineSpacing: 20,
+        font: 'Lato',
+        style: 'Bold',
+        color: '#FFFFFF'
+      },
+    })
+    setTimeout(() => text.in(), 2000)
+    text.getElement().position.set(0, 0, 100)
+    this._scene.add(text.getElement())
   }
 
   private handleMouseDown = () => {
@@ -246,9 +244,14 @@ class App extends React.Component<App.Props, App.State> {
 
   private animate = (): any => {
     this.stats.update()
-    requestAnimationFrame(this.animate)
-    this.animateArray.forEach(fn => fn.call())
     TWEEN.update()
+    requestAnimationFrame(this.animate)
+
+    /*
+     * Loop through animateArray
+     * and call each function
+     * */
+    this.animateArray.forEach(fn => fn.call())
 
     if (this.props.mouseData.event === 'mousedown') {
       if (this.props.mouseData.object) {
@@ -265,6 +268,9 @@ class App extends React.Component<App.Props, App.State> {
 
   public _render = (): void => {
     this._renderer.render(this.props.sceneData.currentScene, this._camera)
+    // this._camera.position.x += (this._mouse.mouseX - this._camera.position.x) * 0.02
+    // this._camera.position.y += (-this._mouse.mouseY + 200 - this._camera.position.y) * 0.02
+    // this._camera.lookAt(this.props.sceneData.currentScene.position)
   }
 
 
