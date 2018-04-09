@@ -285,9 +285,11 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   public _render = (): void => {
-    this._camera.position.x += (this._mouse.mouseX - this._camera.position.x) * 0.01
-    this._camera.position.y += (-this._mouse.mouseY - this._camera.position.y) * 0.01
-    this._camera.lookAt(this.props.sceneData.currentScene.position)
+    if (this._mouse.mouseX && this._mouse.mouseY) {
+      this._camera.position.x += (this._mouse.mouseX - this._camera.position.x) * 0.01
+      this._camera.position.y += (-this._mouse.mouseY - this._camera.position.y) * 0.01
+      this._camera.lookAt(this.props.sceneData.currentScene.position)
+    }
     this._renderer.render(this.props.sceneData.currentScene, this._camera)
   }
 
