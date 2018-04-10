@@ -84,29 +84,18 @@ class App extends React.Component<App.Props, App.State> {
     })
   }
 
-  public createScene = (): void => {
-    this.props.actions.addToSceneList({ scene: this.RootScene.scene })
-    this.props.actions.setCurrentScene({ name: 'mainScene' })
+  public setDefaultScene = (): Promise<any> => {
+    return new Promise(resolve => {
+      resolve(this.props.actions.addToSceneList({ scene: this.RootScene.scene }) &&
+        this.props.actions.setCurrentScene({ name: 'mainScene' }))
+    })
   }
 
   componentDidMount() {
     if (this.svgContainer) {
       this.RootScene.setContainer(this.svgContainer)
       this.RootScene.createScene()
-      this.createScene()
-      setTimeout(() => {
-        this.animate()
-      }, 100)
-      //
-      // const mesh = new THREE.Mesh(
-      //   new THREE.SphereGeometry(20, 16, 16),
-      //   new THREE.MeshBasicMaterial(({ color: 0xFFFFFF }))
-      // )
-      // mesh.clickable = true
-      //
-      // this.RootScene.scene.add(
-      //   mesh
-      // )
+      this.setDefaultScene().then(() => this.animate())
 
       this._text1.in()
       this._text1.setName('to:pondScene')
@@ -152,7 +141,7 @@ class App extends React.Component<App.Props, App.State> {
     this.RootScene.vector = new THREE.Vector3(this.RootScene.mouse.x, this.RootScene.mouse.y, 0).unproject(this.RootScene.camera)
     this.RootScene.raycaster = new THREE.Raycaster(
       this.RootScene.camera.position,
-      this.RootScene.vector.sub(this.RootScene.camera.position).normalize()
+      this.RootScene.vector.sub(this.RootScene.camera.position).normalize(),
     )
     /*
      * This gives us an array of objects that intersect with the scene children
@@ -259,16 +248,16 @@ class App extends React.Component<App.Props, App.State> {
       <main>
 
         {/*<div*/}
-          {/*onMouseDown={this.handleMouseDown}*/}
-          {/*onMouseUp={this.handleMouseUp}*/}
-          {/*style={{*/}
-            {/*position: 'absolute' as 'absolute',*/}
-            {/*width: window.innerWidth,*/}
-            {/*height: window.innerHeight,*/}
-            {/*zIndex: 999,*/}
-            {/*top: 0,*/}
-            {/*left: 0,*/}
-          {/*}}*/}
+        {/*onMouseDown={this.handleMouseDown}*/}
+        {/*onMouseUp={this.handleMouseUp}*/}
+        {/*style={{*/}
+        {/*position: 'absolute' as 'absolute',*/}
+        {/*width: window.innerWidth,*/}
+        {/*height: window.innerHeight,*/}
+        {/*zIndex: 999,*/}
+        {/*top: 0,*/}
+        {/*left: 0,*/}
+        {/*}}*/}
         {/*/>*/}
 
         <div

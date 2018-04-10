@@ -169,21 +169,4 @@ export class Root {
     const sky = new THREE.Mesh(skyGeometry, skyMaterial)
     this.scene.add(sky)
   }
-
-  // public animate = () => {
-  //   this.stats.update()
-  //   TWEEN.update()
-  //   this.render()
-  //   requestAnimationFrame(this.animate)
-  // }
-  //
-  // private render = () => {
-  //   if (this.mouse.mouseX && this.mouse.mouseY) {
-  //     this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.02
-  //     this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
-  //     this.camera.lookAt(new THREE.Vector3(0, 0, 0))
-  //     // this.camera.lookAt(this.props.sceneData.currentScene.position)
-  //   }
-  //   this.renderer.render(this.scene, this.camera)
-  // }
 }
