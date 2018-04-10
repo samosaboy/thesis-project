@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+
 const TWEEN = require('@tweenjs/tween.js')
 
 interface TextGeometryParams {
@@ -74,12 +75,15 @@ export class TextGeometry {
       opacity: 0,
     })
 
-    const geometry = new THREE.PlaneGeometry(canvas.width / 20, canvas.height / 20)
+    const geometry = new THREE.PlaneGeometry(
+      canvas.width / 20,
+      canvas.height / 20)
 
     // Group is exposed, mesh is animated
     this.group = new THREE.Object3D()
     this.mesh = new THREE.Mesh(geometry, material)
     this.mesh.position.y = 20
+    this.mesh.castShadow = true
     this.group.add(this.mesh)
     this.group.visible = false
 
@@ -104,6 +108,23 @@ export class TextGeometry {
       .onStart(() => this.group.visible = true)
       .onUpdate(() => this.update())
       .start()
+  }
+
+  public out = () => {
+    return new Promise((res) => {
+      new TWEEN.Tween(this.cache)
+        .to({
+          y: 20,
+          opacity: 0,
+        }, 1500)
+        .easing(TWEEN.Easing.Circular.InOut)
+        .onUpdate(() => this.update())
+        .onComplete(() => {
+          this.group.visible = false
+          res()
+        })
+        .start()
+    })
   }
 
   public setName = name => {

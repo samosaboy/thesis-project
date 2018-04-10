@@ -17,7 +17,7 @@ export class BackgroundParticles {
       const particle = new THREE.Vector3(
         random(-(window.innerWidth / 6), (window.innerWidth / 6)),
         random(params.rangeY[0], params.rangeY[1]),
-        random(-50, 100)
+        random(-50, 400)
       )
 
       geometry.vertices.push(particle)

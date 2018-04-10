@@ -3,11 +3,15 @@ import Pond from '../Pond/Pond'
 import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
-import 'three/trackballcontrols'
 import { bindActionCreators } from 'redux'
-import { TextGeometry, BackgroundParticles } from '../../components'
+import {
+  BackgroundParticles,
+  EventParticles,
+  TextGeometry,
+} from '../../components'
 
-import 'three/flycontrols'
+// import 'three/trackballcontrols'
+// import 'three/flycontrols'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
@@ -54,7 +58,6 @@ class App extends React.Component<App.Props, App.State> {
   private _vector: THREE.Vector3
   private _intersects: any
   private _clock: THREE.Clock
-  // private _controls: any
 
   // stats
   private stats: any
@@ -64,6 +67,9 @@ class App extends React.Component<App.Props, App.State> {
 
   // animate array setup
   private animateArray: Array<any>
+
+  // text elements
+  private _text1: any
 
   constructor(props?: any, context?: any) {
     super(props, context)
@@ -81,11 +87,14 @@ class App extends React.Component<App.Props, App.State> {
      * */
     this._scene = new THREE.Scene()
     this._scene.name = 'mainScene'
+    this._scene.fog = new THREE.Fog(new THREE.Color('#e0e0e0'), 1, 5000)
     this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
     this._camera.position.set(0, 0, 300)
     this._camera.lookAt(new THREE.Vector3(0, 0, 0))
     this._renderer = new THREE.WebGLRenderer({ antialias: true })
-    this._light = new THREE.SpotLight(0xFFFFFF)
+    this._renderer.shadowMap.enabled = true
+    this._renderer.shadowMap.type = THREE.PCFSoftShadowMap
+
     this._mouse = new THREE.Vector2()
     this._scene.updateMatrixWorld()
     this._camera.updateMatrixWorld()
@@ -144,11 +153,27 @@ class App extends React.Component<App.Props, App.State> {
           .easing(TWEEN.Easing.Cubic.Out).start()
       }
     }
+
+    /* Text Elements */
+    this._text1 = new TextGeometry({
+      text: 'T H E \n R I P P L E \n E F F E C T',
+      options: {
+        align: 'left',
+        size: 500,
+        lineSpacing: 20,
+        font: 'Lato',
+        style: 'Bold',
+        color: '#FFFFFF',
+      },
+    })
   }
 
   public createScene = (): void => {
     this._renderer.setSize(window.innerWidth, window.innerHeight)
-    this._renderer.setClearColor(0x000000)
+    // this._renderer.setClearColor(0x000000)
+    this._renderer.gammaInput = true
+    this._renderer.gammaOutput = true
+    this._renderer.shadowMap.enabled = true
     this.svgContainer.appendChild(this._renderer.domElement)
 
     /*
@@ -158,16 +183,66 @@ class App extends React.Component<App.Props, App.State> {
     this.stats.showPanel(0)
     document.body.appendChild(this.stats.dom)
 
+    // Plane
+    const planeGeometry = new THREE.BoxBufferGeometry(6000, 10, 10000)
+    const planeMaterial = new THREE.MeshPhongMaterial({
+      color: '#060615',
+      dithering: true,
+    })
+    const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
+    planeMesh.position.set(0, -50, 0)
+    planeMesh.receiveShadow = true
+
+    this._scene.add(planeMesh)
+
     /*
      * Light Params
      * */
-    this._light.position.set(0, 0, 300)
-    this._light.castShadow = true
-    this._light.shadow.mapSize.height = 512
-    this._light.shadow.mapSize.width = 512
-    this._light.shadow.camera.near = 0
-    this._light.shadow.camera.far = 250
-    this._scene.add(this._light)
+    const spotLight = new THREE.SpotLight(0xFFFFFF)
+    spotLight.penumbra = 1 // how soft the spotlight looks
+    spotLight.position.set(0, 200, 0)
+    this._scene.add(spotLight)
+
+    const shadowLight = new THREE.SpotLight(0xFFFFFF)
+    shadowLight.penumbra = 1 // how soft the shadowLight looks
+    shadowLight.position.set(0, 200, 100)
+    shadowLight.castShadow = true
+    shadowLight.shadow.mapSize.width = 100
+    shadowLight.shadow.mapSize.height = 100
+    this._scene.add(shadowLight)
+
+    const skyBox = new THREE.HemisphereLight('#373f52', '#0e0e1d')
+    skyBox.position.set(0, 50, 0)
+    this._scene.add(skyBox)
+
+    const skyGeometry = new THREE.SphereGeometry(600, 32, 15)
+    const skyMaterial = new THREE.ShaderMaterial({
+      vertexShader: `varying vec3 vWorldPosition;
+			void main() {
+				vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+				vWorldPosition = worldPosition.xyz;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+			}`,
+      fragmentShader: `uniform vec3 topColor;
+			uniform vec3 bottomColor;
+			uniform float offset;
+			uniform float exponent;
+			varying vec3 vWorldPosition;
+			void main() {
+				float h = normalize( vWorldPosition + offset ).y;
+				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+			}`,
+      uniforms: {
+        topColor: { value: new THREE.Color('#141418') },
+        bottomColor: { value: new THREE.Color('#262c3c') },
+        offset: { value: 100 },
+        exponent: { value: 1.1 },
+      },
+      side: THREE.BackSide,
+    })
+    const sky = new THREE.Mesh(skyGeometry, skyMaterial)
+    sky.clickable = false
+    this._scene.add(sky)
 
     this.props.actions.addToSceneList({ scene: this._scene })
     this.props.actions.setCurrentScene({ name: 'mainScene' })
@@ -189,21 +264,11 @@ class App extends React.Component<App.Props, App.State> {
 
   componentDidMount() {
     this.init()
-    const text = new TextGeometry({
-      text: 'T H E \n R I P P L E \n E F F E C T',
-      options: {
-        align: 'left',
-        size: 500,
-        lineSpacing: 20,
-        font: 'Lato',
-        style: 'Bold',
-        color: '#FFFFFF',
-      },
-    })
-    text.in()
-    text.setName('to:pondScene')
-    this._scene.add(text.getElement())
+    this._text1.in()
+    this._text1.setName('to:pondScene')
+    this._scene.add(this._text1.getElement())
 
+    // TODO: Move these to own scene
     const particles = new BackgroundParticles({
       count: 1000,
       particleSize: 0.1,
@@ -212,8 +277,16 @@ class App extends React.Component<App.Props, App.State> {
         100,
       ],
     })
-
     this._scene.add(particles.getElement())
+
+    const eventParticles = new EventParticles()
+    this._scene.add(eventParticles.getElement())
+  }
+
+  private resetHandleMouseMove = () => {
+    this.toName = ''
+    this.props.actions.resetMouseEvent({ object: null })
+    window.document.body.style.cursor = 'default'
   }
 
   private handleMouseMove = (event) => {
@@ -238,10 +311,11 @@ class App extends React.Component<App.Props, App.State> {
         // Simplify for our animate
         this.toName = this.props.mouseData.object.object.name
         window.document.body.style.cursor = 'pointer'
+      } else {
+        this.resetHandleMouseMove()
       }
     } else {
-      this.props.actions.resetMouseEvent({ object: null })
-      window.document.body.style.cursor = 'default'
+      this.resetHandleMouseMove()
     }
   }
 
@@ -263,30 +337,39 @@ class App extends React.Component<App.Props, App.State> {
     this._clock.stop()
   }
 
+  private setScene = name => {
+    this.props.actions.setCurrentScene({ name })
+    this._camera.reset()
+  }
+
   private animate = (): any => {
     // https://stackoverflow.com/questions/31282318/is-there-a-way-to-cancel-requestanimationframe-without-a-global-variable
     this.stats.update()
     TWEEN.update()
+    this.sceneBus()
     requestAnimationFrame(this.animate)
-
     /*
      * Loop through animateArray
      * and call each function
      * */
     this.animateArray.forEach(fn => fn.call())
+  }
+
+  public sceneBus = () => {
+    if (!this.props.mouseData.event) {
+      return
+    }
 
     if (this.props.mouseData.event === 'mousedown') {
       if (this.props.mouseData.object) {
         if (this.toName === 'to:pondScene') {
           //this._clock.getElapsedTime() > 0
           // Here we should be using stuff like scene.in() and have visible; false, opacity: 1 etc for fade transitions
-          this._camera.zoom(this.props.mouseData.object.object)
-          this.props.actions.setCurrentScene({ name: 'pondScene' })
-          this._camera.reset()
+          // this._camera.zoom(this.props.mouseData.object.object)
+          this._text1.out().then(() => this.setScene('pondScene'))
         } else if (this.toName === 'to:mainScene') {
-          this.props.actions.setCurrentScene({ name: 'mainScene' })
-          this._camera.zoom(this.props.mouseData.object.object)
-          this._camera.reset()
+          this.setScene('mainScene')
+          this._text1.in()
         }
       }
     } else {

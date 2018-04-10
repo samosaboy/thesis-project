@@ -6,6 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const isProduction = process.argv.indexOf('-p') >= 0;
 const outPath = Path.join(__dirname, './dist');
 const sourcePath = Path.join(__dirname, './src');
+const publicPath = Path.join(__dirname, './public');
 
 module.exports = {
   context: sourcePath,
@@ -21,8 +22,9 @@ module.exports = {
   },
   output: {
     path: outPath,
-    publicPath: '/',
     filename: 'bundle.js',
+    chunkFilename: '[chunkhash].js',
+    publicPath: '/'
   },
   target: 'web',
   resolve: {
@@ -116,9 +118,11 @@ module.exports = {
       { test: /\.wav$/, use: 'file-loader' },
     ]
   },
+
   plugins: [
     new Webpack.DefinePlugin({
-      'process.env.NODE_ENV': isProduction === true ? JSON.stringify('production') : JSON.stringify('development')
+      'process.env.NODE_ENV': isProduction === true ? JSON.stringify('production') : JSON.stringify('development'),
+      'process.env.PUBLIC_URL': JSON.stringify(sourcePath + publicPath)
     }),
     new Webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -131,7 +135,7 @@ module.exports = {
       disable: !isProduction
     }),
     new HtmlWebpackPlugin({
-      template: 'index.html'
+      template: 'public/index.html'
     }),
     new Webpack.ProvidePlugin({
       THREE: 'three'
@@ -140,9 +144,11 @@ module.exports = {
   devServer: {
     contentBase: sourcePath,
     hot: true,
-    stats: {
-      warnings: false
+    inline: true,
+    historyApiFallback: {
+      disableDotRule: true
     },
+    stats: 'minimal'
   },
   node: {
     // workaround for webpack-dev-server issue
