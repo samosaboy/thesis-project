@@ -1,28 +1,72 @@
 import * as React from 'react'
 import * as THREE from 'three'
 
-import * as SyriaShape from '../../public/Extrude.json'
-
-const TWEEN = require('@tweenjs/tween.js')
-
 export class EventParticles {
+  private sphereMesh: any
+  private sphereMaterial: any
   private group: any
+  private getCameraPosition: any
 
-  constructor(params?: any) {
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xFFFFFF,
-      refractionRatio: 0.95,
+  constructor() {
+    this.sphereMaterial = new THREE.ShaderMaterial({
+      uniforms:
+        {
+          'c': {
+            type: 'f',
+            value: 0.6,
+          },
+          'p': {
+            type: 'f',
+            value: 4,
+          },
+          glowColor: {
+            type: 'c',
+            value: new THREE.Color(0xffffff),
+          },
+          viewVector: {
+            type: 'v3',
+            value: new THREE.Vector3(0, 0, 0),
+          },
+        },
+      vertexShader: `uniform vec3 viewVector;
+      uniform float c;
+      uniform float p;
+      varying float intensity;
+      void main() 
+      {
+          vec3 vNormal = normalize( normalMatrix * normal );
+        vec3 vNormel = normalize( normalMatrix * viewVector );
+        intensity = pow( c - dot(vNormal, vNormel), p );
+        
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+      }`,
+      fragmentShader: `uniform vec3 glowColor;
+      varying float intensity;
+      void main() 
+      {
+        vec3 glow = glowColor * intensity;
+          gl_FragColor = vec4( glow, 1.0 );
+      }`,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
     })
+
+    this.sphereMaterial.needsUpdate = true
 
     this.group = new THREE.Object3D()
     const eventData = [
       {
         id: 1,
-        location: {x: 0, y: 20, z: 100}
+        location: {
+          x: 0,
+          y: 20,
+          z: 100,
+        },
       },
     ]
 
-    const geometry = new THREE.SphereGeometry(20, 16, 16)
+    const geometry = new THREE.SphereGeometry(22, 16, 16)
 
     // for (let i = 0; i < eventData.length; i++) {
     //   const mesh = new THREE.Mesh(geometry, material)
@@ -32,16 +76,31 @@ export class EventParticles {
 
     const loader = new THREE.JSONLoader()
 
-    loader.load('../public/Extrude.json', obj => {
+    loader.load('../public/objects/SyriaObj.json', obj => {
       const mesh = new THREE.Mesh(obj, new THREE.MeshStandardMaterial({
-        color: 0xFFFFFF
+        color: '#c2f3ff',
       }))
+      obj.center()
+      mesh.position.set(0, 60, 0)
+      mesh.scale.multiplyScalar(0.09)
+      mesh.name = 'country'
       this.group.add(mesh)
+
+      this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial.clone())
+      // this is always the position + the radius
+      this.sphereMesh.position.set(0, 60, 0)
+      this.sphereMesh.name = 'sphere'
+      this.group.add(this.sphereMesh)
+
     })
+  }
 
-    // console.log(model)
-
-    // console.log(this.group)
+  public updateCameraPosition = (position) => {
+    this.getCameraPosition = position
+    this.sphereMaterial.uniforms.viewVector.value = new THREE.Vector3().addVectors(
+      position,
+      this.sphereMesh.position
+    )
   }
 
   public getElement = () => this.group

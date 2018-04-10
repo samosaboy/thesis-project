@@ -131,6 +131,4 @@ export class TextGeometry {
     this.mesh.name = name
     this.mesh.clickable = true
   }
-
-  public getElement = () => this.group
 }
