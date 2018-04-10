@@ -2,6 +2,8 @@ const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
 
+import * as ShaderFrogRuntime from 'shaderfrog-runtime'
+
 export class Root {
   // three setup
   private scene: THREE.Scene | any
@@ -103,14 +105,19 @@ export class Root {
   public createScene = () => {
     // Plane
     const planeGeometry = new THREE.BoxBufferGeometry(100000, 10, 1000)
-    const planeMaterial = new THREE.MeshPhongMaterial({
-      color: '#060615',
-      dithering: true,
+    // const planeMaterial = new THREE.MeshPhongMaterial({
+    //   color: '#060615',
+    //   dithering: true,
+    // })
+
+    const runtime = new ShaderFrogRuntime()
+    runtime.load('../public/WaterShader.json', data => {
+      const material = runtime.get(data.name)
+      const planeMesh = new THREE.Mesh(planeGeometry, material)
+      planeMesh.position.set(0, -75, 0)
+      planeMesh.receiveShadow = true
+      this.scene.add(planeMesh)
     })
-    const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
-    planeMesh.position.set(0, -75, 0)
-    planeMesh.receiveShadow = true
-    this.scene.add(planeMesh)
 
     /*
      * Light Params
