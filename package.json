@@ -66,6 +66,7 @@
     "es6-tween": "^5.1.0",
     "konva": "^1.7.6",
     "normalize.css": "^7.0.0",
+    "postprocessing": "^4.4.1",
     "react": "^16.0.0",
     "react-animation-frame": "^1.0.1",
     "react-dom": "^16.0.0",

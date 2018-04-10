@@ -11,6 +11,22 @@ import {
   TextGeometry,
 } from '../../components'
 
+import {
+  BloomPass,
+  EffectComposer,
+  RenderPass,
+  SMAAPass,
+} from 'postprocessing'
+
+import 'three/copyshader'
+import 'three/effectcomposer'
+import 'three/shaderpass'
+import 'three/renderpass'
+import 'three/fxaashader'
+import 'three/maskpass'
+import 'three/smaashader'
+import 'three/smaapass'
+
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
@@ -57,6 +73,12 @@ class App extends React.Component<App.Props, App.State> {
   //root
   private RootScene: any
 
+
+  // postprocessing
+  private composer
+  private depthMaterial
+  private depthRenderTarget
+
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
@@ -78,7 +100,10 @@ class App extends React.Component<App.Props, App.State> {
     if (this.svgContainer) {
       this.RootScene.setContainer(this.svgContainer)
       this.RootScene.createScene()
-      this.setDefaultScene().then(() => this.animate())
+      this.setDefaultScene().then(() => {
+        this.postProcessing()
+        this.animate()
+      })
 
       // TODO: Move these to own scene
       this._text1 = new TextGeometry({
@@ -99,7 +124,7 @@ class App extends React.Component<App.Props, App.State> {
 
       const particles = new BackgroundParticles({
         count: 1000,
-        particleSize: 1,
+        particleSize: 1.2,
         rangeY: [
           -100,
           100,
@@ -199,7 +224,9 @@ class App extends React.Component<App.Props, App.State> {
           case 'to:mainScene':
             this.setScene('mainScene')
             this._text1.in()
-
+            break
+          default:
+            break
         }
       }
     } else {
@@ -208,11 +235,33 @@ class App extends React.Component<App.Props, App.State> {
     }
   }
 
+  private postProcessing = () => {
+    const res = window.devicePixelRatio
+    /*
+     * Add Postprocessing Effects
+     * */
+
+    this.composer = new THREE.EffectComposer(this.RootScene.renderer)
+    this.composer.addPass(new THREE.RenderPass(this.props.sceneData.currentScene, this.RootScene.camera))
+    this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
+
+    const bloomPass = new BloomPass(
+      {
+        resolutionScale: 0.06,
+        intensity: 1.2,
+        distinction: 1,
+      },
+    )
+    bloomPass.renderToScreen = true
+    this.composer.addPass(bloomPass)
+  }
+
   public animate = () => {
     this.RootScene.stats.update()
     TWEEN.update()
     this.THREErender()
     this.sceneBus()
+    this.composer.render(this.RootScene.clock.getDelta())
     requestAnimationFrame(this.animate)
 
     /*
@@ -225,10 +274,17 @@ class App extends React.Component<App.Props, App.State> {
   private THREErender = () => {
     if (this.RootScene.mouse.mouseX && this.RootScene.mouse.mouseY) {
       this.RootScene.camera.position.x += (this.RootScene.mouse.mouseX - this.RootScene.camera.position.x) * 0.02
-      this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
+      // this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
       this.RootScene.camera.lookAt(this.props.sceneData.currentScene.position)
     }
-    this.RootScene.renderer.render(this.props.sceneData.currentScene, this.RootScene.camera)
+    const sphere = this.RootScene.scene.getObjectByName('sphere')
+    if (sphere) {
+      this.eventParticles.updateCameraPosition(this.RootScene.camera.position)
+    }
+    this.RootScene.renderer.render(
+      this.props.sceneData.currentScene,
+      this.RootScene.camera,
+    )
   }
 
   public render() {

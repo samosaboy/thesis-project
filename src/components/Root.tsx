@@ -24,12 +24,11 @@ export class Root {
 
     this.scene = new THREE.Scene()
     this.scene.name = 'mainScene'
-    this.scene.fog = new THREE.Fog(new THREE.Color(0xe0e0e0), 1, 5000)
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000)
+    this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 200, 800)
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000)
     this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
       antialias: (window.devicePixelRatio === 1),
-      fov: 60,
     })
     this.mouse = new THREE.Vector2()
     this.scene.updateMatrixWorld()
@@ -109,9 +108,8 @@ export class Root {
       dithering: true,
     })
     const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
-    planeMesh.position.set(0, -50, 0)
+    planeMesh.position.set(0, -75, 0)
     planeMesh.receiveShadow = true
-
     this.scene.add(planeMesh)
 
     /*
@@ -152,7 +150,7 @@ export class Root {
 				gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
 			}`,
       uniforms: {
-        topColor: { value: new THREE.Color('#141418') },
+        topColor: { value: new THREE.Color('#0a0a0c') },
         bottomColor: { value: new THREE.Color('#262c3c') },
         offset: { value: 100 },
         exponent: { value: 1.1 },

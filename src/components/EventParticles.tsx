@@ -13,15 +13,15 @@ export class EventParticles {
         {
           'c': {
             type: 'f',
-            value: 0.6,
+            value: 0.5,
           },
           'p': {
             type: 'f',
-            value: 4,
+            value: 2.1,
           },
           glowColor: {
             type: 'c',
-            value: new THREE.Color(0xffffff),
+            value: new THREE.Color('#e0efff'),
           },
           viewVector: {
             type: 'v3',
@@ -47,7 +47,7 @@ export class EventParticles {
         vec3 glow = glowColor * intensity;
           gl_FragColor = vec4( glow, 1.0 );
       }`,
-      side: THREE.BackSide,
+      side: THREE.FrontSide,
       blending: THREE.AdditiveBlending,
       transparent: true,
     })
@@ -86,7 +86,7 @@ export class EventParticles {
       mesh.name = 'country'
       this.group.add(mesh)
 
-      this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial.clone())
+      this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial)
       // this is always the position + the radius
       this.sphereMesh.position.set(0, 60, 0)
       this.sphereMesh.name = 'sphere'
@@ -99,7 +99,7 @@ export class EventParticles {
     this.getCameraPosition = position
     this.sphereMaterial.uniforms.viewVector.value = new THREE.Vector3().addVectors(
       position,
-      this.sphereMesh.position
+      this.sphereMesh.position,
     )
   }
 
