@@ -99,7 +99,7 @@ class App extends React.Component<App.Props, App.State> {
 
       const particles = new BackgroundParticles({
         count: 1000,
-        particleSize: 0.1,
+        particleSize: 1,
         rangeY: [
           -100,
           100,

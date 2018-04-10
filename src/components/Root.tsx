@@ -1,10 +1,3 @@
-/* So here we basically need to define a Scene that we can use to instantiate
- * all of our components. I need to be able to declare const pool = new Scene()
- * and then trigger animations on click events and delete everything afterwards
- *
- * Should each scene have its own camera, renderer, requestAnimationFrame etc???
- */
-
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
@@ -110,7 +103,7 @@ export class Root {
 
   public createScene = () => {
     // Plane
-    const planeGeometry = new THREE.BoxBufferGeometry(6000, 10, 10000)
+    const planeGeometry = new THREE.BoxBufferGeometry(100000, 10, 1000)
     const planeMaterial = new THREE.MeshPhongMaterial({
       color: '#060615',
       dithering: true,
@@ -141,7 +134,7 @@ export class Root {
     skyBox.position.set(0, 50, 0)
     this.scene.add(skyBox)
 
-    const skyGeometry = new THREE.SphereGeometry(600, 32, 15)
+    const skyGeometry = new THREE.SphereBufferGeometry(1000, 6, 6)
     const skyMaterial = new THREE.ShaderMaterial({
       vertexShader: `varying vec3 vWorldPosition;
 			void main() {

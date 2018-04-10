@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { createCircularCanvasMaterial } from './Utils/createCircularCanvasMaterial'
 import { random } from './Utils/random'
 
 const TWEEN = require('@tweenjs/tween.js')
@@ -8,7 +9,10 @@ export class BackgroundParticles {
 
   constructor(params?: any) {
     const material = new THREE.PointsMaterial({
+      map: createCircularCanvasMaterial('#FFFFFF', 256),
       size: params.particleSize,
+      depthWrite: false,
+      transparent: true
     })
 
     const geometry = new THREE.Geometry()
