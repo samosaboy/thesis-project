@@ -64,24 +64,7 @@ class App extends React.Component<App.Props, App.State> {
     }
 
     this.RootScene = new Root()
-
-    /*
-     * Animate Array
-     * */
     this.animateArray = []
-
-    /* Text Elements */
-    this._text1 = new TextGeometry({
-      text: 'T H E \n R I P P L E \n E F F E C T',
-      options: {
-        align: 'left',
-        size: 500,
-        lineSpacing: 20,
-        font: 'Lato',
-        style: 'Bold',
-        color: '#FFFFFF',
-      },
-    })
   }
 
   public setDefaultScene = (): Promise<any> => {
@@ -97,11 +80,23 @@ class App extends React.Component<App.Props, App.State> {
       this.RootScene.createScene()
       this.setDefaultScene().then(() => this.animate())
 
+      // TODO: Move these to own scene
+      this._text1 = new TextGeometry({
+        text: 'T H E \n R I P P L E \n E F F E C T',
+        options: {
+          align: 'left',
+          size: 500,
+          lineSpacing: 20,
+          font: 'Lato',
+          style: 'Bold',
+          color: '#FFFFFF',
+        },
+      })
+
       this._text1.in()
       this._text1.setName('to:pondScene')
       this.RootScene.scene.add(this._text1.mesh)
 
-      // TODO: Move these to own scene
       const particles = new BackgroundParticles({
         count: 1000,
         particleSize: 0.1,
@@ -193,16 +188,18 @@ class App extends React.Component<App.Props, App.State> {
 
     if (this.props.mouseData.event === 'mousedown') {
       if (this.props.mouseData.object) {
-        if (this.toName === 'to:pondScene') {
-          //this._clock.getElapsedTime() > 0
-          // Here we should be using stuff like scene.in() and have visible; false, opacity: 1 etc for fade transitions
-          // this._camera.zoom(this.props.mouseData.object.object)
-          this._text1.out().then(() => {
-            this.setScene('pondScene')
-          })
-        } else if (this.toName === 'to:mainScene') {
-          this.setScene('mainScene')
-          this._text1.in()
+        // this._clock.getElapsedTime() > 0
+        // this.RootScene.camera.zoom(this.props.mouseData.object.object)
+        switch (this.toName) {
+          case'to:pondScene':
+            this._text1.out().then(() => {
+              this.setScene('pondScene')
+            })
+            break
+          case 'to:mainScene':
+            this.setScene('mainScene')
+            this._text1.in()
+
         }
       }
     } else {
@@ -234,31 +231,9 @@ class App extends React.Component<App.Props, App.State> {
     this.RootScene.renderer.render(this.props.sceneData.currentScene, this.RootScene.camera)
   }
 
-  // public _render = (): void => {
-  //   const marbles = this.RootScene.scene.getObjectByName('sphere')
-  //   if (this.RootScene.camera.position && marbles) {
-  //     this.eventParticles.updateCameraPosition(this.RootScene.camera.position)
-  //   }
-  //   this.RootScene.renderer.render(this.props.sceneData.currentScene, this.RootScene.camera)
-  //   console.log(this.RootScene.renderer)
-  // }
-
   public render() {
     return (
       <main>
-
-        {/*<div*/}
-        {/*onMouseDown={this.handleMouseDown}*/}
-        {/*onMouseUp={this.handleMouseUp}*/}
-        {/*style={{*/}
-        {/*position: 'absolute' as 'absolute',*/}
-        {/*width: window.innerWidth,*/}
-        {/*height: window.innerHeight,*/}
-        {/*zIndex: 999,*/}
-        {/*top: 0,*/}
-        {/*left: 0,*/}
-        {/*}}*/}
-        {/*/>*/}
 
         <div
           style={{
