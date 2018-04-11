@@ -81,9 +81,9 @@ export class TextGeometry {
 
     // Group is exposed, mesh is animated
     this.group = new THREE.Object3D()
-    this.mesh = new THREE.Mesh(geometry, material)
+    this.mesh = new THREE.Mesh(geometry.clone(), material.clone())
     this.mesh.position.y = 20
-    this.mesh.castShadow = true
+    // this.mesh.castShadow = true
     this.group.add(this.mesh)
     this.group.visible = false
 
@@ -98,29 +98,33 @@ export class TextGeometry {
     this.mesh.material.opacity = this.cache.opacity
   }
 
-  public in = () => {
+  public in = (speed?) => {
     return new TWEEN.Tween(this.cache)
       .to({
         y: 0,
         opacity: 1,
-      }, 1500)
+      }, speed === 'fast' ? 200 : 1500)
       .easing(TWEEN.Easing.Circular.InOut)
-      .onStart(() => this.group.visible = true)
+      .onStart(() => {
+        this.group.visible = true
+        this.mesh.castShadow = true
+      })
       .onUpdate(() => this.update())
       .start()
   }
 
-  public out = () => {
+  public out = (speed?) => {
     return new Promise((res) => {
       new TWEEN.Tween(this.cache)
         .to({
           y: 20,
           opacity: 0,
-        }, 1500)
-        .easing(TWEEN.Easing.Circular.InOut)
+        }, speed === 'fast' ? 200 : 1500)
+        .easing(TWEEN.Easing.Exponential.Out)
         .onUpdate(() => this.update())
         .onComplete(() => {
           this.group.visible = false
+          this.mesh.castShadow = false
           res()
         })
         .start()

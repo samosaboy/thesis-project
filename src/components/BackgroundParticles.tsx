@@ -6,6 +6,8 @@ import {
 
 export class BackgroundParticles {
   private group: any
+  private geometry: any
+  private mesh: any
 
   constructor(params?: any) {
     const material = new THREE.PointsMaterial({
@@ -13,10 +15,10 @@ export class BackgroundParticles {
       size: params.particleSize,
       depthWrite: false,
       transparent: true,
-      opacity: 0.9
+      opacity: 0.9,
     })
 
-    const geometry = new THREE.Geometry()
+    this.geometry = new THREE.Geometry()
 
     for (let i = 0; i < params.count; i++) {
       const particle = new THREE.Vector3(
@@ -25,12 +27,19 @@ export class BackgroundParticles {
         random(-200, 200),
       )
 
-      geometry.vertices.push(particle)
+      this.geometry.vertices.push(particle)
     }
 
     this.group = new THREE.Object3D()
-    this.group.add(new THREE.Points(geometry, material))
+
+    this.mesh = new THREE.Points(this.geometry, material)
+    this.mesh.name = 'backgroundParticles'
+    this.group.add(this.mesh)
   }
 
   public getElement = () => this.group
+
+  public animateParticles = () => {
+    this.mesh.rotation.y += 0.0002
+  }
 }

@@ -83,13 +83,14 @@ export class EventParticles {
       obj.center()
       mesh.position.set(0, 60, 0)
       mesh.scale.multiplyScalar(0.09)
-      mesh.name = 'country'
+      mesh.name = 'event:Syria'
       this.group.add(mesh)
 
       this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial)
       // this is always the position + the radius
       this.sphereMesh.position.set(0, 60, 0)
-      this.sphereMesh.name = 'sphere'
+      this.sphereMesh.name = 'event:Syria'
+      this.sphereMesh.clickable = true
       this.group.add(this.sphereMesh)
 
     })
@@ -99,7 +100,7 @@ export class EventParticles {
     this.getCameraPosition = position
     this.sphereMaterial.uniforms.viewVector.value = new THREE.Vector3().addVectors(
       position,
-      this.sphereMesh.position,
+      this.sphereMesh.position
     )
   }
 

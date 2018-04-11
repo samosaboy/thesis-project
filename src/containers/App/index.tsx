@@ -67,8 +67,13 @@ class App extends React.Component<App.Props, App.State> {
   private animateArray: Array<any>
 
   // text elements & other elements
-  private _text1: any
+  private titleText: any
   private eventParticles: any
+  private backgroundParticles: any
+  private step: number
+
+  // events
+  private syriaText: any
 
   //root
   private RootScene: any
@@ -85,6 +90,7 @@ class App extends React.Component<App.Props, App.State> {
       prevObject: {}, // the last object we hovered over
     }
 
+    this.step = 0
     this.RootScene = new Root()
     this.animateArray = []
   }
@@ -103,38 +109,52 @@ class App extends React.Component<App.Props, App.State> {
       this.setDefaultScene().then(() => {
         this.postProcessing()
         this.animate()
+
+        // TODO: Move these to own scene
+        this.titleText = new TextGeometry({
+          text: 'T H E \n R I P P L E \n E F F E C T',
+          options: {
+            align: 'left',
+            size: 500,
+            lineSpacing: 20,
+            font: 'Lato',
+            style: 'Bold',
+            color: '#FFFFFF',
+          },
+        })
+
+        this.titleText.in()
+        // this._text1.setName('to:pondScene')
+        this.props.sceneData.currentScene.add(this.titleText.mesh)
+
+        this.backgroundParticles = new BackgroundParticles({
+          count: 1000,
+          particleSize: 1.2,
+          rangeY: [
+            -100,
+            100,
+          ],
+        })
+        this.RootScene.scene.add(this.backgroundParticles.getElement())
+
+        this.eventParticles = new EventParticles()
+        this.props.sceneData.currentScene.add(this.eventParticles.group)
+
+        /* Event Text */
+        // TODO: Figure out how to add descriptions
+        this.syriaText = new TextGeometry({
+          text: 'D A M A S C U S, \n S Y R I A',
+          options: {
+            align: 'left',
+            size: 500,
+            lineSpacing: 20,
+            font: 'Lato',
+            style: 'Bold',
+            color: '#FFFFFF',
+          },
+        })
+        this.props.sceneData.currentScene.add(this.syriaText.mesh)
       })
-
-      // TODO: Move these to own scene
-      this._text1 = new TextGeometry({
-        text: 'T H E \n R I P P L E \n E F F E C T',
-        options: {
-          align: 'left',
-          size: 500,
-          lineSpacing: 20,
-          font: 'Lato',
-          style: 'Bold',
-          color: '#FFFFFF',
-        },
-      })
-
-      this._text1.in()
-      this._text1.setName('to:pondScene')
-      this.RootScene.scene.add(this._text1.mesh)
-
-      const particles = new BackgroundParticles({
-        count: 1000,
-        particleSize: 1.2,
-        rangeY: [
-          -100,
-          100,
-        ],
-      })
-      this.RootScene.scene.add(particles.getElement())
-
-      this.eventParticles = new EventParticles()
-      this.RootScene.scene.add(this.eventParticles.getElement())
-
     }
 
     /*
@@ -167,9 +187,10 @@ class App extends React.Component<App.Props, App.State> {
      * This gives us an array of objects that intersect with the scene children
      * We can match the object name to trigger events
      * */
-    this.RootScene.intersects = this.RootScene.raycaster.intersectObjects(this.props.sceneData.currentScene.children)
+    this.RootScene.intersects = this.RootScene.raycaster.intersectObjects(this.props.sceneData.currentScene.children, true)
 
     if (this.RootScene.intersects.length) {
+      // TODO: Do we want hover events?
       this.props.actions.addLastHoveredObject({ object: this.RootScene.intersects[0] })
       if (this.RootScene.intersects[0].object.clickable) {
         // Simplify for our animate
@@ -217,14 +238,18 @@ class App extends React.Component<App.Props, App.State> {
         // this.RootScene.camera.zoom(this.props.mouseData.object.object)
         switch (this.toName) {
           case'to:pondScene':
-            this._text1.out().then(() => {
+            this.titleText.out().then(() => {
               this.setScene('pondScene')
             })
             break
           case 'to:mainScene':
             this.setScene('mainScene')
-            this._text1.in()
+            this.titleText.in()
             break
+          case 'event:Syria':
+            this.titleText.out('fast').then(() => {
+              this.syriaText.in('fast')
+            })
           default:
             break
         }
@@ -272,13 +297,16 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   private THREErender = () => {
+    this.step += 0.05
+
     if (this.RootScene.mouse.mouseX && this.RootScene.mouse.mouseY) {
       this.RootScene.camera.position.x += (this.RootScene.mouse.mouseX - this.RootScene.camera.position.x) * 0.02
       // this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
       this.RootScene.camera.lookAt(this.props.sceneData.currentScene.position)
     }
-    const sphere = this.RootScene.scene.getObjectByName('sphere')
-    if (sphere) {
+    const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')
+    if (eventSyria) {
+      this.backgroundParticles.animateParticles()
       this.eventParticles.updateCameraPosition(this.RootScene.camera.position)
     }
     this.RootScene.renderer.render(
