@@ -35,9 +35,9 @@ export class Root {
 
     this.scene = new THREE.Scene()
     this.scene.name = 'mainScene'
-    this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 300, 600)
+    this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000)
-    this.camera.position.set(0, 100, 300)
+    this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
       antialias: (window.devicePixelRatio === 1),
     })
@@ -143,9 +143,9 @@ export class Root {
       i
 
     const Phi = Math.PI * (3 - Math.sqrt(5))
-    const n = 10000
+    const n = 20000
     const radius = 500
-    const noise = 6
+    const noise = 10
 
     for (i = 0; i <= n; i++) {
       const t = i * Phi
@@ -237,6 +237,7 @@ export class Root {
     // planeMesh.receiveShadow = true
     // this.scene.add(planeMesh)
     this.animation = new AnimateFloor(this.geometry)
+    this.animation.position.y = -75
     // this.animation.receiveShadow = true
     this.scene.add(this.animation)
 
@@ -306,10 +307,10 @@ export class Root {
     const px = window.innerWidth / event.offsetX
     const py = event.clientY / window.innerHeight
 
-    this.animation.material.uniforms['uD'].value = 2 + px * 8
-    this.animation.material.uniforms['uA'].value = py * 16
+    this.animation.material.uniforms['uD'].value = 2 + px * 24
+    this.animation.material.uniforms['uA'].value = py * 36
 
-    this.animation.material.uniforms['roughness'].value = px
-    this.animation.material.uniforms['metalness'].value = py
+    // this.animation.material.uniforms['roughness'].value = px
+    // this.animation.material.uniforms['metalness'].value = py
   }
 }

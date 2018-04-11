@@ -62,9 +62,9 @@ export class AnimateFloor {
         uA: { value: 3.2 },
       },
       uniformValues: {
-        diffuse: new THREE.Color('#61637a'),
-        roughness: 3,
-        metalness: 6,
+        diffuse: new THREE.Color('#0e1648'),
+        roughness: 2,
+        metalness: 0,
         opacity: 0.9,
       },
       vertexFunctions: [
