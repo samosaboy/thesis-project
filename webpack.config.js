@@ -51,6 +51,7 @@ module.exports = {
       'three/trackballcontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.tsx'),
       'three/flycontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/FlyControls.js'),
       'three/firstpersoncontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/FirstPersonControls.js'),
+      'three/geometryutils': Path.join(__dirname, 'node_modules/three/examples/js/utils/GeometryUtils.js'),
     },
   },
   module: {

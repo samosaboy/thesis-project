@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import * as BAS from 'three-bas'
 
 const TWEEN = require('@tweenjs/tween.js')
 
@@ -6,10 +7,13 @@ interface TextGeometryParams {
   text: string,
   options: any
 }
+
 export class TextGeometry {
   private mesh: any
   private cache: any
   private group: any
+  private geometry: any
+  private material: any
 
   constructor(params?: TextGeometryParams) {
     const words = params.text.split('\n')
@@ -66,7 +70,7 @@ export class TextGeometry {
     const texture = new THREE.Texture(canvas)
     texture.needsUpdate = true
 
-    const material = new THREE.MeshBasicMaterial({
+    this.material = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
       depthWrite: false,
@@ -75,13 +79,13 @@ export class TextGeometry {
       opacity: 0,
     })
 
-    const geometry = new THREE.PlaneGeometry(
+    this.geometry = new THREE.PlaneGeometry(
       canvas.width / 20,
       canvas.height / 20)
 
     // Group is exposed, mesh is animated
     this.group = new THREE.Object3D()
-    this.mesh = new THREE.Mesh(geometry.clone(), material.clone())
+    this.mesh = new THREE.Mesh(this.geometry.clone(), this.material.clone())
     this.mesh.position.y = 20
     // this.mesh.castShadow = true
     this.group.add(this.mesh)
@@ -113,7 +117,7 @@ export class TextGeometry {
       .start()
   }
 
-  public out = (speed?) => {
+  public out = (speed?: string) => {
     return new Promise((res) => {
       new TWEEN.Tween(this.cache)
         .to({

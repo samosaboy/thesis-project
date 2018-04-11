@@ -190,7 +190,8 @@ class App extends React.Component<App.Props, App.State> {
     this.RootScene.intersects = this.RootScene.raycaster.intersectObjects(this.props.sceneData.currentScene.children, true)
 
     if (this.RootScene.intersects.length) {
-      // TODO: Do we want hover events?
+
+      // TODO: Do we want hover events? YES
       this.props.actions.addLastHoveredObject({ object: this.RootScene.intersects[0] })
       if (this.RootScene.intersects[0].object.clickable) {
         // Simplify for our animate

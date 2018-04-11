@@ -1,11 +1,12 @@
-import * as React from 'react'
-import * as THREE from 'three'
+const THREE = require('three')
+const TWEEN = require('@tweenjs/tween.js')
 
 export class EventParticles {
   private sphereMesh: any
   private sphereMaterial: any
   private group: any
   private getCameraPosition: any
+  private cache: any
 
   constructor() {
     this.sphereMaterial = new THREE.ShaderMaterial({
@@ -54,7 +55,7 @@ export class EventParticles {
 
     this.sphereMaterial.needsUpdate = true
 
-    this.group = new THREE.Object3D()
+    this.group = new THREE.Group()
     const eventData = [
       {
         id: 1,
@@ -92,7 +93,6 @@ export class EventParticles {
       this.sphereMesh.name = 'event:Syria'
       this.sphereMesh.clickable = true
       this.group.add(this.sphereMesh)
-
     })
   }
 
@@ -102,6 +102,21 @@ export class EventParticles {
       position,
       this.sphereMesh.position
     )
+  }
+
+  public in = () => {
+    // return new TWEEN.Tween(this.cache)
+    //   .to({
+    //     y: 0,
+    //     opacity: 1,
+    //   }, speed === 'fast' ? 200 : 1500)
+    //   .easing(TWEEN.Easing.Circular.InOut)
+    //   .onStart(() => {
+    //     this.group.visible = true
+    //     this.mesh.castShadow = true
+    //   })
+    //   .onUpdate(() => this.update())
+    //   .start()
   }
 
   public getElement = () => this.group

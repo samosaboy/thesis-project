@@ -11,7 +11,7 @@ export class BackgroundParticles {
 
   constructor(params?: any) {
     const material = new THREE.PointsMaterial({
-      map: createCircularCanvasMaterial('#FFFFFF', 512),
+      map: createCircularCanvasMaterial('#f4f3ff', 512),
       size: params.particleSize,
       depthWrite: false,
       transparent: true,

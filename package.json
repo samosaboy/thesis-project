@@ -78,6 +78,7 @@
     "redux-actions": "^2.2.1",
     "shaderfrog-runtime": "^0.2.0",
     "three": "^0.91.0",
+    "three-bas": "^2.7.0",
     "three.textsprite": "^18.3.19",
     "tone": "^0.11.11"
   }
