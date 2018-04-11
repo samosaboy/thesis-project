@@ -35,6 +35,7 @@ export class BackgroundParticles {
     this.mesh = new THREE.Points(this.geometry, material)
     this.mesh.name = 'backgroundParticles'
     this.group.add(this.mesh)
+
   }
 
   public getElement = () => this.group

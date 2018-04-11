@@ -178,6 +178,8 @@ class App extends React.Component<App.Props, App.State> {
     this.RootScene.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
     this.RootScene.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
 
+    this.RootScene.animateFloor(event)
+
     this.RootScene.vector = new THREE.Vector3(this.RootScene.mouse.x, this.RootScene.mouse.y, 0).unproject(this.RootScene.camera)
     this.RootScene.raycaster = new THREE.Raycaster(
       this.RootScene.camera.position,
@@ -279,6 +281,9 @@ class App extends React.Component<App.Props, App.State> {
       },
     )
     bloomPass.renderToScreen = true
+
+    const copypass = new THREE.ShaderPass(THREE.CopyShader)
+    this.composer.addPass(copypass)
     this.composer.addPass(bloomPass)
   }
 
@@ -286,15 +291,15 @@ class App extends React.Component<App.Props, App.State> {
     this.RootScene.stats.update()
     TWEEN.update()
     this.THREErender()
-    this.sceneBus()
     this.composer.render(this.RootScene.clock.getDelta())
+    this.sceneBus()
     requestAnimationFrame(this.animate)
 
     /*
      * Loop through animateArray
      * and call each function
      * */
-    this.animateArray.forEach(fn => fn.call())
+    this.animateArray.forEach(fn => fn.call(this))
   }
 
   private THREErender = () => {

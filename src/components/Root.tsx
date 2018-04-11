@@ -2,6 +2,8 @@ const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
 
+import { AnimateFloor } from './AnimateFloor'
+
 import * as Delaunay from './Utils/delaunay.js'
 
 // Look how they implement animation:
@@ -22,6 +24,10 @@ export class Root {
   // stats
   private stats: any
 
+  // test
+  private geometry
+  private animation
+
   constructor() {
     /*
      * Basic THREE setup
@@ -29,9 +35,9 @@ export class Root {
 
     this.scene = new THREE.Scene()
     this.scene.name = 'mainScene'
-    this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 200, 600)
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000)
-    this.camera.position.set(0, 0, 300)
+    this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 300, 600)
+    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000)
+    this.camera.position.set(0, 100, 300)
     this.renderer = new THREE.WebGLRenderer({
       antialias: (window.devicePixelRatio === 1),
     })
@@ -136,10 +142,10 @@ export class Root {
       indices,
       i
 
-    const Phi = Math.PI * (3 - Math.sqrt(3))
-    const n = 10
-    const radius = 1000
-    const noise = 1
+    const Phi = Math.PI * (3 - Math.sqrt(5))
+    const n = 10000
+    const radius = 500
+    const noise = 6
 
     for (i = 0; i <= n; i++) {
       const t = i * Phi
@@ -173,6 +179,9 @@ export class Root {
       ))
     }
 
+    const splineX = new THREE.CatmullRomCurve3(pointsX)
+    const splineY = new THREE.CatmullRomCurve3(pointsY)
+
     const geometry = new THREE.Geometry()
     const shapeScale = 1
 
@@ -203,18 +212,33 @@ export class Root {
         bevelEnabled: false,
       })
 
+      // offset z vector components based on the two splines
+      for (let j = 0; j < shapeGeometry.vertices.length; j++) {
+        const v = shapeGeometry.vertices[j]
+        const ux = THREE.Math.clamp(THREE.Math.mapLinear(v.x, -radius, radius, 0.0, 1.0), 0.0, 1.0)
+        const uy = THREE.Math.clamp(THREE.Math.mapLinear(v.y, -radius, radius, 0.0, 1.0), 0.0, 1.0)
+
+        v.z += splineX.getPointAt(ux).z
+        v.z += splineY.getPointAt(uy).z
+      }
+
       // merge into the whole
       geometry.merge(shapeGeometry)
     }
 
-    geometry.center()
-    geometry.rotateX(-Math.PI / 2)
+    this.geometry = geometry
 
-    const planeMesh = new THREE.Mesh(geometry, planeMaterial)
-    planeMesh.name = 'asset:Floor'
-    planeMesh.position.set(0, -50, 0)
-    planeMesh.receiveShadow = true
-    this.scene.add(planeMesh)
+    this.geometry.center()
+    this.geometry.rotateX(-Math.PI / 2)
+
+    // const planeMesh = new THREE.Mesh(this.geometry, planeMaterial)
+    // planeMesh.name = 'asset:Floor'
+    // planeMesh.position.set(0, -50, 0)
+    // planeMesh.receiveShadow = true
+    // this.scene.add(planeMesh)
+    this.animation = new AnimateFloor(this.geometry)
+    // this.animation.receiveShadow = true
+    this.scene.add(this.animation)
 
     /*
      *
@@ -276,5 +300,16 @@ export class Root {
     })
     const sky = new THREE.Mesh(skyGeometry, skyMaterial)
     this.scene.add(sky)
+  }
+
+  animateFloor = (event) => {
+    const px = window.innerWidth / event.offsetX
+    const py = event.clientY / window.innerHeight
+
+    this.animation.material.uniforms['uD'].value = 2 + px * 8
+    this.animation.material.uniforms['uA'].value = py * 16
+
+    this.animation.material.uniforms['roughness'].value = px
+    this.animation.material.uniforms['metalness'].value = py
   }
 }
