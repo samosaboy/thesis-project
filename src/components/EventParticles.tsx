@@ -7,8 +7,14 @@ export class EventParticles {
   private group: any
   private getCameraPosition: any
   private cache: any
+  private countryMesh: any
 
   constructor() {
+    this.cache = {
+      y: 100,
+      opacity: 0
+    }
+
     this.sphereMaterial = new THREE.ShaderMaterial({
       uniforms:
         {
@@ -56,40 +62,24 @@ export class EventParticles {
     this.sphereMaterial.needsUpdate = true
 
     this.group = new THREE.Group()
-    const eventData = [
-      {
-        id: 1,
-        location: {
-          x: 0,
-          y: 20,
-          z: 100,
-        },
-      },
-    ]
-
+    this.group.visible = false
     const geometry = new THREE.SphereGeometry(22, 16, 16)
-
-    // for (let i = 0; i < eventData.length; i++) {
-    //   const mesh = new THREE.Mesh(geometry, material)
-    //   mesh.position.set(eventData[i].location.x, eventData[i].location.y, eventData[i].location.z)
-    //   this.group.add(new THREE.Mesh(geometry, material))
-    // }
 
     const loader = new THREE.JSONLoader()
 
     loader.load('../public/objects/SyriaObj.json', obj => {
-      const mesh = new THREE.Mesh(obj, new THREE.MeshStandardMaterial({
+      this.countryMesh = new THREE.Mesh(obj, new THREE.MeshStandardMaterial({
         color: '#c2f3ff',
       }))
       obj.center()
-      mesh.position.set(0, 60, 0)
-      mesh.scale.multiplyScalar(0.09)
-      mesh.name = 'event:Syria'
-      this.group.add(mesh)
+      this.countryMesh.position.set(0, this.cache.y, 0)
+      this.countryMesh.scale.multiplyScalar(0.09)
+      this.countryMesh.name = 'event:Syria'
+      this.group.add(this.countryMesh)
 
       this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial)
       // this is always the position + the radius
-      this.sphereMesh.position.set(0, 60, 0)
+      this.sphereMesh.position.set(0, this.cache.y, 0)
       this.sphereMesh.name = 'event:Syria'
       this.sphereMesh.clickable = true
       this.group.add(this.sphereMesh)
@@ -105,19 +95,29 @@ export class EventParticles {
   }
 
   public in = () => {
-    // return new TWEEN.Tween(this.cache)
-    //   .to({
-    //     y: 0,
-    //     opacity: 1,
-    //   }, speed === 'fast' ? 200 : 1500)
-    //   .easing(TWEEN.Easing.Circular.InOut)
-    //   .onStart(() => {
-    //     this.group.visible = true
-    //     this.mesh.castShadow = true
-    //   })
-    //   .onUpdate(() => this.update())
-    //   .start()
+    return new TWEEN.Tween(this.cache)
+      .to({
+        y: 80,
+        opacity: 1,
+      }, 2000)
+      .easing(TWEEN.Easing.Circular.InOut)
+      .onStart(() => {
+        this.group.visible = true
+      })
+      .onUpdate(() => this.update())
+      .start()
+  }
+
+  private update = () => {
+    this.group.children.forEach(child => {
+      child.position.y = this.cache.y
+      child.material.opacity = this.cache.opacity
+    })
   }
 
   public getElement = () => this.group
+
+  public rotateElement = () => {
+    this.countryMesh.rotation.y += 0.001
+  }
 }

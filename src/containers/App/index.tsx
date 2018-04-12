@@ -142,6 +142,7 @@ class App extends React.Component<App.Props, App.State> {
         this.RootScene.scene.add(this.backgroundParticles.getElement())
 
         this.eventParticles = new EventParticles()
+        this.eventParticles.in()
         this.props.sceneData.currentScene.add(this.eventParticles.group)
 
         /* Event Text */
@@ -323,6 +324,7 @@ class App extends React.Component<App.Props, App.State> {
     const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')
     if (eventSyria) {
       this.backgroundParticles.animateParticles()
+      this.eventParticles.rotateElement()
       this.eventParticles.updateCameraPosition(this.RootScene.camera.position)
     }
     this.RootScene.renderer.render(
