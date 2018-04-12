@@ -144,7 +144,7 @@ export class Root {
 
     const Phi = Math.PI * (3 - Math.sqrt(2))
     const n = 1000
-    const radius = 200
+    const radius = 100
     const noise = 2
 
     for (i = 0; i <= n; i++) {
@@ -316,7 +316,7 @@ export class Root {
   }
 
   moveFloor = () => {
-    this.animatedFloor.rotation.y += 0.0005
+    this.animatedFloor.rotation.y += 0.00005
   }
 
   moveFloorIn = () => {

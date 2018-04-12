@@ -63,9 +63,9 @@ export class AnimateFloor {
       },
       uniformValues: {
         diffuse: new THREE.Color('#0e1648'),
-        roughness: 0.1,
-        metalness: 0.1,
-        opacity: 1.0,
+        roughness: 0,
+        metalness: 0,
+        opacity: 0.8,
       },
       vertexFunctions: [
         BAS.ShaderChunk['ease_cubic_in_out'],

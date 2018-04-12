@@ -292,8 +292,8 @@ class App extends React.Component<App.Props, App.State> {
     const copyPass = new THREE.ShaderPass(THREE.CopyShader)
     copyPass.renderToScreen = true
 
-    this.composer.addPass(copyPass)
-    this.composer.addPass(bloomPass)
+    // this.composer.addPass(copyPass)
+    // this.composer.addPass(bloomPass)
   }
 
   public animate = () => {
@@ -318,7 +318,7 @@ class App extends React.Component<App.Props, App.State> {
 
     if (this.RootScene.mouse.mouseX && this.RootScene.mouse.mouseY) {
       this.RootScene.camera.position.x += (this.RootScene.mouse.mouseX - this.RootScene.camera.position.x) * 0.02
-      this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
+      // this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
       this.RootScene.camera.lookAt(this.props.sceneData.currentScene.position)
     }
     const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')
