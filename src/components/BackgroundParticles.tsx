@@ -22,7 +22,7 @@ export class BackgroundParticles {
 
     for (let i = 0; i < params.count; i++) {
       const particle = new THREE.Vector3(
-        random(-(window.innerWidth / 6), (window.innerWidth / 6)),
+        random(-(window.innerWidth / 3), (window.innerWidth / 3)),
         random(params.rangeY[0], params.rangeY[1]),
         random(-200, 200),
       )

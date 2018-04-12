@@ -42,12 +42,12 @@ export class AnimateFloor {
     const color = new THREE.Color()
 
     for (i = 0; i < aColor.array.length; i += 18) { // 6 * 3
-      color.setHSL(0, 0, THREE.Math.randFloat(0.5, 1.0));
+      color.setHSL(0, 0, THREE.Math.randFloat(0.5, 1.5))
 
       for (j = 0; j < 18; j += 3) {
-        aColor.array[i + j]     = color.r;
-        aColor.array[i + j + 1] = color.g;
-        aColor.array[i + j + 2] = color.b;
+        aColor.array[i + j] = color.r
+        aColor.array[i + j + 1] = color.g
+        aColor.array[i + j + 2] = color.b
       }
     }
 
@@ -57,15 +57,15 @@ export class AnimateFloor {
       transparent: true,
       side: THREE.DoubleSide,
       uniforms: {
-        uTime: { value: 0 },
+        uTime: { value: 10 },
         uD: { value: 4.4 },
-        uA: { value: 3.2 },
+        uA: { value: 1.1 },
       },
       uniformValues: {
         diffuse: new THREE.Color('#0e1648'),
-        roughness: 2,
-        metalness: 0,
-        opacity: 0.9,
+        roughness: 0.1,
+        metalness: 0.1,
+        opacity: 1.0,
       },
       vertexFunctions: [
         BAS.ShaderChunk['ease_cubic_in_out'],

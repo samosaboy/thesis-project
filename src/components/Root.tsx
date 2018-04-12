@@ -26,7 +26,7 @@ export class Root {
 
   // test
   private geometry
-  private animation
+  private animatedFloor
 
   constructor() {
     /*
@@ -142,10 +142,10 @@ export class Root {
       indices,
       i
 
-    const Phi = Math.PI * (3 - Math.sqrt(5))
-    const n = 20000
-    const radius = 500
-    const noise = 10
+    const Phi = Math.PI * (3 - Math.sqrt(2))
+    const n = 1000
+    const radius = 200
+    const noise = 2
 
     for (i = 0; i <= n; i++) {
       const t = i * Phi
@@ -236,10 +236,11 @@ export class Root {
     // planeMesh.position.set(0, -50, 0)
     // planeMesh.receiveShadow = true
     // this.scene.add(planeMesh)
-    this.animation = new AnimateFloor(this.geometry)
-    this.animation.position.y = -75
-    // this.animation.receiveShadow = true
-    this.scene.add(this.animation)
+    this.animatedFloor = new AnimateFloor(this.geometry)
+    this.animatedFloor.position.y = -80
+    this.animatedFloor.position.z = -40
+    // this.animatedFloor.receiveShadow = true
+    this.scene.add(this.animatedFloor)
 
     /*
      *
@@ -271,10 +272,10 @@ export class Root {
     this.scene.add(shadowLight)
 
     const skyBox = new THREE.HemisphereLight('#373f52', '#0e0e1d')
-    skyBox.position.set(0, 50, 0)
+    skyBox.position.set(0, 0, 0)
     this.scene.add(skyBox)
 
-    const skyGeometry = new THREE.SphereBufferGeometry(1000, 6, 6)
+    const skyGeometry = new THREE.SphereBufferGeometry(1000, 1, 1)
     const skyMaterial = new THREE.ShaderMaterial({
       vertexShader: `varying vec3 vWorldPosition;
 			void main() {
@@ -307,10 +308,33 @@ export class Root {
     const px = window.innerWidth / event.offsetX
     const py = event.clientY / window.innerHeight
 
-    this.animation.material.uniforms['uD'].value = 2 + px * 24
-    this.animation.material.uniforms['uA'].value = py * 36
+    this.animatedFloor.material.uniforms['uD'].value = 2 + px * 24
+    this.animatedFloor.material.uniforms['uA'].value = py * 36
 
     // this.animation.material.uniforms['roughness'].value = px
     // this.animation.material.uniforms['metalness'].value = py
+  }
+
+  moveFloor = () => {
+    this.animatedFloor.rotation.y += 0.0005
+  }
+
+  moveFloorIn = () => {
+    const prev = this.animatedFloor.material.uniforms['uD'].value
+    return new TWEEN.Tween(this.animatedFloor.material.uniforms['uD'])
+      .to({
+        value: 100,
+      }, 3000)
+      .easing(TWEEN.Easing.Cubic.InOut)
+      .start()
+  }
+
+  moveFloorOut = () => {
+    const prev = this.animatedFloor.material.uniforms['uD'].value
+    return new TWEEN.Tween(this.animatedFloor.material.uniforms['uD'])
+      .to({
+        value: 4.4
+      }, 3000)
+      .easing(TWEEN.Easing.Cubic.InOut).start()
   }
 }

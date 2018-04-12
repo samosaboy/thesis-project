@@ -52,6 +52,7 @@ export namespace App {
 
   export interface State {
     prevObject: any,
+    mousemove: boolean,
   }
 }
 
@@ -88,6 +89,7 @@ class App extends React.Component<App.Props, App.State> {
     super(props, context)
     this.state = {
       prevObject: {}, // the last object we hovered over
+      mousemove: false,
     }
 
     this.step = 0
@@ -109,6 +111,8 @@ class App extends React.Component<App.Props, App.State> {
       this.setDefaultScene().then(() => {
         this.postProcessing()
         this.animate()
+        this.RootScene.moveFloor()
+        this.RootScene.moveFloorIn()
 
         // TODO: Move these to own scene
         this.titleText = new TextGeometry({
@@ -131,8 +135,8 @@ class App extends React.Component<App.Props, App.State> {
           count: 1000,
           particleSize: 1.2,
           rangeY: [
-            -100,
-            100,
+            -200,
+            200,
           ],
         })
         this.RootScene.scene.add(this.backgroundParticles.getElement())
@@ -172,13 +176,14 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   private handleMouseMove = (event) => {
+    this.setState({ mousemove: !this.state.mousemove })
     this.RootScene.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
     this.RootScene.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
     this.RootScene.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
     this.RootScene.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
 
-    this.RootScene.animateFloor(event)
+    // this.RootScene.animateFloor(event)
 
     this.RootScene.vector = new THREE.Vector3(this.RootScene.mouse.x, this.RootScene.mouse.y, 0).unproject(this.RootScene.camera)
     this.RootScene.raycaster = new THREE.Raycaster(
@@ -251,6 +256,7 @@ class App extends React.Component<App.Props, App.State> {
             break
           case 'event:Syria':
             this.titleText.out('fast').then(() => {
+              this.RootScene.moveFloorOut()
               this.syriaText.in('fast')
             })
           default:
@@ -282,8 +288,10 @@ class App extends React.Component<App.Props, App.State> {
     )
     bloomPass.renderToScreen = true
 
-    const copypass = new THREE.ShaderPass(THREE.CopyShader)
-    this.composer.addPass(copypass)
+    const copyPass = new THREE.ShaderPass(THREE.CopyShader)
+    copyPass.renderToScreen = true
+
+    this.composer.addPass(copyPass)
     this.composer.addPass(bloomPass)
   }
 
@@ -303,11 +311,13 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   private THREErender = () => {
-    this.step += 0.05
+    this.step += 1
+
+    this.RootScene.moveFloor()
 
     if (this.RootScene.mouse.mouseX && this.RootScene.mouse.mouseY) {
       this.RootScene.camera.position.x += (this.RootScene.mouse.mouseX - this.RootScene.camera.position.x) * 0.02
-      // this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
+      this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
       this.RootScene.camera.lookAt(this.props.sceneData.currentScene.position)
     }
     const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')
