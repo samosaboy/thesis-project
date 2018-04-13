@@ -53,8 +53,13 @@ class App extends React.Component<App.Props, App.State> {
       RootComponent.addSections([
         Pond(),
       ])
-      RootComponent.setDefaultScene('pondScene')
-        .then(() => RootComponent.animate())
+
+      // set default scene using switchScene method
+      RootComponent.switchScene('pondScene')
+        .then(() => {
+          // RootComponent.postStoreInit()
+          RootComponent.animate()
+        })
     }
 
     // document.addEventListener('mousemove', this.handleMouseMove)

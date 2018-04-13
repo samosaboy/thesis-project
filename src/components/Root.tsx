@@ -25,6 +25,7 @@ import 'three/fxaashader'
 import 'three/maskpass'
 import 'three/smaashader'
 import 'three/smaapass'
+import { Event } from './'
 
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
@@ -46,6 +47,10 @@ export class Root {
 
   private step: number
 
+  public events: any
+
+  private sceneList: Array<any>
+
   constructor() {
     /*
      * Basic THREE setup
@@ -54,6 +59,7 @@ export class Root {
     this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000)
     this.camera.position.set(0, 0, 300)
+    this.camera.add(this.scene)
     this.renderer = new THREE.WebGLRenderer({
       antialias: (window.devicePixelRatio === 1),
     })
@@ -72,6 +78,18 @@ export class Root {
     document.body.appendChild(this.stats.dom)
 
     const cameraSpeed = 1
+
+    /*
+     * Instantiate the Event Class
+     */
+
+    this.events = new Event()
+
+    /*
+    * Set scene list
+     */
+
+    this.sceneList = []
 
     /*
     * Instantiate the post-processing
@@ -131,6 +149,8 @@ export class Root {
     this.renderer.gammaOutput = true
     this.renderer.shadowMap.enabled = true
     container.appendChild(this.renderer.domElement)
+
+    document.addEventListener('mousemove', this.handleMouseMove)
   }
 
   // public createScene = (scene) => {
@@ -344,7 +364,6 @@ export class Root {
 
   private THREErender = () => {
     this.renderer.render(
-      // store.getState().sceneData.scenes[0],
       store.getState().sceneData.currentScene,
       this.camera
     )
@@ -364,15 +383,45 @@ export class Root {
     // }
   }
 
+  // public postStoreInit = () => {
+  //   if (store) {
+  //     this.in()
+  //   }
+  // }
+
   public addSections = (sections) => {
     sections.forEach(section => {
+      this.sceneList.push(section)
       store.dispatch(addToSceneList({ scene: section.el }))
     })
   }
 
-  public setDefaultScene = (name): Promise<any> => {
+  private getSceneClass = (name?: string): any => {
+    let getSceneFromState
+    if (!name) {
+      getSceneFromState = store.getState().sceneData.currentScene
+    } else {
+      getSceneFromState = store.getState().sceneData.scenes.filter(scene => scene.el.name === name)
+    }
+    return this.sceneList.filter(scene => scene.el === getSceneFromState)[0]
+  }
+
+  public switchScene = (name): Promise<any> => {
     return new Promise(resolve => {
       resolve(store.dispatch(setCurrentScene({ name })))
+      this.switchSceneChangeStart()
     })
+  }
+
+  // private switchScene = (name) => {
+  //   this.events.on('root:SwitchScene', callback)
+  // }
+
+  private switchSceneChangeStart = () => {
+    this.getSceneClass().onIn(this.getSceneClass().in())
+  }
+
+  private switchSceneChangeStartSuccess = () => {
+    this.getSceneClass().onOut(this.getSceneClass().out())
   }
 }

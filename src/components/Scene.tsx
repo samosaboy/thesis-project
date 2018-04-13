@@ -25,6 +25,7 @@ export class Scene {
 
   public in = () => {
     this._in()
+    console.log('test')
   }
 
   public out = () => {

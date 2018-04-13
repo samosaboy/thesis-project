@@ -9,7 +9,7 @@ interface TextGeometryParams {
 }
 
 export class TextGeometry {
-  private mesh: any
+  public el: any
   private cache: any
   private group: any
   private geometry: any
@@ -85,21 +85,21 @@ export class TextGeometry {
 
     // Group is exposed, mesh is animated
     this.group = new THREE.Object3D()
-    this.mesh = new THREE.Mesh(this.geometry.clone(), this.material.clone())
-    this.mesh.position.y = 20
+    this.el = new THREE.Mesh(this.geometry.clone(), this.material.clone())
+    this.el.position.y = 20
     // this.mesh.castShadow = true
-    this.group.add(this.mesh)
+    this.group.add(this.el)
     this.group.visible = false
 
     this.cache = {
-      y: this.mesh.position.y,
-      opacity: this.mesh.material.opacity,
+      y: this.el.position.y,
+      opacity: this.el.material.opacity,
     }
   }
 
   private update = () => {
-    this.mesh.position.y = this.cache.y
-    this.mesh.material.opacity = this.cache.opacity
+    this.el.position.y = this.cache.y
+    this.el.material.opacity = this.cache.opacity
   }
 
   public in = (speed?) => {
@@ -111,7 +111,7 @@ export class TextGeometry {
       .easing(TWEEN.Easing.Circular.InOut)
       .onStart(() => {
         this.group.visible = true
-        this.mesh.castShadow = true
+        this.el.castShadow = true
       })
       .onUpdate(() => this.update())
       .start()
@@ -128,7 +128,7 @@ export class TextGeometry {
         .onUpdate(() => this.update())
         .onComplete(() => {
           this.group.visible = false
-          this.mesh.castShadow = false
+          this.el.castShadow = false
           res()
         })
         .start()
@@ -136,7 +136,7 @@ export class TextGeometry {
   }
 
   public setName = name => {
-    this.mesh.name = name
-    this.mesh.clickable = true
+    this.el.name = name
+    this.el.clickable = true
   }
 }
