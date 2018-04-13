@@ -16,7 +16,7 @@ export class AnimateFloor {
 
     for (i = 0; i < aOffsetAmplitude.array.length; i += 12) { // 6 * 2
       const offset = THREE.Math.randFloat(1, 4)
-      const amplitude = THREE.Math.randFloat(0.5, 2.0)
+      const amplitude = THREE.Math.randFloat(0.5, 1.0)
 
       x = 0
       y = 0
@@ -57,9 +57,9 @@ export class AnimateFloor {
       transparent: true,
       side: THREE.DoubleSide,
       uniforms: {
-        uTime: { value: 10 },
+        uTime: { value: 0 },
         uD: { value: 4.4 },
-        uA: { value: 1.1 },
+        uA: { value: 3.2 },
       },
       uniformValues: {
         diffuse: new THREE.Color('#0e1648'),

@@ -8,7 +8,7 @@ import App from './containers/App'
 
 import 'normalize.css/normalize.css'
 
-const store = configureStore()
+export const store = configureStore()
 export const history = createBrowserHistory()
 
 ReactDOM.render(

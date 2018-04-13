@@ -12,7 +12,7 @@ export class EventParticles {
   constructor() {
     this.cache = {
       y: 100,
-      opacity: 0
+      opacity: 0,
     }
 
     this.sphereMaterial = new THREE.ShaderMaterial({
@@ -90,7 +90,7 @@ export class EventParticles {
     this.getCameraPosition = position
     this.sphereMaterial.uniforms.viewVector.value = new THREE.Vector3().addVectors(
       position,
-      this.sphereMesh.position
+      this.sphereMesh.position,
     )
   }
 

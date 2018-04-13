@@ -4,7 +4,7 @@ import sceneData from './sceneData'
 
 export interface RootState {
   mouseData: mouseDataConfig,
-  sceneData: sceneDataIndexConfig,
+  sceneData: any,
 }
 
 export default combineReducers<RootState>({
