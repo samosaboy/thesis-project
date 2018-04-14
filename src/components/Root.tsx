@@ -35,7 +35,6 @@ const Stats = require('three/stats')
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
 
 export class Root {
-  private scene: THREE.Scene | any
   private camera: THREE.PerspectiveCamera | any
   private renderer: THREE.WebGLRenderer
   private frameId: any
@@ -57,8 +56,6 @@ export class Root {
     /*
      * Basic THREE setup
      * */
-    this.scene = new THREE.Scene()
-    this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000)
     this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
@@ -66,7 +63,6 @@ export class Root {
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.mouse = new THREE.Vector2()
-    this.scene.updateMatrixWorld()
     this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
     this.clock.autoStart = false
@@ -356,6 +352,7 @@ export class Root {
 
   public setCurrentSceneFromState = () => {
     this.currentScene = store.getState().sceneData.currentScene
+    this.currentScene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
   }
 
   public switchSceneChangeOn = () => {

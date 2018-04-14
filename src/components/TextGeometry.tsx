@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as BAS from 'three-bas'
+import { createAnimation } from './Utils'
 
 const TWEEN = require('@tweenjs/tween.js')
 
@@ -9,11 +10,9 @@ interface TextGeometryParams {
 }
 
 export class TextGeometry {
-  public el: any
-  private cache: any
-  private group: any
-  private geometry: any
-  private material: any
+  public text: any
+
+  private createAnimation: any
 
   constructor(params?: TextGeometryParams) {
     const words = params.text.split('\n')
@@ -70,7 +69,7 @@ export class TextGeometry {
     const texture = new THREE.Texture(canvas)
     texture.needsUpdate = true
 
-    this.material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true,
       depthWrite: false,
@@ -79,64 +78,33 @@ export class TextGeometry {
       opacity: 0,
     })
 
-    this.geometry = new THREE.PlaneGeometry(
+    const geometry = new THREE.PlaneGeometry(
       canvas.width / 20,
       canvas.height / 20)
 
     // Group is exposed, mesh is animated
-    this.group = new THREE.Object3D()
-    this.el = new THREE.Mesh(this.geometry.clone(), this.material.clone())
-    this.el.position.y = 20
-    // this.mesh.castShadow = true
-    this.group.add(this.el)
-    this.group.visible = false
+    this.text = new THREE.Mesh(geometry.clone(), material.clone())
+    this.text.position.y = 20
 
-    this.cache = {
-      y: this.el.position.y,
-      opacity: this.el.material.opacity,
-    }
-  }
-
-  private update = () => {
-    this.el.position.y = this.cache.y
-    this.el.material.opacity = this.cache.opacity
-  }
-
-  public in = (speed?) => {
-    return new TWEEN.Tween(this.cache)
-      .to({
-        y: 0,
-        opacity: 1,
-      }, speed === 'fast' ? 200 : 1500)
-      .easing(TWEEN.Easing.Circular.InOut)
-      .onStart(() => {
-        this.group.visible = true
-        this.el.castShadow = true
-      })
-      .onUpdate(() => this.update())
-      .start()
-  }
-
-  public out = (speed?: string) => {
-    return new Promise((res) => {
-      new TWEEN.Tween(this.cache)
-        .to({
-          y: 20,
-          opacity: 0,
-        }, speed === 'fast' ? 200 : 1500)
-        .easing(TWEEN.Easing.Exponential.Out)
-        .onUpdate(() => this.update())
-        .onComplete(() => {
-          this.group.visible = false
-          this.el.castShadow = false
-          res()
-        })
-        .start()
+    this.createAnimation = new createAnimation(this.text, {
+      y: this.text.position.y,
+      opacity: this.text.material.opacity
     })
   }
 
+  public in = () => {
+    this.createAnimation.in({
+      y: 0,
+      opacity: 1
+    }, 1000)
+  }
+
+  public out = () => {
+    this.createAnimation.out(1000)
+  }
+
   public setName = name => {
-    this.el.name = name
-    this.el.clickable = true
+    this.text.name = name
+    this.text.clickable = true
   }
 }

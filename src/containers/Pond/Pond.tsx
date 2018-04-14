@@ -22,7 +22,7 @@ export const Pond = () => {
       color: '#FFFFFF',
     },
   })
-  pondScene.add(titleText.el)
+  pondScene.add(titleText.text)
 
   /*
    * Surface Plane
@@ -101,10 +101,12 @@ export const Pond = () => {
 
   pondScene.onIn(() => {
     titleText.in()
+    backgroundParticles.in()
   })
 
   pondScene.onOut(() => {
     titleText.out()
+    backgroundParticles.out()
   })
 
   pondScene.onStart(() => {
@@ -118,7 +120,7 @@ export const Pond = () => {
   })
 
   pondScene.onUpdate(() => {
-    backgroundParticles.getElement().rotation.y += 0.0001
+    backgroundParticles.animateParticles()
   })
 
   return pondScene
