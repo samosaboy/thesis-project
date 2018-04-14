@@ -347,6 +347,7 @@ export class Root {
       store.dispatch(setCurrentScene({ name }))
       this.nextScene = { name }
       this.setCurrentSceneFromState()
+      this.switchSceneChangeOn()
       resolve()
     })
   }
@@ -398,7 +399,7 @@ export class Root {
     )
 
     if (this.mouse.mouseX && this.mouse.mouseY) {
-      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
+      // this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
       // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
       this.camera.lookAt(this.currentScene.position)
     }

@@ -55,9 +55,6 @@ class App extends React.Component<App.Props, App.State> {
       RootComponent.switchScene('welcomeScene')
         .then(() => {
           RootComponent.switchSceneChangeOn()
-          document.addEventListener('mousemove', RootComponent.handleMouseMove, false)
-          document.addEventListener('mousedown', RootComponent.handleMouseDown, false)
-          document.addEventListener('mouseup', RootComponent.handleMouseUp, false)
         })
 
       RootEvent.eventOn('sectionChangeStart', (scene) => {
@@ -78,39 +75,23 @@ class App extends React.Component<App.Props, App.State> {
           PondScene.stop()
         }
       })
+
+      document.addEventListener('mousemove', RootComponent.handleMouseMove, false)
+      document.addEventListener('mousedown', RootComponent.handleMouseDown, false)
+      document.addEventListener('mouseup', RootComponent.handleMouseUp, false)
     }
   }
 
   public render() {
     return (
-      <main>
-
-        <div
-          style={{
-            position: 'absolute' as 'absolute',
-            width: window.innerWidth,
-            height: window.innerHeight,
-            zIndex: 999,
-            top: 0,
-            left: 0,
-          }}
-        >
-          <h2 id={'switch'} style={{
-            color: 'white',
-            left: '300px',
-          }}>Switch Scenes</h2>
-        </div>
-
-        <div
-          style={{
-            width: window.innerWidth,
-            height: window.innerHeight,
-            overflow: 'hidden',
-          }}
-          ref={node => this.svgContainer = node}
-        />
-
-      </main>
+      <div
+        style={{
+          width: window.innerWidth,
+          height: window.innerHeight,
+          overflow: 'hidden',
+        }}
+        ref={node => this.svgContainer = node}
+      />
     )
   }
 }

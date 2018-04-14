@@ -81,17 +81,20 @@ export class TextGeometry {
 
     // Group is exposed, mesh is animated
     this.text = new THREE.Mesh(geometry.clone(), material.clone())
-    this.text.position.y = 20
+    const position = params.options.position ? params.options.position : new THREE.Vector3(0, 20, 0)
+    this.text.position.x = position.x
+    this.text.position.y = position.y
+    this.text.position.z = position.z
 
     this.createAnimation = new createAnimation(this.text, {
-      y: this.text.position.y,
+      y: 200,
       opacity: this.text.material.opacity
     })
   }
 
   public in = () => {
     this.createAnimation.in({
-      y: 0,
+      y: this.text.position.y,
       opacity: 1
     }, 1000)
   }

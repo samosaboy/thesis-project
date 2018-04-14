@@ -19,12 +19,34 @@ export const Welcome = () => {
 
   welcomeScene.add(splashText.text)
 
+  const splashDescription = new TextGeometry({
+    text: 'Welcome',
+    options: {
+      align: 'left',
+      size: 200,
+      lineSpacing: 20,
+      font: 'Lato',
+      style: 'Bold',
+      color: '#FFFFFF',
+      position: {
+        x: 0,
+        y: -40,
+        z: 0
+      }
+    },
+  })
+
+  welcomeScene.add(splashDescription.text)
+  splashDescription.setName('splashDescription')
+
   welcomeScene.onIn(() => {
     splashText.in()
+    splashDescription.in()
   })
 
   welcomeScene.onOut(() => {
     splashText.out()
+    splashDescription.out()
   })
 
   welcomeScene.onUpdate(() => {})
