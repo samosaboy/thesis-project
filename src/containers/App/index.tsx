@@ -68,6 +68,7 @@ class App extends React.Component<App.Props, App.State> {
 
         if (from === 'pondScene') {
           PondScene.out()
+          PondScene.stop()
         }
       })
     }

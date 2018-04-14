@@ -389,7 +389,7 @@ export class Root {
         break
     }
 
-    PondScene.update()
+    renderSceneFromState.update()
 
     this.renderer.render(
       renderSceneFromState.el,
