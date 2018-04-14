@@ -25,6 +25,7 @@ import 'three/smaapass'
 import {
   PondScene,
   RootEvent,
+  WelcomeScene,
 } from '../containers/App'
 
 const THREE = require('three')
@@ -379,6 +380,9 @@ export class Root {
   private render = () => {
     let renderSceneFromState
     switch (this.currentScene.name) {
+      case 'welcomeScene':
+        renderSceneFromState = WelcomeScene
+        break
       case 'pondScene':
         renderSceneFromState = PondScene
         break

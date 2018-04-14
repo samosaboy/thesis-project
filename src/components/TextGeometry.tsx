@@ -1,8 +1,5 @@
 import * as THREE from 'three'
-import * as BAS from 'three-bas'
 import { createAnimation } from './Utils'
-
-const TWEEN = require('@tweenjs/tween.js')
 
 interface TextGeometryParams {
   text: string,

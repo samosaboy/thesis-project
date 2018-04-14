@@ -18,7 +18,7 @@ export default handleActions<any, any>(
       }
     },
     [Actions.SCENE_SET_CURRENT]: (state, action) => {
-      const currentScene = state.scenes.filter(scene => action.payload.name === scene.name)[0]
+      const currentScene = state.scenes.filter(scene => scene.name === action.payload.name)[0]
       return {
         ...state,
         currentScene,

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Pond } from '../Pond/Pond'
+import { Pond, Welcome } from '../Scenes'
 import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
@@ -37,6 +37,7 @@ export const RootComponent = new Root()
 export const RootEvent = new Event()
 
 export const PondScene = Pond()
+export const WelcomeScene = Welcome()
 
 @connect(mapStateToProps, mapDispatchToProps)
 class App extends React.Component<App.Props, App.State> {
@@ -46,11 +47,12 @@ class App extends React.Component<App.Props, App.State> {
     if (this.svgContainer) {
       RootComponent.setContainer(this.svgContainer)
       RootComponent.addSections([
+        WelcomeScene,
         PondScene,
       ])
 
       // set default scene using switchScene method
-      RootComponent.switchScene('pondScene')
+      RootComponent.switchScene('welcomeScene')
         .then(() => {
           RootComponent.switchSceneChangeOn()
           document.addEventListener('mousemove', RootComponent.handleMouseMove, false)
@@ -61,12 +63,17 @@ class App extends React.Component<App.Props, App.State> {
       RootEvent.eventOn('sectionChangeStart', (scene) => {
         const { to, from } = scene
 
-        if (to === 'pondScene') {
+        if (to === 'welcomeScene') {
+          WelcomeScene.in()
+        } else if (to === 'pondScene') {
           PondScene.in()
           PondScene.start()
         }
 
-        if (from === 'pondScene') {
+        if (from === 'welcomeScene') {
+          WelcomeScene.out()
+          WelcomeScene.stop()
+        } else if (from === 'pondScene') {
           PondScene.out()
           PondScene.stop()
         }
