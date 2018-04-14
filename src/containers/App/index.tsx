@@ -49,7 +49,6 @@ class App extends React.Component<App.Props, App.State> {
       // set default scene using switchScene method
       RootComponent.switchScene('pondScene')
         .then(() => {
-          this.animate()
           RootComponent.switchSceneChangeOn()
           document.addEventListener('mousemove', RootComponent.handleMouseMove, false)
         })
@@ -70,11 +69,6 @@ class App extends React.Component<App.Props, App.State> {
 
     // document.addEventListener('mousedown', this.handleMouseDown)
     // document.addEventListener('mouseup', this.handleMouseUp)
-  }
-
-  private animate = () => {
-    RootComponent.animate()
-    requestAnimationFrame(this.animate)
   }
 
   public render() {

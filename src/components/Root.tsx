@@ -389,21 +389,11 @@ export class Root {
       this.stats.update()
       TWEEN.update()
       this.composer.render(this.clock.getDelta())
+      this.sphere.rotation.x += 0.01
     }
-    this.sphere.rotation.y += 0.01
     this.render()
+    this.frameId = requestAnimationFrame(this.animate)
   }
-
-  // public animate = () => {
-  //   if (store) {
-  //     // this.getCurrentSceneClass().onIn(this.getCurrentSceneClass().in())
-  //     this.stats.update()
-  //     TWEEN.update()
-  //     this.composer.render(this.clock.getDelta())
-  //   }
-  //   this.render()
-  //   this.frameId = requestAnimationFrame(this.animate)
-  // }
 
   private render = () => {
     this.renderer.render(
