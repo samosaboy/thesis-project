@@ -72,9 +72,10 @@ export class Root {
     this.clock.autoStart = false
 
     this.sphere = new THREE.Mesh(
-      new THREE.CubeGeometry(100, 100, 100),
+      new THREE.CubeGeometry(20, 20, 20),
       new THREE.MeshNormalMaterial()
     )
+    this.sphere.position.x = 100
 
     // this.scene.add(this.camera)
 
@@ -346,36 +347,29 @@ export class Root {
     }
   }
 
-  public addSections = (sections) => {
+  private getCurrentSceneClass = () => {
+    return this.sceneList.filter(scene => this.currentScene.name === scene.el.name)[0]
+  }
+
+  public addSections = (sections: Array<any>): void => {
     sections.forEach(section => {
-      this.sceneList.push(section.call())
-      store.dispatch(addToSceneList({ scene: section.call().el }))
+      this.sceneList.push(section.call(this))
+      store.dispatch(addToSceneList({ scene: section.call(this).el }))
     })
-  }
-
-  public getCurrentSceneName = (): string => {
-    return this.currentScene.name
-  }
-
-  private getSceneClass = (name?: string): any => {
-    let getSceneFromState
-    if (!name) {
-      getSceneFromState = this.currentScene
-    } else {
-      getSceneFromState = store.getState().sceneData.scenes.filter(scene => scene.el.name === name)
-    }
-    return this.sceneList.filter(scene => scene.el === getSceneFromState)[0]
   }
 
   public switchScene = (name): Promise<any> => {
     return new Promise(resolve => {
       store.dispatch(setCurrentScene({ name }))
       this.nextScene = { name }
-      this.currentScene = store.getState().sceneData.currentScene
-      // this.currentScene.add(this.sphere)
-      this.switchSceneChangeOn()
+      this.setCurrentSceneFromState()
       resolve()
     })
+  }
+
+  public setCurrentSceneFromState = () => {
+    this.currentScene = store.getState().sceneData.currentScene
+    this.currentScene.add(this.sphere)
   }
 
   public switchSceneChangeOn = () => {
@@ -384,34 +378,44 @@ export class Root {
       to: this.nextScene.name,
     }
     RootEvent.eventTrigger('sectionChangeStart', data)
-    this.animate()
-    // this.getSceneClass().onIn(this.getSceneClass().in())
+    if (!this.frameId) {
+      this.animate()
+    }
   }
 
   public animate = () => {
     if (store) {
-      // const obj = this.currentScene.getObjectByName('sphere')
-      // console.log(obj.position.x)
+      // this.getCurrentSceneClass().onIn(this.getCurrentSceneClass().in())
       this.stats.update()
       TWEEN.update()
       this.composer.render(this.clock.getDelta())
     }
+    this.sphere.rotation.y += 0.01
     this.render()
-    requestAnimationFrame(this.animate)
   }
+
+  // public animate = () => {
+  //   if (store) {
+  //     // this.getCurrentSceneClass().onIn(this.getCurrentSceneClass().in())
+  //     this.stats.update()
+  //     TWEEN.update()
+  //     this.composer.render(this.clock.getDelta())
+  //   }
+  //   this.render()
+  //   this.frameId = requestAnimationFrame(this.animate)
+  // }
 
   private render = () => {
     this.renderer.render(
       this.currentScene,
-      this.camera,
+      this.camera
     )
 
     this.step += 1
-    // this.sphere.rotation.y += 0.01
 
     if (this.mouse.mouseX && this.mouse.mouseY) {
       this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
-      // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
+      this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
       this.camera.lookAt(this.currentScene.position)
     }
     // const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')

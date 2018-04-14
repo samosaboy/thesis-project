@@ -10,10 +10,9 @@ export class Scene {
   public _start: any
   public _stop: any
 
-  constructor(name?: any) {
-    this.name = name
+  constructor(name: string) {
     this.el = new THREE.Scene()
-    this.el.name = this.name
+    this.el.name = name
     this.isPlaying = false
   }
 

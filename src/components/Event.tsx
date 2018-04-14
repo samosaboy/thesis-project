@@ -1,3 +1,5 @@
+import { RootComponent } from '../containers/App'
+
 export class Event {
   public events: any
 
@@ -17,7 +19,6 @@ export class Event {
   }
 
   public eventTrigger = (name, data) => {
-    console.log(name, data)
     if (!this.events[name]) {
       return false
     }
@@ -26,5 +27,7 @@ export class Event {
     subscribe.forEach(q => {
       q.callback.call(this, data)
     })
+
+    RootComponent.animate()
   }
 }
