@@ -1,13 +1,8 @@
 import * as React from 'react'
-import * as actions from '../../actions/actions'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { RootState } from '../../reducers'
 import {
   BackgroundParticles,
-  EventParticles,
   Scene,
-  TextGeometry
+  TextGeometry,
 } from '../../components'
 
 const THREE = require('three')
@@ -29,18 +24,80 @@ export const Pond = () => {
   })
   pondScene.add(titleText.el)
 
-  const light = new THREE.AmbientLight(0xFFFFFF, 25)
-  pondScene.add(light)
+  /*
+   * Surface Plane
+   * */
+  const planeGeometry = new THREE.BoxBufferGeometry(1000, 1, 1000)
+  const planeMaterial = new THREE.MeshPhongMaterial({
+    color: '#060615',
+  })
+  const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
+  planeMesh.position.set(0, -75, 0)
+  planeMesh.receiveShadow = true
+  planeMesh.visible = false
 
-  const sphere = new THREE.Mesh(
-    new THREE.SphereBufferGeometry(20, 16, 16),
-    new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
-  )
-  sphere.name = 'sphere'
-  sphere.clickable = true
-  sphere.visible = false
+  pondScene.add(planeMesh)
 
-  pondScene.add(sphere)
+  /*
+   * Light Params
+   * */
+  const spotLight = new THREE.SpotLight(0xFFFFFF)
+  spotLight.penumbra = 1 // how soft the spotlight looks
+  spotLight.position.set(0, 200, 0)
+  pondScene.add(spotLight)
+
+  const shadowLight = new THREE.SpotLight(0xFFFFFF)
+  shadowLight.penumbra = 1 // how soft the shadowLight looks
+  shadowLight.position.set(0, 200, 100)
+  shadowLight.castShadow = true
+  shadowLight.shadow.mapSize.width = 100
+  shadowLight.shadow.mapSize.height = 100
+
+  pondScene.add(shadowLight)
+
+  const skyBox = new THREE.HemisphereLight('#373f52', '#0e0e1d')
+  skyBox.position.set(0, 0, 0)
+  pondScene.add(skyBox)
+
+  const skyGeometry = new THREE.SphereBufferGeometry(1000, 1, 1)
+  const skyMaterial = new THREE.ShaderMaterial({
+    vertexShader: `varying vec3 vWorldPosition;
+  	void main() {
+  		vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+  		vWorldPosition = worldPosition.xyz;
+  		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  	}`,
+    fragmentShader: `uniform vec3 topColor;
+  	uniform vec3 bottomColor;
+  	uniform float offset;
+  	uniform float exponent;
+  	varying vec3 vWorldPosition;
+  	void main() {
+  		float h = normalize( vWorldPosition + offset ).y;
+  		gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+  	}`,
+    uniforms: {
+      topColor: { value: new THREE.Color('#0a0a0c') },
+      bottomColor: { value: new THREE.Color('#262c3c') },
+      offset: { value: 100 },
+      exponent: { value: 1.1 },
+    },
+    side: THREE.BackSide,
+  })
+  const sky = new THREE.Mesh(skyGeometry, skyMaterial)
+  sky.visible = false
+
+  pondScene.add(sky)
+
+  const backgroundParticles = new BackgroundParticles({
+    count: 1000,
+    particleSize: 1.2,
+    rangeY: [
+      -200,
+      200,
+    ],
+  })
+  pondScene.add(backgroundParticles.getElement())
 
   pondScene.onIn(() => {
     titleText.in()
@@ -51,11 +108,17 @@ export const Pond = () => {
   })
 
   pondScene.onStart(() => {
-    sphere.visible = true
+    sky.visible = true
+    planeMesh.visible = true
   })
 
   pondScene.onStop(() => {
-    sphere.vislble = false
+    sky.visible = false
+    planeMesh.visible = false
+  })
+
+  pondScene.onUpdate(() => {
+    backgroundParticles.getElement().rotation.y += 0.0001
   })
 
   return pondScene

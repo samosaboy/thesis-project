@@ -383,20 +383,22 @@ export class Root {
     let renderSceneFromState
     switch (this.currentScene.name) {
       case 'pondScene':
-        renderSceneFromState = PondScene.el
+        renderSceneFromState = PondScene
         break
       default:
         break
     }
 
+    PondScene.update()
+
     this.renderer.render(
-      renderSceneFromState,
+      renderSceneFromState.el,
       this.camera
     )
 
     if (this.mouse.mouseX && this.mouse.mouseY) {
       this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
-      this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
+      // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
       this.camera.lookAt(this.currentScene.position)
     }
   }

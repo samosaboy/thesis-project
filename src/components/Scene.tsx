@@ -9,6 +9,7 @@ export class Scene {
   public _out: any
   public _start: any
   public _stop: any
+  public _update: any
 
   constructor(name: string) {
     this.el = new THREE.Scene()
@@ -45,6 +46,10 @@ export class Scene {
     this.isPlaying = false
   }
 
+  public update = () => {
+    this._update()
+  }
+
   public onIn = (callback) => {
     this._in = callback
   }
@@ -59,5 +64,9 @@ export class Scene {
 
   public onStop = (callback) => {
     this._stop = callback
+  }
+
+  public onUpdate = (callback) => {
+    this._update = callback
   }
 }
