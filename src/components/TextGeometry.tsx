@@ -114,9 +114,6 @@ export class TextGeometry {
         this.el.castShadow = true
       })
       .onUpdate(() => this.update())
-      .onComplete(() => {
-        console.log(this.cache)
-      })
       .start()
   }
 

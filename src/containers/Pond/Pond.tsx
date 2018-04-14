@@ -43,7 +43,6 @@ export const Pond = () => {
   pondScene.add(sphere)
 
   pondScene.onIn(() => {
-    console.log('test')
     titleText.in()
   })
 

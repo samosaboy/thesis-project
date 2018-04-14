@@ -1,5 +1,6 @@
 import {
   addLastHoveredObject,
+  addMouseEvent,
   addToSceneList,
   resetMouseEvent,
   setCurrentScene,
@@ -21,7 +22,10 @@ import 'three/fxaashader'
 import 'three/maskpass'
 import 'three/smaashader'
 import 'three/smaapass'
-import { RootEvent } from '../containers/App'
+import {
+  PondScene,
+  RootEvent,
+} from '../containers/App'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
@@ -45,10 +49,6 @@ export class Root {
   private vector: any
   private raycaster: any
 
-  private step: number
-
-  private sphere: any
-
   private sceneList: Array<any>
   private currentScene: any
   private nextScene: any
@@ -66,18 +66,10 @@ export class Root {
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.mouse = new THREE.Vector2()
-    // this.scene.updateMatrixWorld()
-    // this.camera.updateMatrixWorld()
+    this.scene.updateMatrixWorld()
+    this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
     this.clock.autoStart = false
-
-    this.sphere = new THREE.Mesh(
-      new THREE.CubeGeometry(20, 20, 20),
-      new THREE.MeshNormalMaterial()
-    )
-    this.sphere.position.x = 100
-
-    // this.scene.add(this.camera)
 
     /*
      * Instantiate Stats for Development
@@ -91,17 +83,16 @@ export class Root {
     /*
      * Set scene list
      */
-
     this.sceneList = []
 
     /*
      * Instantiate the post-processing
      */
-
     this.postProcessing()
 
     /*
-     * Additional camera functionality
+     * Custom camera functionality
+     * for THREE.Camera prototype
      * */
     this.camera.reset = () => {
       new TWEEN.Tween(this.camera.position)
@@ -259,38 +250,38 @@ export class Root {
      * This gives us an array of objects that intersect with the scene children
      * We can match the object name to trigger events
      * */
-    // this.intersects = this.raycaster.intersectObjects(this.currentScene.children, true)
-    // if (this.intersects.length) {
-    //   if (this.intersects[0].object.clickable) {
-    //     window.document.body.style.cursor = 'pointer'
-    //     store.dispatch(addLastHoveredObject({ object: this.intersects[0] }))
-    //     this.toName = store.getState().mouseData.object.object.name
-    //   } else {
-    //     // this.resetHandleMouseMove()
-    //   }
-    // } else {
-    //   this.resetHandleMouseMove()
-    // }
+    this.intersects = this.raycaster.intersectObjects(this.currentScene.children, true)
+    if (this.intersects.length) {
+      if (this.intersects[0].object.clickable) {
+        window.document.body.style.cursor = 'pointer'
+        store.dispatch(addLastHoveredObject({ object: this.intersects[0] }))
+        this.toName = store.getState().mouseData.object.object.name
+      } else {
+        // this.resetHandleMouseMove()
+      }
+    } else {
+      this.resetHandleMouseMove()
+    }
   }
 
-  // private handleMouseDown = () => {
-  //   // We also need a way to track if you are holding and which event type you are holding for
-  //   if (this.intersects.length) {
-  //     this.props.actions.addMouseEvent({
-  //       event: 'mousedown',
-  //       object: this.RootScene.intersects[0],
-  //     })
-  //     this.clock.start()
-  //   }
-  // }
-  //
-  // private handleMouseUp = () => {
-  //   this.props.actions.addMouseEvent({
-  //     event: 'mouseout',
-  //   })
-  //   this.clock.stop()
-  // }
-  //
+  public handleMouseDown = () => {
+    // We also need a way to track if you are holding and which event type you are holding for
+    if (this.intersects.length) {
+      store.dispatch(addMouseEvent({
+        event: 'mousedown',
+        object: this.intersects[0],
+      }))
+      this.clock.start()
+    }
+  }
+
+  public handleMouseUp = () => {
+    store.dispatch(addMouseEvent({
+      event: 'mouseout',
+    }))
+    this.clock.stop()
+  }
+
   // private setScene = name => {
   //   this.props.actions.setCurrentScene({ name })
   //   this.camera.reset()
@@ -347,14 +338,10 @@ export class Root {
     }
   }
 
-  private getCurrentSceneClass = () => {
-    return this.sceneList.filter(scene => this.currentScene.name === scene.el.name)[0]
-  }
-
   public addSections = (sections: Array<any>): void => {
     sections.forEach(section => {
-      this.sceneList.push(section.call(this))
-      store.dispatch(addToSceneList({ scene: section.call(this).el }))
+      this.sceneList.push(section)
+      store.dispatch(addToSceneList({ scene: section.el }))
     })
   }
 
@@ -369,7 +356,6 @@ export class Root {
 
   public setCurrentSceneFromState = () => {
     this.currentScene = store.getState().sceneData.currentScene
-    this.currentScene.add(this.sphere)
   }
 
   public switchSceneChangeOn = () => {
@@ -385,34 +371,33 @@ export class Root {
 
   public animate = () => {
     if (store) {
-      // this.getCurrentSceneClass().onIn(this.getCurrentSceneClass().in())
       this.stats.update()
       TWEEN.update()
       this.composer.render(this.clock.getDelta())
-      this.sphere.rotation.x += 0.01
     }
     this.render()
     this.frameId = requestAnimationFrame(this.animate)
   }
 
   private render = () => {
+    let renderSceneFromState
+    switch (this.currentScene.name) {
+      case 'pondScene':
+        renderSceneFromState = PondScene.el
+        break
+      default:
+        break
+    }
+
     this.renderer.render(
-      this.currentScene,
+      renderSceneFromState,
       this.camera
     )
-
-    this.step += 1
 
     if (this.mouse.mouseX && this.mouse.mouseY) {
       this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
       this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
       this.camera.lookAt(this.currentScene.position)
     }
-    // const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')
-    // if (eventSyria) {
-    //   this.backgroundParticles.animateParticles()
-    //   this.eventParticles.rotateElement()
-    //   this.eventParticles.updateCameraPosition(this.RootScene.camera.position)
-    // }
   }
 }
