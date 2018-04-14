@@ -1,13 +1,9 @@
 import {
+  addLastHoveredObject,
   addToSceneList,
   resetMouseEvent,
   setCurrentScene,
 } from '../actions/actions'
-
-const THREE = require('three')
-const TWEEN = require('@tweenjs/tween.js')
-const Stats = require('three/stats')
-
 import { store } from '../index'
 
 import {
@@ -25,7 +21,11 @@ import 'three/fxaashader'
 import 'three/maskpass'
 import 'three/smaashader'
 import 'three/smaapass'
-import { Event } from './'
+import { RootEvent } from '../containers/App'
+
+const THREE = require('three')
+const TWEEN = require('@tweenjs/tween.js')
+const Stats = require('three/stats')
 
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
@@ -34,6 +34,7 @@ export class Root {
   private scene: THREE.Scene | any
   private camera: THREE.PerspectiveCamera | any
   private renderer: THREE.WebGLRenderer
+  private frameId: any
   private mouse: THREE.Vector2 | any
   public intersects: any
   private clock: THREE.Clock
@@ -41,15 +42,16 @@ export class Root {
   private composer: any
   private stats: any
 
-  private isMouseMove: boolean
   private vector: any
   private raycaster: any
 
   private step: number
 
-  public events: any
+  private sphere: any
 
   private sceneList: Array<any>
+  private currentScene: any
+  private nextScene: any
 
   constructor() {
     /*
@@ -57,18 +59,24 @@ export class Root {
      * */
     this.scene = new THREE.Scene()
     this.scene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
-    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000)
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000)
     this.camera.position.set(0, 0, 300)
-    this.camera.add(this.scene)
     this.renderer = new THREE.WebGLRenderer({
       antialias: (window.devicePixelRatio === 1),
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.mouse = new THREE.Vector2()
-    this.camera.updateMatrixWorld()
-    this.camera.updateProjectionMatrix()
+    // this.scene.updateMatrixWorld()
+    // this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
     this.clock.autoStart = false
+
+    this.sphere = new THREE.Mesh(
+      new THREE.CubeGeometry(100, 100, 100),
+      new THREE.MeshNormalMaterial()
+    )
+
+    // this.scene.add(this.camera)
 
     /*
      * Instantiate Stats for Development
@@ -80,19 +88,13 @@ export class Root {
     const cameraSpeed = 1
 
     /*
-     * Instantiate the Event Class
-     */
-
-    this.events = new Event()
-
-    /*
-    * Set scene list
+     * Set scene list
      */
 
     this.sceneList = []
 
     /*
-    * Instantiate the post-processing
+     * Instantiate the post-processing
      */
 
     this.postProcessing()
@@ -150,7 +152,6 @@ export class Root {
     this.renderer.shadowMap.enabled = true
     container.appendChild(this.renderer.domElement)
 
-    document.addEventListener('mousemove', this.handleMouseMove)
   }
 
   // public createScene = (scene) => {
@@ -190,20 +191,20 @@ export class Root {
   //   const skyGeometry = new THREE.SphereBufferGeometry(1000, 1, 1)
   //   const skyMaterial = new THREE.ShaderMaterial({
   //     vertexShader: `varying vec3 vWorldPosition;
-		// 	void main() {
-		// 		vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
-		// 		vWorldPosition = worldPosition.xyz;
-		// 		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-		// 	}`,
+  // 	void main() {
+  // 		vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+  // 		vWorldPosition = worldPosition.xyz;
+  // 		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  // 	}`,
   //     fragmentShader: `uniform vec3 topColor;
-		// 	uniform vec3 bottomColor;
-		// 	uniform float offset;
-		// 	uniform float exponent;
-		// 	varying vec3 vWorldPosition;
-		// 	void main() {
-		// 		float h = normalize( vWorldPosition + offset ).y;
-		// 		gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
-		// 	}`,
+  // 	uniform vec3 bottomColor;
+  // 	uniform float offset;
+  // 	uniform float exponent;
+  // 	varying vec3 vWorldPosition;
+  // 	void main() {
+  // 		float h = normalize( vWorldPosition + offset ).y;
+  // 		gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+  // 	}`,
   //     uniforms: {
   //       topColor: { value: new THREE.Color('#0a0a0c') },
   //       bottomColor: { value: new THREE.Color('#262c3c') },
@@ -241,15 +242,12 @@ export class Root {
     window.document.body.style.cursor = 'default'
   }
 
-  private handleMouseMove = (event) => {
-    this.isMouseMove = true
+  public handleMouseMove = (event) => {
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
     this.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
     this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
-
-    // this.RootScene.animateFloor(event)
 
     this.vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 0).unproject(this.camera)
     this.raycaster = new THREE.Raycaster(
@@ -260,18 +258,14 @@ export class Root {
      * This gives us an array of objects that intersect with the scene children
      * We can match the object name to trigger events
      * */
-    // this.intersects = this.raycaster.intersectObjects(this.props.sceneData.currentScene.children, true)
-    //
-    // if (this.RootScene.intersects.length) {
-    //
-    //   // TODO: Do we want hover events? YES
-    //   this.props.actions.addLastHoveredObject({ object: this.RootScene.intersects[0] })
-    //   if (this.RootScene.intersects[0].object.clickable) {
-    //     // Simplify for our animate
-    //     this.toName = this.props.mouseData.object.object.name
+    // this.intersects = this.raycaster.intersectObjects(this.currentScene.children, true)
+    // if (this.intersects.length) {
+    //   if (this.intersects[0].object.clickable) {
     //     window.document.body.style.cursor = 'pointer'
+    //     store.dispatch(addLastHoveredObject({ object: this.intersects[0] }))
+    //     this.toName = store.getState().mouseData.object.object.name
     //   } else {
-    //     this.resetHandleMouseMove()
+    //     // this.resetHandleMouseMove()
     //   }
     // } else {
     //   this.resetHandleMouseMove()
@@ -332,7 +326,7 @@ export class Root {
   private postProcessing = () => {
     if (store) {
       const res = window.devicePixelRatio
-      this.composer.addPass(new THREE.RenderPass(store.getState().sceneData.currentScene, this.camera))
+      this.composer.addPass(new THREE.RenderPass(this.currentScene, this.camera))
       this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
 
       const bloomPass = new BloomPass(
@@ -352,54 +346,21 @@ export class Root {
     }
   }
 
-  public animate = () => {
-    if (store) {
-      this.stats.update()
-      TWEEN.update()
-      this.THREErender()
-      this.composer.render(this.clock.getDelta())
-    }
-    requestAnimationFrame(this.animate)
-  }
-
-  private THREErender = () => {
-    this.renderer.render(
-      store.getState().sceneData.currentScene,
-      this.camera
-    )
-
-    this.step += 1
-
-    if (this.mouse.mouseX && this.mouse.mouseY) {
-      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.02
-      // this.RootScene.camera.position.y += (-this.RootScene.mouse.mouseY - this.RootScene.camera.position.y) * 0.005
-      this.camera.lookAt(store.getState().sceneData.currentScene.position)
-    }
-    // const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')
-    // if (eventSyria) {
-    //   this.backgroundParticles.animateParticles()
-    //   this.eventParticles.rotateElement()
-    //   this.eventParticles.updateCameraPosition(this.RootScene.camera.position)
-    // }
-  }
-
-  // public postStoreInit = () => {
-  //   if (store) {
-  //     this.in()
-  //   }
-  // }
-
   public addSections = (sections) => {
     sections.forEach(section => {
-      this.sceneList.push(section)
-      store.dispatch(addToSceneList({ scene: section.el }))
+      this.sceneList.push(section.call())
+      store.dispatch(addToSceneList({ scene: section.call().el }))
     })
+  }
+
+  public getCurrentSceneName = (): string => {
+    return this.currentScene.name
   }
 
   private getSceneClass = (name?: string): any => {
     let getSceneFromState
     if (!name) {
-      getSceneFromState = store.getState().sceneData.currentScene
+      getSceneFromState = this.currentScene
     } else {
       getSceneFromState = store.getState().sceneData.scenes.filter(scene => scene.el.name === name)
     }
@@ -408,20 +369,56 @@ export class Root {
 
   public switchScene = (name): Promise<any> => {
     return new Promise(resolve => {
-      resolve(store.dispatch(setCurrentScene({ name })))
-      this.switchSceneChangeStart()
+      store.dispatch(setCurrentScene({ name }))
+      this.nextScene = { name }
+      this.currentScene = store.getState().sceneData.currentScene
+      // this.currentScene.add(this.sphere)
+      this.switchSceneChangeOn()
+      resolve()
     })
   }
 
-  // private switchScene = (name) => {
-  //   this.events.on('root:SwitchScene', callback)
-  // }
-
-  private switchSceneChangeStart = () => {
-    this.getSceneClass().onIn(this.getSceneClass().in())
+  public switchSceneChangeOn = () => {
+    const data = {
+      from: this.nextScene.name === this.currentScene.name ? null : this.currentScene.name,
+      to: this.nextScene.name,
+    }
+    RootEvent.eventTrigger('sectionChangeStart', data)
+    this.animate()
+    // this.getSceneClass().onIn(this.getSceneClass().in())
   }
 
-  private switchSceneChangeStartSuccess = () => {
-    this.getSceneClass().onOut(this.getSceneClass().out())
+  public animate = () => {
+    if (store) {
+      // const obj = this.currentScene.getObjectByName('sphere')
+      // console.log(obj.position.x)
+      this.stats.update()
+      TWEEN.update()
+      this.composer.render(this.clock.getDelta())
+    }
+    this.render()
+    requestAnimationFrame(this.animate)
+  }
+
+  private render = () => {
+    this.renderer.render(
+      this.currentScene,
+      this.camera,
+    )
+
+    this.step += 1
+    // this.sphere.rotation.y += 0.01
+
+    if (this.mouse.mouseX && this.mouse.mouseY) {
+      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
+      // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
+      this.camera.lookAt(this.currentScene.position)
+    }
+    // const eventSyria = this.RootScene.scene.getObjectByName('event:Syria')
+    // if (eventSyria) {
+    //   this.backgroundParticles.animateParticles()
+    //   this.eventParticles.rotateElement()
+    //   this.eventParticles.updateCameraPosition(this.RootScene.camera.position)
+    // }
   }
 }

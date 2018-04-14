@@ -29,14 +29,35 @@ export const Pond = () => {
   })
   pondScene.add(titleText.el)
 
-  pondScene.in = () => {
-    console.log('pondScene in')
-    titleText.in()
-  }
+  const light = new THREE.AmbientLight(0xFFFFFF, 25)
+  pondScene.add(light)
 
-  pondScene.out = () => {
+  const sphere = new THREE.Mesh(
+    new THREE.SphereBufferGeometry(20, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
+  )
+  sphere.name = 'sphere'
+  sphere.clickable = true
+  sphere.visible = false
+
+  pondScene.add(sphere)
+
+  pondScene.onIn(() => {
+    titleText.in()
+    console.log('test')
+  })
+
+  pondScene.onOut(() => {
     titleText.out()
-  }
+  })
+
+  pondScene.onStart(() => {
+    sphere.visible = true
+  })
+
+  pondScene.onStop(() => {
+    sphere.vislble = false
+  })
 
   return pondScene
 }

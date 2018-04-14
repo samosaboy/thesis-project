@@ -4,7 +4,10 @@ import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
 import { bindActionCreators } from 'redux'
-import { Root } from '../../components'
+import {
+  Event,
+  Root,
+} from '../../components'
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -26,43 +29,45 @@ export namespace App {
     sceneData?: any
   }
 
-  export interface State {
-    prevObject: any,
-    mousemove: boolean,
-  }
+  export interface State {}
 }
 
 export const RootComponent = new Root()
+export const RootEvent = new Event()
 
 @connect(mapStateToProps, mapDispatchToProps)
 class App extends React.Component<App.Props, App.State> {
   private svgContainer: any
 
-  constructor(props?: any, context?: any) {
-    super(props, context)
-    this.state = {
-      prevObject: {}, // the last object we hovered over
-      mousemove: false,
-    }
-  }
-
   componentDidMount() {
-    // We must put this in cDM because svgContainer DNE until its mounted
     if (this.svgContainer) {
       RootComponent.setContainer(this.svgContainer)
       RootComponent.addSections([
-        Pond(),
+        Pond,
       ])
 
       // set default scene using switchScene method
       RootComponent.switchScene('pondScene')
         .then(() => {
-          // RootComponent.postStoreInit()
-          RootComponent.animate()
+          document.addEventListener('mousemove', RootComponent.handleMouseMove, false)
         })
+
+
+      RootEvent.eventOn('sectionChangeStart', (scene) => {
+        const { to, from } = scene
+        console.log(scene)
+
+        if (to === 'pondScene') {
+          Pond().in()
+          Pond().start()
+        }
+
+        if (from === 'pondScene') {
+          // Pond().out()
+        }
+      })
     }
 
-    // document.addEventListener('mousemove', this.handleMouseMove)
     // document.addEventListener('mousedown', this.handleMouseDown)
     // document.addEventListener('mouseup', this.handleMouseUp)
   }
@@ -72,6 +77,19 @@ class App extends React.Component<App.Props, App.State> {
   public render() {
     return (
       <main>
+
+        <div
+          style={{
+            position: 'absolute' as 'absolute',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            zIndex: 999,
+            top: 0,
+            left: 0
+          }}
+        >
+          <h2 id={'switch'} style={{ color: 'white', left: '300px' }}>Switch Scenes</h2>
+        </div>
 
         <div
           style={{

@@ -1,20 +1,18 @@
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
-import { store } from '../index'
-
 export class Scene {
   private name: string
   private isPlaying: boolean
-  public el: THREE.Object3D
+  public el: THREE.Scene
   public _in: any
   public _out: any
   public _start: any
   public _stop: any
 
-  constructor(props?: any) {
-    this.name = props
-    this.el = new THREE.Object3D()
+  constructor(name?: any) {
+    this.name = name
+    this.el = new THREE.Scene()
     this.el.name = this.name
     this.isPlaying = false
   }
@@ -25,7 +23,6 @@ export class Scene {
 
   public in = () => {
     this._in()
-    console.log('test')
   }
 
   public out = () => {

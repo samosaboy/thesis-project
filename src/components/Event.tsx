@@ -1,35 +1,30 @@
 export class Event {
   public events: any
-  private id: number
 
   constructor() {
     this.events = {}
-    this.id = -1
   }
 
-  public on = (name, callback) => {
+  public eventOn = (name, callback) => {
     if (!this.events[name]) {
       this.events[name] = []
     }
 
-    const id = (++this.id).toString()
-
-    this.events[name].push ({
-      id,
+    this.events[name].push({
+      name,
       callback,
     })
-
-    return id
   }
 
-  public trigger = (name, data) => {
+  public eventTrigger = (name, data) => {
+    console.log(name, data)
     if (!this.events[name]) {
-      return
+      return false
     }
 
-    const subscribed = this.events[name]
-    subscribed.forEach(q => {
-      q.callback.apply(data)
+    const subscribe = this.events[name]
+    subscribe.forEach(q => {
+      q.callback.call(this, data)
     })
   }
 }
