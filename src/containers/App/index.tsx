@@ -61,6 +61,7 @@ class App extends React.Component<App.Props, App.State> {
 
         if (to === 'welcomeScene') {
           WelcomeScene.in()
+          WelcomeScene.start()
         } else if (to === 'pondScene') {
           PondScene.in()
           PondScene.start()

@@ -4,7 +4,6 @@ import {
   TextGeometry,
 } from '../../components'
 import { RootComponent } from '../App'
-import { TextureAnimator } from '../../components/Utils'
 
 const THREE = require('three')
 
@@ -80,11 +79,6 @@ export const Welcome = () => {
     },
   })
 
-  splashDescription.text.on('click', () => {
-    RootComponent.switchScreen('pondScene')
-  })
-  splashDescription.text.cursor = 'pointer'
-
   welcomeScene.add(splashDescription.text)
 
   const light = new THREE.DirectionalLight(0xFFFFFF, 0.2)
@@ -100,20 +94,39 @@ export const Welcome = () => {
     horizontal: 1,
     vertical: 70,
     total: 70,
-    duration: 2
+    duration: 1,
+    position: {
+      x: 0,
+      y: -80,
+      z: 0,
+    },
   })
-  sprite.el().scale.set(0.6, 0.8, 0.8)
-  sprite.el().position.set(0, -80, 0)
+  sprite.el().scale.set(0.4, 0.6, 0.4)
   welcomeScene.add(sprite.el())
+
+  let time = 0
+  let mouseDown
+
+  splashDescription.text.on('mousedown', () => {
+    sprite.out()
+    mouseDown = true
+  })
+  splashDescription.text.on('mouseup', () => {
+    sprite.in()
+    mouseDown = false
+  })
+  splashDescription.text.cursor = 'pointer'
 
   welcomeScene.onIn(() => {
     splashText.in()
     splashDescription.in()
+    sprite.in()
   })
 
   welcomeScene.onOut(() => {
     splashText.out()
     splashDescription.out()
+    sprite.out()
   })
 
   welcomeScene.onStart(() => {
@@ -126,6 +139,15 @@ export const Welcome = () => {
 
   welcomeScene.onUpdate(() => {
     sprite.update(1000 * RootComponent.delta)
+
+    if (mouseDown) {
+      time += 1 / 60
+      if (time > 4) {
+        RootComponent.switchScreen('pondScene')
+      }
+    } else {
+      time = 0
+    }
   })
 
   return welcomeScene
