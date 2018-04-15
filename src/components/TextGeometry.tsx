@@ -1,18 +1,14 @@
 import * as THREE from 'three'
 import { createAnimation } from './Utils'
 
-interface TextGeometryParams {
-  text: string,
-  options: any
-}
-
 export class TextGeometry {
   public text: any
+  private position: THREE.Vector3
 
   private createAnimation: any
 
-  constructor(params?: TextGeometryParams) {
-    const words = params.text.split('\n')
+  constructor(text: string, params) {
+    const words = text.split('\n')
 
     for (let i = 0; i < words.length; i++) {
       words[i] = words[i].replace(/^\s+|\s+$/g, '')
@@ -21,7 +17,7 @@ export class TextGeometry {
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d')
 
-    const font = params.options.style + ' ' + params.options.size + 'px' + ' ' + params.options.font
+    const font = params.style + ' ' + params.size + 'px' + ' ' + params.font
 
     context.font = font
 
@@ -36,15 +32,15 @@ export class TextGeometry {
 
     const width = maxWidth
 
-    const lineHeight = params.options.size + params.options.lineSpacing
+    const lineHeight = params.size + params.lineSpacing
     const height = lineHeight * words.length
 
     canvas.width = width + 20
     canvas.height = height + 20
 
     context.font = font
-    context.fillStyle = params.options.color
-    context.textAlign = params.options.align
+    context.fillStyle = params.color
+    context.textAlign = params.align
     context.textBaseline = 'top'
 
     for (let k = 0; k < words.length; k++) {
@@ -52,9 +48,9 @@ export class TextGeometry {
 
       let left
 
-      if (params.options.align === 'left') {
+      if (params.align === 'left') {
         left = 0
-      } else if (params.options.align === 'center') {
+      } else if (params.align === 'center') {
         left = canvas.width / 2
       } else {
         left = canvas.width
@@ -72,7 +68,6 @@ export class TextGeometry {
       depthWrite: false,
       depthTest: true,
       side: THREE.DoubleSide,
-      opacity: 0,
     })
 
     const geometry = new THREE.PlaneGeometry(
@@ -81,26 +76,24 @@ export class TextGeometry {
 
     // Group is exposed, mesh is animated
     this.text = new THREE.Mesh(geometry.clone(), material.clone())
-    const position = params.options.position ? params.options.position : new THREE.Vector3(0, 20, 0)
-    this.text.position.x = position.x
-    this.text.position.y = position.y
-    this.text.position.z = position.z
+    this.position = params.position || new THREE.Vector3(0, 0, 0)
+    this.text.visible = false
 
     this.createAnimation = new createAnimation(this.text, {
       y: 200,
-      opacity: this.text.material.opacity
+      opacity: 0
     })
   }
 
   public in = () => {
     this.createAnimation.in({
-      y: this.text.position.y,
+      y: this.position.y,
       opacity: 1
     }, 1000)
   }
 
-  public out = () => {
-    this.createAnimation.out(1000)
+  public out = (dur?: number) => {
+    this.createAnimation.out(dur || 1000)
   }
 
   public setName = name => {

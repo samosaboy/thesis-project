@@ -9,16 +9,13 @@ const THREE = require('three')
 export const Pond = () => {
   const pondScene = new Scene('pondScene')
 
-  const titleText = new TextGeometry({
-    text: 'Pick a country',
-    options: {
-      align: 'left',
-      size: 500,
-      lineSpacing: 20,
-      font: 'Lato',
-      style: 'Bold',
-      color: '#FFFFFF',
-    },
+  const titleText = new TextGeometry('Pick a country', {
+    align: 'left',
+    size: 500,
+    lineSpacing: 20,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#FFFFFF',
   })
   pondScene.add(titleText.text)
 

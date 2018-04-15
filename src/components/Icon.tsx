@@ -40,7 +40,7 @@ export class Icon {
     this.createAnimation.in({
       y: this.position.y,
       opacity: 1
-    }, 2000)
+    }, 1000)
   }
 
   public out = () => {

@@ -48,23 +48,40 @@ export const Welcome = () => {
 
   welcomeScene.add(bgSphere)
 
-  const splashText = new TextGeometry({
-    text: 'T H E \n R I P P L E \n E F F E C T',
-    options: {
-      align: 'left',
-      size: 500,
-      lineSpacing: 20,
-      font: 'Lato',
-      style: 'Bold',
-      color: '#FFFFFF',
+  const splashText = new TextGeometry('T H E \n R I P P L E \n E F F E C T', {
+    align: 'left',
+    size: 500,
+    lineSpacing: 20,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#FFFFFF',
+    position: {
+      x: 0,
+      y: 20,
+      z: 0,
     },
   })
 
   welcomeScene.add(splashText.text)
 
-  const splashDescription = new TextGeometry({
-    text: 'This experiences requires headphones. \n When you are ready, click continue.',
-    options: {
+  const keepHolding = new TextGeometry('K E E P \n H O L D I N G', {
+    align: 'left',
+    size: 500,
+    lineSpacing: 20,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#FFFFFF',
+    position: {
+      x: 0,
+      y: 20,
+      z: 0,
+    },
+  })
+
+  welcomeScene.add(keepHolding.text)
+
+  const splashDescription = new TextGeometry(
+    'This experiences requires headphones. \n When you are ready, hold over this text.', {
       align: 'center',
       size: 200,
       lineSpacing: 10,
@@ -76,25 +93,19 @@ export const Welcome = () => {
         y: -40,
         z: 0,
       },
-    },
-  })
+    })
 
   welcomeScene.add(splashDescription.text)
 
-  const light = new THREE.DirectionalLight(0xFFFFFF, 0.2)
+  const light = new THREE.DirectionalLight(0xFFFFFF, 0.02)
   light.position.set(0, 0, 300)
-  // welcomeScene.add(light)
+  welcomeScene.add(light)
 
-  // const iconTexture = new THREE.ImageUtils.loadTexture('../../public/images/mouseicondown-sprite.png')
-  // const icon = new TextureAnimator(iconTexture, 1, 70, 70, 1)
-  // const material = new THREE.MeshStandardMaterial({ map: icon.get(), side: THREE.DoubleSide })
-  // const geometry = new THREE.PlaneGeometry(50, 50, 1, 1)
-  // const sprite = new THREE.Mesh(geometry, material)
   const sprite = new Icon('../../public/images/mouseicondown-sprite.png', {
     horizontal: 1,
     vertical: 70,
     total: 70,
-    duration: 1,
+    duration: 0.5,
     position: {
       x: 0,
       y: -80,
@@ -108,11 +119,15 @@ export const Welcome = () => {
   let mouseDown
 
   splashDescription.text.on('mousedown', () => {
-    sprite.out()
+    sprite.in()
+    splashText.out(500)
+    keepHolding.in()
     mouseDown = true
   })
   splashDescription.text.on('mouseup', () => {
-    sprite.in()
+    sprite.out()
+    splashText.in()
+    keepHolding.out(500)
     mouseDown = false
   })
   splashDescription.text.cursor = 'pointer'
@@ -120,7 +135,6 @@ export const Welcome = () => {
   welcomeScene.onIn(() => {
     splashText.in()
     splashDescription.in()
-    sprite.in()
   })
 
   welcomeScene.onOut(() => {
