@@ -37,7 +37,7 @@ export const Welcome = () => {
   })
 
   welcomeScene.add(splashDescription.text)
-  splashDescription.setName('splashDescription')
+  splashDescription.setName('to:pondScene')
 
   welcomeScene.onIn(() => {
     splashText.in()

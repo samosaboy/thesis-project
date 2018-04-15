@@ -335,6 +335,14 @@ export class Root {
     }
   }
 
+  private switchScreenPromise = (name): Promise<any> => {
+    this.currentScene = store.getState().sceneData.currentScene
+    return new Promise(resolve => {
+      store.dispatch(setCurrentScene({ name }))
+      resolve()
+    })
+  }
+
   public addSections = (sections: Array<any>): void => {
     sections.forEach(section => {
       this.sceneList.push(section)
@@ -342,14 +350,21 @@ export class Root {
     })
   }
 
-  public switchScene = (name): Promise<any> => {
-    return new Promise(resolve => {
-      store.dispatch(setCurrentScene({ name }))
-      this.nextScene = { name }
-      this.setCurrentSceneFromState()
-      this.switchSceneChangeOn()
-      resolve()
-    })
+  public setDefaultScreen = (name: string): void => {
+    this.switchScreenPromise(name)
+      .then(() => {
+        this.setCurrentSceneFromState()
+        this.switchSceneChangeOn(true)
+      })
+  }
+
+  public switchScreen = (name: string): void => {
+    this.nextScene = { name }
+    this.switchScreenPromise(name)
+      .then(() => {
+        this.switchSceneChangeOn()
+        this.setCurrentSceneFromState()
+      })
   }
 
   public setCurrentSceneFromState = () => {
@@ -357,10 +372,18 @@ export class Root {
     this.currentScene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
   }
 
-  public switchSceneChangeOn = () => {
-    const data = {
-      from: this.nextScene.name === this.currentScene.name ? null : this.currentScene.name,
-      to: this.nextScene.name,
+  public switchSceneChangeOn = (setDefault = false) => {
+    let data
+    if (setDefault) {
+      data = {
+        from: null,
+        to: 'welcomeScene',
+      }
+    } else {
+      data = {
+        from: this.currentScene.name,
+        to: this.nextScene.name,
+      }
     }
     RootEvent.eventTrigger('sectionChangeStart', data)
     if (!this.frameId) {
@@ -395,7 +418,7 @@ export class Root {
 
     this.renderer.render(
       renderSceneFromState.el,
-      this.camera
+      this.camera,
     )
 
     if (this.mouse.mouseX && this.mouse.mouseY) {

@@ -27,6 +27,7 @@ export class Scene {
 
   public out = () => {
     this._out()
+    console.log('out fired')
   }
 
   public start = () => {

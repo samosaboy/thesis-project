@@ -1,5 +1,3 @@
-import { RootComponent } from '../containers/App'
-
 export class Event {
   public events: any
 
@@ -27,7 +25,5 @@ export class Event {
     subscribe.forEach(q => {
       q.callback.call(this, data)
     })
-
-    RootComponent.animate()
   }
 }

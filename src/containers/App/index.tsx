@@ -51,12 +51,7 @@ class App extends React.Component<App.Props, App.State> {
         PondScene,
       ])
 
-      // set default scene using switchScene method
-      RootComponent.switchScene('welcomeScene')
-        .then(() => {
-          RootComponent.switchSceneChangeOn()
-        })
-
+      RootComponent.setDefaultScreen('welcomeScene')
       RootEvent.eventOn('sectionChangeStart', (scene) => {
         const { to, from } = scene
 
