@@ -72,10 +72,10 @@ export class TextGeometry {
       }
 
       if (!!params.label) {
-        context.fillStyle = '#FFF'
+        context.fillStyle = params.color
         context.fillText(word, left, 40)
       } else {
-        context.fillStyle = '#FFF'
+        context.fillStyle = params.color
         context.fillText(word, left, lineHeight * k)
       }
     }
@@ -105,11 +105,11 @@ export class TextGeometry {
     })
   }
 
-  public in = () => {
+  public in = (dur?: number) => {
     this.createAnimation.in({
       y: this.position.y,
       opacity: 1,
-    }, 1000)
+    }, dur || 1000)
   }
 
   public out = (dur?: number) => {

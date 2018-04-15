@@ -1,5 +1,4 @@
 const THREE = require('three')
-const TWEEN = require('@tweenjs/tween.js')
 
 export class Scene {
   private name: string

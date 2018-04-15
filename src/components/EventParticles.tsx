@@ -1,3 +1,5 @@
+import { createAnimation } from './Utils'
+
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
@@ -8,13 +10,11 @@ export class EventParticles {
   private getCameraPosition: any
   private cache: any
   private countryMesh: any
+  private createAnimation: any
+  private position: THREE.Vector3
 
-  constructor() {
-    this.cache = {
-      y: 100,
-      opacity: 0
-    }
-
+  constructor(position) {
+    this.position = position
     this.sphereMaterial = new THREE.ShaderMaterial({
       uniforms:
         {
@@ -69,43 +69,46 @@ export class EventParticles {
 
     loader.load('../public/objects/SyriaObj.json', obj => {
       this.countryMesh = new THREE.Mesh(obj, new THREE.MeshStandardMaterial({
-        color: '#c2f3ff',
+        color: '#f8fffd',
       }))
       obj.center()
-      this.countryMesh.position.set(0, this.cache.y, 0)
       this.countryMesh.scale.multiplyScalar(0.09)
       this.countryMesh.name = 'event:Syria'
       this.group.add(this.countryMesh)
 
       this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial)
       // this is always the position + the radius
-      this.sphereMesh.position.set(0, this.cache.y, 0)
       this.sphereMesh.name = 'event:Syria'
       this.sphereMesh.clickable = true
+      this.group.position.set(position.x, position.y, position.z)
       this.group.add(this.sphereMesh)
+    })
+
+    this.createAnimation = new createAnimation(this.group, {
+      y: this.position.y < 0 / 2 ? -300 : 300,
+      opacity: 0
     })
   }
 
   public updateCameraPosition = (position) => {
     this.getCameraPosition = position
-    this.sphereMaterial.uniforms.viewVector.value = new THREE.Vector3().addVectors(
-      position,
-      this.sphereMesh.position
-    )
+    if (this.sphereMesh) {
+      this.sphereMaterial.uniforms.viewVector.value = new THREE.Vector3().addVectors(
+        position,
+        this.sphereMesh.position
+      )
+    }
   }
 
-  public in = () => {
-    return new TWEEN.Tween(this.cache)
-      .to({
-        y: 80,
-        opacity: 1,
-      }, 2000)
-      .easing(TWEEN.Easing.Circular.InOut)
-      .onStart(() => {
-        this.group.visible = true
-      })
-      .onUpdate(() => this.update())
-      .start()
+  public in = (dur?: number) => {
+    this.createAnimation.in({
+      y: this.position.y,
+      opacity: 1
+    }, dur || 2000)
+  }
+
+  public out = () => {
+    this.createAnimation.out(1000)
   }
 
   private update = () => {
@@ -118,6 +121,8 @@ export class EventParticles {
   public getElement = () => this.group
 
   public rotateElement = () => {
-    this.countryMesh.rotation.y += 0.001
+    if (this.countryMesh) {
+      this.countryMesh.rotation.y += 0.005
+    }
   }
 }

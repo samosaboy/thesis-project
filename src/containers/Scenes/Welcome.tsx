@@ -40,15 +40,6 @@ export const Welcome = () => {
   sky.visible = true
   welcomeScene.add(sky)
 
-  const bgSphere = new THREE.Mesh(
-    new THREE.SphereBufferGeometry(200, 36, 36),
-    new THREE.MeshStandardMaterial({ color: '#a8a8a8' })
-  )
-
-  bgSphere.position.set(0, 0, -200)
-
-  welcomeScene.add(bgSphere)
-
   const splashText = new TextGeometry('T H E \n R I P P L E \n E F F E C T', {
     align: 'left',
     size: 500,
@@ -124,7 +115,7 @@ export const Welcome = () => {
     horizontal: 1,
     vertical: 70,
     total: 70,
-    duration: 0.5,
+    duration: 60,
     position: {
       x: 0,
       y: -40,
@@ -153,6 +144,43 @@ export const Welcome = () => {
   })
   button.text.cursor = 'pointer'
 
+  const points = [
+    [68.5, 185.5],
+    [1, 262.5],
+    [270.9, 281.9],
+    [345.5, 212.8],
+    [178, 155.7],
+    [240.3, 72.3],
+    [153.4, 0.6],
+    [52.6, 53.3],
+    [68.5, 185.5],
+  ]
+
+  for (let i = 0; i < points.length; i++) {
+    points[i] = new THREE.Vector3(points[i][0], 0, points[i][1])
+  }
+
+  const path = new THREE.CatmullRomCurve3(points)
+
+  // const geometry = new THREE.TubeGeometry(path, 10, 100, 20, true)
+  const geometry = new THREE.IcosahedronGeometry(300, 5)
+  const material = new THREE.MeshStandardMaterial({
+    color: '#0a0c10',
+    side: THREE.DoubleSide,
+    alphaTest: 0.5,
+    wireframe: true,
+    transparent: true
+  })
+  const alphaMap = new THREE.TextureLoader().load('../public/images/textures/alphaMapTexture.png')
+  material.alphaMap = alphaMap
+  material.alphaMap.magFilter = THREE.NearestFilter
+  material.alphaMap.wrapT = material.alphaMap.wrapS = THREE.RepeatWrapping
+  material.alphaMap.repeat.yz = 1
+  const tube = new THREE.Mesh(geometry, material)
+  tube.position.set(-200, 0, -100)
+
+  welcomeScene.add(tube)
+
   welcomeScene.onIn(() => {
     button.in()
     splashText.in()
@@ -176,6 +204,7 @@ export const Welcome = () => {
 
   welcomeScene.onUpdate(() => {
     sprite.update(1000 * RootComponent.delta)
+    tube.material.alphaMap.offset.y = RootComponent.step * 0.001
 
     if (mouseDown) {
       time += 1 / 60

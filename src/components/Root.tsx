@@ -22,6 +22,7 @@ import 'three/fxaashader'
 import 'three/maskpass'
 import 'three/smaashader'
 import 'three/smaapass'
+import 'three/crossfadeScene'
 import {
   PondScene,
   RootEvent,
@@ -32,10 +33,14 @@ const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
 
+import * as Transition from './Utils/transition.js'
+import * as Scene from './Utils/scene.js'
+
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
 
 export class Root {
+  private devicePixelRatio: number
   private camera: THREE.PerspectiveCamera | any
   private renderer: THREE.WebGLRenderer
   private frameId: any
@@ -47,6 +52,7 @@ export class Root {
   private sceneList: Array<any>
   private currentScene: any
   private nextScene: any
+  public isSceneInTransition: boolean
 
   public step: number
   public delta: number
@@ -54,14 +60,22 @@ export class Root {
   private cameraSpeed: number
   private cameraShake: number
 
+  private defaultScene: string
+
   constructor() {
     /*
      * Basic THREE setup
      * */
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000)
+    this.devicePixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1
+    this.camera = new THREE.PerspectiveCamera(
+      70,
+      window.innerWidth / window.innerHeight,
+      0.01,
+      10000)
     this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
-      antialias: (window.devicePixelRatio === 1),
+      antialias: false,
+      preserveDrawingBuffer: true
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.mouse = new THREE.Vector2()
@@ -84,10 +98,6 @@ export class Root {
      */
     this.sceneList = []
 
-    /*
-     * Instantiate the post-processing
-     */
-    this.postProcessing()
 
     /*
      * Custom camera functionality
@@ -135,7 +145,17 @@ export class Root {
   }
 
   public setContainer = (container) => {
-    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.renderer.setSize(
+      window.innerWidth,
+      window.innerHeight,
+    )
+    this.renderer.setViewport(
+      0,
+      0,
+      window.innerWidth * this.devicePixelRatio,
+      window.innerHeight * this.devicePixelRatio,
+    )
+    this.renderer.setPixelRatio(this.devicePixelRatio)
     this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
     this.renderer.gammaInput = true
@@ -155,26 +175,23 @@ export class Root {
   }
 
   private postProcessing = () => {
-    if (store) {
-      const res = window.devicePixelRatio
-      this.composer.addPass(new THREE.RenderPass(this.currentScene, this.camera))
-      this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
+    const res = window.devicePixelRatio
+    this.composer.addPass(new THREE.RenderPass(this.currentScene, this.camera))
+    this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
 
-      const bloomPass = new BloomPass(
-        {
-          resolutionScale: 0.06,
-          intensity: 1.2,
-          distinction: 1,
-        },
-      )
-      bloomPass.renderToScreen = true
+    const bloomPass = new BloomPass(
+      {
+        resolutionScale: 0.04,
+        intensity: 2,
+        distinction: 0.5,
+      },
+    )
 
-      const copyPass = new THREE.ShaderPass(THREE.CopyShader)
-      copyPass.renderToScreen = true
-
-      this.composer.addPass(copyPass)
-      this.composer.addPass(bloomPass)
-    }
+    bloomPass.renderToScreen = true
+    const copyPass = new THREE.ShaderPass(THREE.CopyShader)
+    copyPass.renderToScreen = true
+    this.composer.addPass(copyPass)
+    this.composer.addPass(bloomPass)
   }
 
   private switchScreenPromise = (name): Promise<any> => {
@@ -193,6 +210,7 @@ export class Root {
   }
 
   public setDefaultScreen = (name: string): void => {
+    this.defaultScene = name
     this.switchScreenPromise(name)
       .then(() => {
         this.setCurrentSceneFromState()
@@ -201,24 +219,30 @@ export class Root {
   }
 
   public switchScreen = (name: string): void => {
+    this.isSceneInTransition = true
     this.nextScene = { name }
     this.switchScreenPromise(name)
       .then(() => {
         this.switchSceneChangeOn()
         this.setCurrentSceneFromState()
+        this.isSceneInTransition = false
       })
   }
 
   public setCurrentSceneFromState = () => {
     this.currentScene = store.getState().sceneData.currentScene
-    this.currentScene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
+    /*
+     * Instantiate the post-processing
+     */
+    this.postProcessing()
+    this.currentScene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 500)
     const interaction = new Interaction(this.renderer, this.currentScene, this.camera)
   }
 
   public switchSceneChangeOn = (setDefault = false) => {
     let data = {
       from: null,
-      to: 'welcomeScene',
+      to: this.defaultScene,
     }
     if (!setDefault) {
       data = {
@@ -233,14 +257,20 @@ export class Root {
   }
 
   public animate = () => {
-    if (store) {
-      this.stats.update()
-      TWEEN.update()
-      this.composer.render(this.clock.getDelta())
-    }
+    this.stats.update()
+    TWEEN.update()
     this.render()
     this.delta = this.clock.getDelta()
+    this.composer.render()
     this.frameId = requestAnimationFrame(this.animate)
+  }
+
+  private delaySwitchScreen = (): any => {
+    const newScreen = new Promise(resolve => {
+      setTimeout(() => resolve(), 1000)
+    })
+
+    return newScreen
   }
 
   private render = () => {
@@ -256,16 +286,16 @@ export class Root {
       default:
         break
     }
-
     renderSceneFromState.update()
 
+    this.camera.position.y += Math.cos(this.cameraShake) / 20
+    this.cameraShake += 0.005
+
     if (this.mouse.mouseX) {
-      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
+      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.08
       // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
       this.camera.lookAt(new THREE.Vector3(0, this.camera.position.y, 0))
     }
-    this.camera.position.y += Math.cos(this.cameraShake) / 20
-    this.cameraShake += 0.02
 
     this.step += 1
 

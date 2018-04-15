@@ -12,12 +12,14 @@ export class BackgroundParticles {
   private geometry: any
   private mesh: any
   private cache: any
+  private devicePixelRatio: number
 
   private createAnimation: any
 
   constructor(params?: any) {
+    this.devicePixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1
     const material = new THREE.PointsMaterial({
-      map: createCircularCanvasMaterial('#f4f3ff', 512),
+      map: createCircularCanvasMaterial('#8e8d94', 512),
       size: params.particleSize,
       depthWrite: false,
       transparent: true,
@@ -28,9 +30,9 @@ export class BackgroundParticles {
 
     for (let i = 0; i < params.count; i++) {
       const particle = new THREE.Vector3(
-        random(-(window.innerWidth / 3), (window.innerWidth / 3)),
-        random(params.rangeY[0], params.rangeY[1]),
-        random(-200, 200),
+        random(-(window.innerWidth * this.devicePixelRatio), (window.innerWidth * this.devicePixelRatio)),
+        random(-50, (window.innerHeight / 6)),
+        random(-300, 300),
       )
 
       this.geometry.vertices.push(particle)
@@ -41,20 +43,10 @@ export class BackgroundParticles {
     this.mesh = new THREE.Points(this.geometry, material)
     this.group.add(this.mesh)
 
-    this.cache = {
-      y: 100,
-      opacity: 0
-    }
-
     this.createAnimation = new createAnimation(this.mesh, {
       y: 100,
       opacity: 0
     })
-  }
-
-  private update = () => {
-    this.mesh.position.y = this.cache.y
-    this.mesh.material.opacity = this.cache.opacity
   }
 
   public getElement = () => this.group
@@ -67,7 +59,7 @@ export class BackgroundParticles {
     this.createAnimation.in({
       y: 0,
       opacity: 1
-    }, 3000)
+    }, 1000)
   }
 
   public out = () => {

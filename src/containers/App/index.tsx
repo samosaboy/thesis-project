@@ -11,7 +11,6 @@ import {
   Event,
   Root,
 } from '../../components'
-import TextLabel from '../../components/TextLabel'
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
