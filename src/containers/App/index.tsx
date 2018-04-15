@@ -1,5 +1,8 @@
 import * as React from 'react'
-import { Pond, Welcome } from '../Scenes'
+import {
+  Pond,
+  Welcome,
+} from '../Scenes'
 import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
 import { RootState } from '../../reducers/index'
@@ -8,6 +11,7 @@ import {
   Event,
   Root,
 } from '../../components'
+import TextLabel from '../../components/TextLabel'
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -77,14 +81,16 @@ class App extends React.Component<App.Props, App.State> {
 
   public render() {
     return (
-      <div
-        style={{
-          width: window.innerWidth,
-          height: window.innerHeight,
-          overflow: 'hidden',
-        }}
-        ref={node => this.svgContainer = node}
-      />
+      <main>
+        <div
+          style={{
+            width: window.innerWidth,
+            height: window.innerHeight,
+            overflow: 'hidden',
+          }}
+          ref={node => this.svgContainer = node}
+        />
+      </main>
     )
   }
 }

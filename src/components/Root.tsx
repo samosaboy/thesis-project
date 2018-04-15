@@ -242,6 +242,7 @@ export class Root {
   }
 
   private render = () => {
+    // TODO: Figure out how to trigger out() animations (setTimeout is not a good solution)
     let renderSceneFromState
     switch (this.currentScene.name) {
       case 'welcomeScene':
@@ -266,4 +267,6 @@ export class Root {
 
     this.renderer.render(renderSceneFromState.el, this.camera)
   }
+
+  public getCamera = () => this.camera
 }

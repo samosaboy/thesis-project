@@ -1,12 +1,12 @@
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 
+import { RootComponent } from '../containers/App'
+
 interface TextLabelParams {
-  parent?: any
-  camera?: THREE.Camera,
-  position?: THREE.Vector3,
+  parent?: any,
   text: string,
-  style?: any
+  style: any
 }
 
 export default class TextLabel {
@@ -17,24 +17,24 @@ export default class TextLabel {
 
   private animate: any
 
-  private span: any
+  public span: any
 
   constructor(params?: TextLabelParams) {
     this.span = document.createElement('span')
     this.span.className = 'text-label'
     this.span.style.color = params.style.color || '#FFFFFF'
-    this.span.style['font-family'] = params.style.font || 'Lora'
-    this.span.style['font-size'] = `${params.style.size}px` || '20px'
-    this.span.style['font-weight'] = params.style.weight || 400
+    this.span.style.fontFamily = params.style.font || 'Lora'
+    this.span.style.fontSize = `${params.style.size}px` || '20px'
+    this.span.style.fontWeight = params.style.weight || 400
     this.span.style.position = 'absolute'
     this.span.style.opacity = 0
     this.span.innerHTML = params.text
 
     this.text = params.text.split('')
 
-    this.camera = params.camera
+    this.camera = RootComponent.getCamera()
     this.parent = params.parent
-    this.position = params.position || new THREE.Vector3(0, 0, 0)
+    this.position = new THREE.Vector3(0, 0, 0)
 
     this.animate = new TWEEN.Tween(this.span.style)
       .to({ opacity: 1 }, 2000)
@@ -52,13 +52,13 @@ export default class TextLabel {
     return vector
   }
 
-  public start = () => this.animate.start()
+  public in = () => this.animate.start()
 
-  public stop = () => this.animate.stop()
+  public out = () => this.animate.stop()
 
   public update = () => {
     if (this.parent) {
-      this.position.copy(this.parent.position)
+      this.position.copy(new THREE.Vector3(0, 0, 0))
     }
     const coordinates = this.projectTo2D()
     this.span.style.left = `${coordinates.x}px`
