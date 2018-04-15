@@ -1,6 +1,6 @@
 import { Scene, TextGeometry } from '../../components'
 
-const THREE = require('three')
+import { RootComponent } from '../App'
 
 export const Welcome = () => {
   const welcomeScene = new Scene('welcomeScene')
@@ -34,6 +34,10 @@ export const Welcome = () => {
         z: 0
       }
     },
+  })
+
+  splashDescription.text.on('click', () => {
+    RootComponent.switchScreen('pondScene')
   })
 
   welcomeScene.add(splashDescription.text)

@@ -7,6 +7,8 @@ import {
 } from '../actions/actions'
 import { store } from '../index'
 
+import { Interaction } from 'three.interaction'
+
 import {
   BloomPass,
   EffectComposer,
@@ -140,7 +142,6 @@ export class Root {
     this.renderer.gammaOutput = true
     this.renderer.shadowMap.enabled = true
     container.appendChild(this.renderer.domElement)
-
   }
 
   // public createScene = (scene) => {
@@ -370,6 +371,7 @@ export class Root {
   public setCurrentSceneFromState = () => {
     this.currentScene = store.getState().sceneData.currentScene
     this.currentScene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 700)
+    const interaction = new Interaction(this.renderer, this.currentScene, this.camera)
   }
 
   public switchSceneChangeOn = (setDefault = false) => {
