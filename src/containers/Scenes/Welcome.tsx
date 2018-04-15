@@ -1,4 +1,7 @@
-import { Scene, TextGeometry } from '../../components'
+import {
+  Scene,
+  TextGeometry,
+} from '../../components'
 
 import { RootComponent } from '../App'
 
@@ -20,19 +23,19 @@ export const Welcome = () => {
   welcomeScene.add(splashText.text)
 
   const splashDescription = new TextGeometry({
-    text: 'Welcome',
+    text: 'This experiences requires headphones. \n When you are ready, click continue.',
     options: {
-      align: 'left',
+      align: 'center',
       size: 200,
-      lineSpacing: 20,
-      font: 'Lato',
-      style: 'Bold',
+      lineSpacing: 10,
+      font: 'Lora',
+      style: 'Normal',
       color: '#FFFFFF',
       position: {
         x: 0,
         y: -40,
-        z: 0
-      }
+        z: 0,
+      },
     },
   })
 

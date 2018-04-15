@@ -1,6 +1,4 @@
 import {
-  addLastHoveredObject,
-  addMouseEvent,
   addToSceneList,
   resetMouseEvent,
   setCurrentScene,
@@ -42,18 +40,16 @@ export class Root {
   private renderer: THREE.WebGLRenderer
   private frameId: any
   private mouse: THREE.Vector2 | any
-  public intersects: any
   private clock: THREE.Clock
   private toName: string
   private composer: any
   private stats: any
-
-  private vector: any
-  private raycaster: any
-
   private sceneList: Array<any>
   private currentScene: any
   private nextScene: any
+
+  private cameraSpeed: number
+  private cameraShake: number
 
   constructor() {
     /*
@@ -77,7 +73,8 @@ export class Root {
     this.stats.showPanel(0)
     document.body.appendChild(this.stats.dom)
 
-    const cameraSpeed = 1
+    this.cameraSpeed = 1
+    this.cameraShake = 0
 
     /*
      * Set scene list
@@ -99,7 +96,7 @@ export class Root {
           x: 0,
           y: 0,
           z: 300,
-        }, cameraSpeed * 1000)
+        }, this.cameraSpeed * 1000)
         .easing(TWEEN.Easing.Cubic.Out).start()
     }
 
@@ -113,7 +110,7 @@ export class Root {
             x: position.x,
             y: position.y,
             z: 30,
-          }, cameraSpeed * 1000)
+          }, this.cameraSpeed * 1000)
           .easing(TWEEN.Easing.Cubic.Out).start()
       }
     }
@@ -128,7 +125,7 @@ export class Root {
             x: position.x,
             y: position.y,
             z: 10,
-          }, cameraSpeed * 3000)
+          }, this.cameraSpeed * 3000)
           .easing(TWEEN.Easing.Cubic.Out).start()
       }
     }
@@ -151,7 +148,7 @@ export class Root {
 
   public handleMouseMove = (event) => {
     this.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
-    this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
+    // this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
   }
 
   private postProcessing = () => {
@@ -259,15 +256,14 @@ export class Root {
 
     renderSceneFromState.update()
 
-    this.renderer.render(
-      renderSceneFromState.el,
-      this.camera,
-    )
-
-    if (this.mouse.mouseX && this.mouse.mouseY) {
+    if (this.mouse.mouseX) {
       this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
-      this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
-      this.camera.lookAt(this.currentScene.position)
+      // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
+      this.camera.lookAt(new THREE.Vector3(0, this.camera.position.y, 0))
     }
+    this.camera.position.y += Math.cos(this.cameraShake) / 20
+    this.cameraShake += 0.02
+
+    this.renderer.render(renderSceneFromState.el, this.camera)
   }
 }
