@@ -229,89 +229,12 @@ export class Root {
   private resetHandleMouseMove = () => {
     this.toName = ''
     store.dispatch(resetMouseEvent({ object: null }))
-    window.document.body.style.cursor = 'default'
   }
 
   public handleMouseMove = (event) => {
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
     this.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
     this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
-
-    this.vector = new THREE.Vector3(this.mouse.x, this.mouse.y, 0).unproject(this.camera)
-    this.raycaster = new THREE.Raycaster(
-      this.camera.position,
-      this.vector.sub(this.camera.position).normalize(),
-    )
-    /*
-     * This gives us an array of objects that intersect with the scene children
-     * We can match the object name to trigger events
-     * */
-    this.intersects = this.raycaster.intersectObjects(this.currentScene.children, true)
-    if (this.intersects.length) {
-      if (this.intersects[0].object.clickable) {
-        window.document.body.style.cursor = 'pointer'
-        store.dispatch(addLastHoveredObject({ object: this.intersects[0] }))
-        this.toName = store.getState().mouseData.object.object.name
-      } else {
-        // this.resetHandleMouseMove()
-      }
-    } else {
-      this.resetHandleMouseMove()
-    }
   }
-
-  public handleMouseDown = () => {
-    // We also need a way to track if you are holding and which event type you are holding for
-    if (this.intersects.length) {
-      store.dispatch(addMouseEvent({
-        event: 'mousedown',
-        object: this.intersects[0],
-      }))
-      this.clock.start()
-    }
-  }
-
-  public handleMouseUp = () => {
-    store.dispatch(addMouseEvent({
-      event: 'mouseout',
-    }))
-    this.clock.stop()
-  }
-
-  // private setScene = name => {
-  //   this.props.actions.setCurrentScene({ name })
-  //   this.camera.reset()
-  // }
-  //
-  // public sceneBus = () => {
-  //   if (this.props.mouseData.event !== 'mousedown') {
-  //     return
-  //   } else {
-  //     if (this.props.mouseData.object) {
-  //       // this._clock.getElapsedTime() > 0
-  //       // this.RootScene.camera.zoom(this.props.mouseData.object.object)
-  //       // switch (this.toName) {
-  //       //   case'to:pondScene':
-  //       //     this.titleText.out().then(() => {
-  //       //       this.setScene('pondScene')
-  //       //     })
-  //       //     break
-  //       //   case 'to:mainScene':
-  //       //     this.setScene('mainScene')
-  //       //     this.titleText.in()
-  //       //     break
-  //       //   case 'event:Syria':
-  //       //     this.titleText.out('fast').then(() => {
-  //       //       this.syriaText.in('fast')
-  //       //     })
-  //       //   default:
-  //       //     break
-  //       // }
-  //     }
-  //   }
-  // }
 
   private postProcessing = () => {
     if (store) {
@@ -424,8 +347,8 @@ export class Root {
     )
 
     if (this.mouse.mouseX && this.mouse.mouseY) {
-      // this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
-      // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
+      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.2
+      this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
       this.camera.lookAt(this.currentScene.position)
     }
   }

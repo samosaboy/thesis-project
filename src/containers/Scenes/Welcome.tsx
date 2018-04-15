@@ -39,6 +39,7 @@ export const Welcome = () => {
   splashDescription.text.on('click', () => {
     RootComponent.switchScreen('pondScene')
   })
+  splashDescription.text.cursor = 'pointer'
 
   welcomeScene.add(splashDescription.text)
   splashDescription.setName('to:pondScene')

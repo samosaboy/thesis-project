@@ -72,8 +72,6 @@ class App extends React.Component<App.Props, App.State> {
       })
 
       document.addEventListener('mousemove', RootComponent.handleMouseMove, false)
-      document.addEventListener('mousedown', RootComponent.handleMouseDown, false)
-      document.addEventListener('mouseup', RootComponent.handleMouseUp, false)
     }
   }
 
