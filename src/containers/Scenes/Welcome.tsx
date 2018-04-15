@@ -1,8 +1,10 @@
 import {
+  Icon,
   Scene,
   TextGeometry,
 } from '../../components'
 import { RootComponent } from '../App'
+import { TextureAnimator } from '../../components/Utils'
 
 const THREE = require('three')
 
@@ -27,7 +29,7 @@ export const Welcome = () => {
   		gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
   	}`,
     uniforms: {
-      topColor: { value: new THREE.Color('#4e4e5f') },
+      topColor: { value: new THREE.Color('#16161b') },
       bottomColor: { value: new THREE.Color('#0e040a') },
       offset: { value: 100 },
       exponent: { value: 1.1 },
@@ -37,6 +39,15 @@ export const Welcome = () => {
   const sky = new THREE.Mesh(skyGeometry, skyMaterial)
   sky.visible = true
   welcomeScene.add(sky)
+
+  const bgSphere = new THREE.Mesh(
+    new THREE.SphereBufferGeometry(200, 36, 36),
+    new THREE.MeshLambertMaterial({ color: '#a8a8a8' }),
+  )
+
+  bgSphere.position.set(0, 0, -200)
+
+  welcomeScene.add(bgSphere)
 
   const splashText = new TextGeometry({
     text: 'T H E \n R I P P L E \n E F F E C T',
@@ -76,6 +87,25 @@ export const Welcome = () => {
 
   welcomeScene.add(splashDescription.text)
 
+  const light = new THREE.DirectionalLight(0xFFFFFF, 0.2)
+  light.position.set(0, 0, 300)
+  // welcomeScene.add(light)
+
+  // const iconTexture = new THREE.ImageUtils.loadTexture('../../public/images/mouseicondown-sprite.png')
+  // const icon = new TextureAnimator(iconTexture, 1, 70, 70, 1)
+  // const material = new THREE.MeshStandardMaterial({ map: icon.get(), side: THREE.DoubleSide })
+  // const geometry = new THREE.PlaneGeometry(50, 50, 1, 1)
+  // const sprite = new THREE.Mesh(geometry, material)
+  const sprite = new Icon('../../public/images/mouseicondown-sprite.png', {
+    horizontal: 1,
+    vertical: 70,
+    total: 70,
+    duration: 2
+  })
+  sprite.el().scale.set(0.6, 0.8, 0.8)
+  sprite.el().position.set(0, -80, 0)
+  welcomeScene.add(sprite.el())
+
   welcomeScene.onIn(() => {
     splashText.in()
     splashDescription.in()
@@ -94,7 +124,9 @@ export const Welcome = () => {
     sky.visible = false
   })
 
-  welcomeScene.onUpdate(() => {})
+  welcomeScene.onUpdate(() => {
+    sprite.update(1000 * RootComponent.delta)
+  })
 
   return welcomeScene
 }

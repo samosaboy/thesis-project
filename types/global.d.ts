@@ -16,15 +16,15 @@ declare module '*.svg' {
 
 declare module '*.png' {
   const image: any
-  export = image;
+  export = image
 }
 
 declare module '*.mp3' {
   const sound: any
-  export = sound;
+  export = sound
 }
 
 declare module '*.wav' {
   const sound: any
-  export = sound;
+  export = sound
 }

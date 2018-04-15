@@ -48,6 +48,9 @@ export class Root {
   private currentScene: any
   private nextScene: any
 
+  public step: number
+  public delta: number
+
   private cameraSpeed: number
   private cameraShake: number
 
@@ -64,7 +67,6 @@ export class Root {
     this.mouse = new THREE.Vector2()
     this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
-    this.clock.autoStart = false
 
     /*
      * Instantiate Stats for Development
@@ -73,6 +75,7 @@ export class Root {
     this.stats.showPanel(0)
     document.body.appendChild(this.stats.dom)
 
+    this.step = 0
     this.cameraSpeed = 1
     this.cameraShake = 0
 
@@ -213,13 +216,11 @@ export class Root {
   }
 
   public switchSceneChangeOn = (setDefault = false) => {
-    let data
-    if (setDefault) {
-      data = {
-        from: null,
-        to: 'welcomeScene',
-      }
-    } else {
+    let data = {
+      from: null,
+      to: 'welcomeScene',
+    }
+    if (!setDefault) {
       data = {
         from: this.currentScene.name,
         to: this.nextScene.name,
@@ -238,6 +239,7 @@ export class Root {
       this.composer.render(this.clock.getDelta())
     }
     this.render()
+    this.delta = this.clock.getDelta()
     this.frameId = requestAnimationFrame(this.animate)
   }
 
@@ -264,6 +266,8 @@ export class Root {
     }
     this.camera.position.y += Math.cos(this.cameraShake) / 20
     this.cameraShake += 0.02
+
+    this.step += 1
 
     this.renderer.render(renderSceneFromState.el, this.camera)
   }
