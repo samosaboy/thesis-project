@@ -6,6 +6,7 @@ import {
 import { RootComponent } from '../App'
 
 const THREE = require('three')
+const TWEEN = require('@tweenjs/tween.js')
 
 export const Welcome = () => {
   const welcomeScene = new Scene('welcomeScene')
@@ -41,7 +42,7 @@ export const Welcome = () => {
 
   const bgSphere = new THREE.Mesh(
     new THREE.SphereBufferGeometry(200, 36, 36),
-    new THREE.MeshLambertMaterial({ color: '#a8a8a8' }),
+    new THREE.MeshStandardMaterial({ color: '#a8a8a8' })
   )
 
   bgSphere.position.set(0, 0, -200)
@@ -81,7 +82,7 @@ export const Welcome = () => {
   welcomeScene.add(keepHolding.text)
 
   const splashDescription = new TextGeometry(
-    'This experiences requires headphones. \n When you are ready, hold over this text.', {
+    'This experiences requires headphones.', {
       align: 'center',
       size: 200,
       lineSpacing: 10,
@@ -97,8 +98,26 @@ export const Welcome = () => {
 
   welcomeScene.add(splashDescription.text)
 
-  const light = new THREE.DirectionalLight(0xFFFFFF, 0.02)
-  light.position.set(0, 0, 300)
+  const button = new TextGeometry(
+    'H O L D', {
+      align: 'center',
+      size: 200,
+      lineSpacing: 10,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#FFFFFF',
+      label: true,
+      position: {
+        x: 0,
+        y: -80,
+        z: 0,
+      },
+    })
+
+  welcomeScene.add(button.text)
+
+  const light = new THREE.DirectionalLight(0xFFFFFF, 2)
+  light.position.set(0, 0, -100)
   welcomeScene.add(light)
 
   const sprite = new Icon('../../public/images/mouseicondown-sprite.png', {
@@ -108,7 +127,7 @@ export const Welcome = () => {
     duration: 0.5,
     position: {
       x: 0,
-      y: -80,
+      y: -40,
       z: 0,
     },
   })
@@ -118,26 +137,30 @@ export const Welcome = () => {
   let time = 0
   let mouseDown
 
-  splashDescription.text.on('mousedown', () => {
+  button.text.on('mousedown', () => {
     sprite.in()
     splashText.out(500)
+    splashDescription.out()
     keepHolding.in()
     mouseDown = true
   })
-  splashDescription.text.on('mouseup', () => {
+  button.text.on('mouseup', () => {
     sprite.out()
     splashText.in()
+    splashDescription.in()
     keepHolding.out(500)
     mouseDown = false
   })
-  splashDescription.text.cursor = 'pointer'
+  button.text.cursor = 'pointer'
 
   welcomeScene.onIn(() => {
+    button.in()
     splashText.in()
     splashDescription.in()
   })
 
   welcomeScene.onOut(() => {
+    button.out()
     splashText.out()
     splashDescription.out()
     sprite.out()

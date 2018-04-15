@@ -4,6 +4,7 @@ export class createAnimation {
   private cache: any
   private el: any
   private _cache: any
+  private isPlaying: boolean
 
   constructor(mesh, params) {
     this.cache = params
@@ -20,20 +21,28 @@ export class createAnimation {
   }
 
   public in = (newParams, duration) => {
-    return new TWEEN.Tween(this.cache)
-      .to(newParams, duration)
-      .easing(TWEEN.Easing.Circular.InOut)
-      .onStart(() => this.el.visible = true)
-      .onUpdate(() => this.update())
-      .start()
+    if (!this.isPlaying) {
+      new TWEEN.Tween(this.cache)
+        .to(newParams, duration)
+        .easing(TWEEN.Easing.Circular.InOut)
+        .onStart(() => {
+          this.isPlaying = true
+          this.el.visible = true
+        })
+        .onUpdate(() => this.update())
+        .start()
+    }
   }
 
   public out = (duration) => {
-    return new TWEEN.Tween(this.cache)
+    new TWEEN.Tween(this.cache)
       .to(this._cache, duration)
       .easing(TWEEN.Easing.Circular.InOut)
       .onUpdate(() => this.update())
-      .onComplete(() => this.el.visible = false)
+      .onComplete(() => {
+        this.isPlaying = false
+        this.el.visible = false
+      })
       .start()
   }
 }

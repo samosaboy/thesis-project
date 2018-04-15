@@ -35,13 +35,28 @@ export class TextGeometry {
     const lineHeight = params.size + params.lineSpacing
     const height = lineHeight * words.length
 
-    canvas.width = width + 20
-    canvas.height = height + 20
+    if (!!params.label) {
+      canvas.width = width * 2
+      canvas.height = height * 3
+    } else {
+      canvas.width = width + 20
+      canvas.height = height + 20
+    }
 
     context.font = font
     context.fillStyle = params.color
     context.textAlign = params.align
     context.textBaseline = 'top'
+
+    if (!!params.label) {
+      // context.fillStyle = '#FFF'
+      // context.fillRect(0, 0, canvas.width, canvas.height / 2)
+      context.beginPath()
+      context.lineWidth = 15
+      context.strokeStyle = 'white'
+      context.rect(0, 0, canvas.width, canvas.height / 2)
+      context.stroke()
+    }
 
     for (let k = 0; k < words.length; k++) {
       const word = words[k]
@@ -56,9 +71,14 @@ export class TextGeometry {
         left = canvas.width
       }
 
-      context.fillText(word, left, lineHeight * k)
+      if (!!params.label) {
+        context.fillStyle = '#FFF'
+        context.fillText(word, left, 40)
+      } else {
+        context.fillStyle = '#FFF'
+        context.fillText(word, left, lineHeight * k)
+      }
     }
-
     const texture = new THREE.Texture(canvas)
     texture.needsUpdate = true
 
@@ -80,15 +100,15 @@ export class TextGeometry {
     this.text.visible = false
 
     this.createAnimation = new createAnimation(this.text, {
-      y: 200,
-      opacity: 0
+      y: this.position.y < 0 / 2 ? -200 : 200,
+      opacity: 0,
     })
   }
 
   public in = () => {
     this.createAnimation.in({
       y: this.position.y,
-      opacity: 1
+      opacity: 1,
     }, 1000)
   }
 
