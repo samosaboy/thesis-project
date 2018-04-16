@@ -130,7 +130,7 @@ export class Country {
     })
 
     this.title = new TextGeometry(
-      'S Y R I A', {
+      this.countryName.split('').join(' ').toUpperCase(), {
         align: 'center',
         size: 200,
         lineSpacing: 20,
@@ -146,8 +146,7 @@ export class Country {
     )
 
     this.description = new TextGeometry(
-      `C A T A S T R O P H E     A S
-    A     R E S U L T     O F     T H E     C I V I L     W A R.`, {
+      this.des.toUpperCase(), {
         align: 'center',
         size: 150,
         lineSpacing: 20,

@@ -1,9 +1,7 @@
 import {
   Country,
   Scene,
-  TextGeometry,
 } from '../../components'
-import { RootComponent } from '../App'
 
 const THREE = require('three')
 
@@ -11,7 +9,7 @@ export const SyriaEvent = () => {
   const event = new Scene('syriaEvent')
   const syriaEvent = new Country({
     countryName: 'Syria',
-    des: 'Catastrophe as a result of the civil war'
+    description: 'Catastrophe as a result of the civil war',
   })
 
   event.add(syriaEvent.sky)
