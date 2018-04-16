@@ -113,7 +113,7 @@ export class TextGeometry {
   }
 
   public out = (dur?: number) => {
-    this.createAnimation.out(dur || 1000)
+    this.createAnimation.out(dur || 500)
   }
 
   public setName = name => {

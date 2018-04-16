@@ -170,6 +170,22 @@ export const Pond = () => {
     sprite.in(1500)
   })
 
+  const eventViewHelperText = new TextGeometry(
+    `C H O O S E     A     C O U N T R Y     T O     S T A R T     E X P L O R I N G`, {
+      align: 'center',
+      size: 150,
+      lineSpacing: 20,
+      font: 'Lora',
+      style: 'Normal',
+      color: '#cbcbcb',
+      position: {
+        x: 0,
+        y: -150,
+        z: 200,
+      },
+    })
+  pondScene.add(eventViewHelperText.text)
+
   /* Events */
 
   const SyriaEvent = new EventParticles({
@@ -189,14 +205,15 @@ export const Pond = () => {
       color: '#cbcbcb',
       position: {
         x: SyriaEvent.getElement().position.x,
-        y: SyriaEvent.getElement().position.y + 100,
+        y: SyriaEvent.getElement().position.y + 150,
         z: SyriaEvent.getElement().position.z,
       },
     },
   )
 
   pondScene.add(SyriaEventTitle.text)
-  
+
+  // SyriaEvent.in() // uncomment for testing
   step2.text.cursor = 'pointer'
   step2.text.on('click', () => {
     step2.out()
@@ -205,17 +222,18 @@ export const Pond = () => {
     sprite.out()
 
     // Event in
+    eventViewHelperText.in()
     SyriaEvent.in()
   })
 
   SyriaEvent.getElement().cursor = 'pointer'
   SyriaEvent.getElement().on('mouseover', () => {
     SyriaEvent.hoverIn()
-    SyriaEventTitle.in()
+    SyriaEventTitle.in(500)
   })
   SyriaEvent.getElement().on('mouseout', () => {
     SyriaEvent.hoverOut()
-    SyriaEventTitle.out()
+    SyriaEventTitle.out(500)
   })
 
   /*
@@ -237,23 +255,14 @@ export const Pond = () => {
    * */
   const spotLight = new THREE.SpotLight(0xFFFFFF)
   spotLight.penumbra = 1 // how soft the spotlight looks
-  spotLight.position.set(0, 400, 100)
+  spotLight.position.set(0, 300, 200)
   pondScene.add(spotLight)
 
-  const shadowLight = new THREE.SpotLight(0xFFFFFF)
-  shadowLight.penumbra = 1 // how soft the shadowLight looks
-  shadowLight.position.set(0, 200, 100)
-  shadowLight.castShadow = true
-  shadowLight.shadow.mapSize.width = 100
-  shadowLight.shadow.mapSize.height = 100
+  // const skyBox = new THREE.HemisphereLight('#373f52', '#0e0e1d')
+  // skyBox.position.set(0, 0, 0)
+  // pondScene.add(skyBox)
 
-  pondScene.add(shadowLight)
-
-  const skyBox = new THREE.HemisphereLight('#373f52', '#0e0e1d')
-  skyBox.position.set(0, 0, 0)
-  pondScene.add(skyBox)
-
-  const skyGeometry = new THREE.SphereBufferGeometry(1000, 2, 2)
+  const skyGeometry = new THREE.SphereBufferGeometry(1000, 4, 4)
   const skyMaterial = new THREE.ShaderMaterial({
     vertexShader: `varying vec3 vWorldPosition;
   	void main() {
@@ -274,7 +283,7 @@ export const Pond = () => {
       topColor: { value: new THREE.Color('#37414b') },
       bottomColor: { value: new THREE.Color('#141619') },
       offset: { value: 400 },
-      exponent: { value: 20 },
+      exponent: { value: 25 },
     },
     side: THREE.BackSide,
   })
@@ -289,7 +298,7 @@ export const Pond = () => {
   })
   pondScene.add(backgroundParticles.getElement())
 
-  const geometry = new THREE.PlaneBufferGeometry(1000, 1000, 120, 120)
+  const geometry = new THREE.PlaneBufferGeometry(2000, 2000, 300, 300)
   geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
   const colors = new THREE.BufferAttribute(new Float32Array(60 * 3 * 4), 4)
 
@@ -341,8 +350,8 @@ export const Pond = () => {
   })
 
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
-  terrainMesh.position.set(0, -150, -300)
-  terrainMesh.rotateY(110)
+  terrainMesh.position.set(0, -150, -500)
+  // terrainMesh.rotateY(110)
   pondScene.add(terrainMesh)
 
   pondScene.onIn(() => {

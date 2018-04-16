@@ -265,16 +265,7 @@ export class Root {
     this.frameId = requestAnimationFrame(this.animate)
   }
 
-  private delaySwitchScreen = (): any => {
-    const newScreen = new Promise(resolve => {
-      setTimeout(() => resolve(), 1000)
-    })
-
-    return newScreen
-  }
-
   private render = () => {
-    // TODO: Figure out how to trigger out() animations (setTimeout is not a good solution)
     let renderSceneFromState
     switch (this.currentScene.name) {
       case 'welcomeScene':

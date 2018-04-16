@@ -63,7 +63,7 @@ export class EventParticles {
 
     this.group = new THREE.Group()
     this.group.visible = false
-    const geometry = new THREE.SphereGeometry(22, 16, 16)
+    const geometry = new THREE.SphereGeometry(22, 48, 48)
 
     const loader = new THREE.JSONLoader()
 
@@ -73,20 +73,16 @@ export class EventParticles {
       }))
       obj.center()
       this.countryMesh.scale.multiplyScalar(0.09)
-      this.countryMesh.name = 'event:Syria'
       this.group.add(this.countryMesh)
 
       this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial)
-      // this is always the position + the radius
-      this.sphereMesh.name = 'event:Syria'
-      this.sphereMesh.clickable = true
       this.group.position.set(position.x, position.y, position.z)
       this.group.add(this.sphereMesh)
     })
 
     this.createAnimation = new createAnimation(this.group, {
       y: this.position.y < 0 / 2 ? -300 : 300,
-      opacity: 0
+      opacity: 0,
     })
   }
 
@@ -95,7 +91,7 @@ export class EventParticles {
     if (this.sphereMesh) {
       this.sphereMaterial.uniforms.viewVector.value = new THREE.Vector3().addVectors(
         position,
-        this.sphereMesh.position
+        this.sphereMesh.position,
       )
     }
   }
@@ -103,7 +99,7 @@ export class EventParticles {
   public in = (dur?: number) => {
     this.createAnimation.in({
       y: this.position.y,
-      opacity: 1
+      opacity: 1,
     }, dur || 2000)
   }
 
@@ -131,11 +127,19 @@ export class EventParticles {
       .to({ value: 1.6 }, 500)
       .easing(TWEEN.Easing.Quadratic.InOut)
       .start()
+    new TWEEN.Tween(this.group.position)
+      .to({ z: 100 }, 500)
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .start()
   }
 
   public hoverOut = () => {
     new TWEEN.Tween(this.sphereMaterial.uniforms['c'])
       .to({ value: 0.9 }, 500)
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .start()
+    new TWEEN.Tween(this.group.position)
+      .to(this.position, 500)
       .easing(TWEEN.Easing.Quadratic.InOut)
       .start()
   }

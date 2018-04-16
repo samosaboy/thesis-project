@@ -129,7 +129,7 @@ export const Welcome = () => {
   let mouseDown
 
   button.text.on('mousedown', () => {
-    sprite.in()
+    sprite.in(1000)
     splashText.out(500)
     splashDescription.out()
     keepHolding.in()
@@ -177,10 +177,12 @@ export const Welcome = () => {
 
   welcomeScene.onStart(() => {
     sky.visible = true
+    alphaMap.visible = true
   })
 
   welcomeScene.onStop(() => {
     sky.visible = false
+    alphaMap.visible = false
   })
 
   welcomeScene.onUpdate(() => {

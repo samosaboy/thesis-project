@@ -30,7 +30,7 @@ export class BackgroundParticles {
     for (let i = 0; i < params.count; i++) {
       const particle = new THREE.Vector3(
         random(-(window.innerWidth * this.devicePixelRatio), (window.innerWidth * this.devicePixelRatio)),
-        random(-20, (window.innerHeight / 6)),
+        random(-40, (window.innerHeight / 6)),
         random(-300, 300),
       )
 

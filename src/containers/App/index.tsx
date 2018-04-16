@@ -67,6 +67,7 @@ class App extends React.Component<App.Props, App.State> {
         }
 
         if (from === 'welcomeScene') {
+          console.log('out fired')
           WelcomeScene.out()
           WelcomeScene.stop()
         } else if (from === 'pondScene') {
