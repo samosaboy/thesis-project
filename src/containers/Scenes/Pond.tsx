@@ -1,6 +1,7 @@
 import {
   BackgroundParticles,
   EventParticles,
+  Icon,
   Scene,
   TextGeometry,
 } from '../../components'
@@ -12,6 +13,10 @@ const TWEEN = require('@tweenjs/tween.js')
 
 export const Pond = () => {
   const pondScene = new Scene('pondScene')
+
+  /*
+   * Step 1
+   * */
 
   const titleText = new TextGeometry(
     `T H I S    I S    T H E    U N I V E R S E 
@@ -61,6 +66,157 @@ export const Pond = () => {
       },
     })
   pondScene.add(titleTextDesc2.text)
+
+  const step1 = new TextGeometry(
+    'C O N T I N U E', {
+      align: 'center',
+      size: 200,
+      lineSpacing: 10,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#FFFFFF',
+      label: true,
+      position: {
+        x: 0,
+        y: -80,
+        z: 0,
+      },
+    })
+  pondScene.add(step1.text)
+
+  /*
+   * Step 2
+   * */
+
+  const sprite = new Icon('../../public/images/mouseiconmove-sprite.png', {
+    horizontal: 15,
+    vertical: 21,
+    total: 300,
+    duration: 10000,
+    position: {
+      x: 0,
+      y: 40,
+      z: 0,
+    },
+  })
+  sprite.el().rotation.x = 120
+  sprite.el().scale.set(0.8, 0.65, 0.8)
+  pondScene.add(sprite.el())
+
+  const titleText2 = new TextGeometry(
+    `E V E N T S     A R E     E X P L O R A B L E
+    \n I N     T H E     F O R M     O F     S O U N D.`, {
+      align: 'center',
+      size: 200,
+      lineSpacing: 20,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#cbcbcb',
+      position: {
+        x: 0,
+        y: 100,
+        z: 0,
+      },
+    })
+  pondScene.add(titleText2.text)
+
+  const titleTextDesc3 = new TextGeometry(
+    `T H R O U G H O U T     T H I S     E X P E R I E N C E
+    \n U S E     Y O U R     M O U S E     T O     R O T A T E     A R O U N D.`, {
+      align: 'center',
+      size: 150,
+      lineSpacing: 20,
+      font: 'Lora',
+      style: 'Normal',
+      color: '#cbcbcb',
+      position: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+    })
+  pondScene.add(titleTextDesc3.text)
+
+  const step2 = new TextGeometry(
+    'B E G I N', {
+      align: 'center',
+      size: 200,
+      lineSpacing: 10,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#FFFFFF',
+      label: true,
+      position: {
+        x: 0,
+        y: -80,
+        z: 0,
+      },
+    })
+  pondScene.add(step2.text)
+
+  step1.text.cursor = 'pointer'
+  step1.text.on('click', () => {
+    //step1 out
+    titleText.out()
+    titleTextDesc.out()
+    titleTextDesc2.out()
+    step1.out()
+
+    // Whatever is at the end is what you put in onOut()
+    // step2 in
+    step2.in(2000)
+    titleTextDesc3.in(2000)
+    titleText2.in(2000)
+    sprite.in(1500)
+  })
+
+  /* Events */
+
+  const SyriaEvent = new EventParticles({
+    x: 0,
+    y: 50,
+    z: 50,
+  })
+  pondScene.add(SyriaEvent.getElement())
+
+  const SyriaEventTitle = new TextGeometry(
+    'S Y R I A', {
+      align: 'center',
+      size: 200,
+      lineSpacing: 20,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#cbcbcb',
+      position: {
+        x: SyriaEvent.getElement().position.x,
+        y: SyriaEvent.getElement().position.y + 100,
+        z: SyriaEvent.getElement().position.z,
+      },
+    },
+  )
+
+  pondScene.add(SyriaEventTitle.text)
+  
+  step2.text.cursor = 'pointer'
+  step2.text.on('click', () => {
+    step2.out()
+    titleTextDesc3.out()
+    titleText2.out()
+    sprite.out()
+
+    // Event in
+    SyriaEvent.in()
+  })
+
+  SyriaEvent.getElement().cursor = 'pointer'
+  SyriaEvent.getElement().on('mouseover', () => {
+    SyriaEvent.hoverIn()
+    SyriaEventTitle.in()
+  })
+  SyriaEvent.getElement().on('mouseout', () => {
+    SyriaEvent.hoverOut()
+    SyriaEventTitle.out()
+  })
 
   /*
    * Surface Plane
@@ -133,21 +289,6 @@ export const Pond = () => {
   })
   pondScene.add(backgroundParticles.getElement())
 
-  const SyriaEvent = new EventParticles({
-    x: 0,
-    y: 50,
-    z: 0,
-  })
-  pondScene.add(SyriaEvent.getElement())
-
-  /*
-   * *
-   * *
-   * TEST *
-   * *
-   * *
-   * */
-
   const geometry = new THREE.PlaneBufferGeometry(1000, 1000, 120, 120)
   geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
   const colors = new THREE.BufferAttribute(new Float32Array(60 * 3 * 4), 4)
@@ -165,7 +306,7 @@ export const Pond = () => {
     },
     radius: {
       type: 'f',
-      value: 9.0,
+      value: 9,
     },
   }
 
@@ -199,37 +340,22 @@ export const Pond = () => {
       }`,
   })
 
-  // color.r += y / radius;
-  // color.g +=  1.0 - (y / radius); // it will be green near to the ground
-  // color.b += y * 2.0 / radius;
-  // color.a = vPosition.y / radius;
-
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
   terrainMesh.position.set(0, -150, -300)
   terrainMesh.rotateY(110)
   pondScene.add(terrainMesh)
 
-  /*
-   * *
-   * *
-   * TEST *
-   * *
-   * *
-   * */
-
   pondScene.onIn(() => {
-    // SyriaEvent.in(1500)
     titleText.in()
-    titleTextDesc.in()
-    titleTextDesc2.in()
+    titleTextDesc.in(3000)
+    titleTextDesc2.in(5000)
+    step1.in(5000)
     backgroundParticles.in()
   })
 
   pondScene.onOut(() => {
+    // put all Events in onOut()
     SyriaEvent.out()
-    titleText.out()
-    titleTextDesc.out()
-    titleTextDesc2.out()
     backgroundParticles.out()
   })
 

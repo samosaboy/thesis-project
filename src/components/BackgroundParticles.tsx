@@ -21,9 +21,8 @@ export class BackgroundParticles {
     const material = new THREE.PointsMaterial({
       map: createCircularCanvasMaterial('#8e8d94', 512),
       size: params.particleSize,
-      depthWrite: false,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.5,
     })
 
     this.geometry = new THREE.Geometry()
@@ -31,7 +30,7 @@ export class BackgroundParticles {
     for (let i = 0; i < params.count; i++) {
       const particle = new THREE.Vector3(
         random(-(window.innerWidth * this.devicePixelRatio), (window.innerWidth * this.devicePixelRatio)),
-        random(-50, (window.innerHeight / 6)),
+        random(-20, (window.innerHeight / 6)),
         random(-300, 300),
       )
 

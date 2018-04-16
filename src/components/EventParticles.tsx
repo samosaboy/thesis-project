@@ -20,11 +20,11 @@ export class EventParticles {
         {
           'c': {
             type: 'f',
-            value: 0.5,
+            value: 0.9,
           },
           'p': {
             type: 'f',
-            value: 2.1,
+            value: 2.2,
           },
           glowColor: {
             type: 'c',
@@ -69,7 +69,7 @@ export class EventParticles {
 
     loader.load('../public/objects/SyriaObj.json', obj => {
       this.countryMesh = new THREE.Mesh(obj, new THREE.MeshStandardMaterial({
-        color: '#f8fffd',
+        color: '#f4ffee',
       }))
       obj.center()
       this.countryMesh.scale.multiplyScalar(0.09)
@@ -124,5 +124,19 @@ export class EventParticles {
     if (this.countryMesh) {
       this.countryMesh.rotation.y += 0.005
     }
+  }
+
+  public hoverIn = () => {
+    new TWEEN.Tween(this.sphereMaterial.uniforms['c'])
+      .to({ value: 1.6 }, 500)
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .start()
+  }
+
+  public hoverOut = () => {
+    new TWEEN.Tween(this.sphereMaterial.uniforms['c'])
+      .to({ value: 0.9 }, 500)
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .start()
   }
 }

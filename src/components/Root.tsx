@@ -235,7 +235,7 @@ export class Root {
      * Instantiate the post-processing
      */
     this.postProcessing()
-    this.currentScene.fog = new THREE.Fog(new THREE.Color('#262c3c'), 400, 500)
+    this.currentScene.fog = new THREE.Fog(new THREE.Color('#000000'), 600, 1000)
     const interaction = new Interaction(this.renderer, this.currentScene, this.camera)
   }
 

@@ -32,7 +32,6 @@ export class TextureAnimator {
   public update = (delta) => {
     if (!isNaN(delta)) {
       this.currentDisplayTime += delta
-
       while (this.currentDisplayTime > this.tileDisplayDuration) {
         this.currentDisplayTime -= this.tileDisplayDuration
         this.currentTile++

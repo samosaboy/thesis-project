@@ -27,20 +27,22 @@ export class Icon {
     this.position = params.position
 
     this.createAnimation = new createAnimation(this.sprite, {
-      y: -200,
+      y: this.position.y < 0 / 2 ? -200 : 200,
       opacity: 0
     })
   }
 
   public el = () => this.sprite
 
-  public update = (time) => this.map.update(time)
+  public update = (time) => {
+    this.map.update(time)
+  }
 
-  public in = () => {
+  public in = (dur?: number) => {
     this.createAnimation.in({
       y: this.position.y,
       opacity: 1
-    }, 1000)
+    }, dur || 1000)
   }
 
   public out = () => {

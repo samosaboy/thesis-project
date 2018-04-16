@@ -144,32 +144,13 @@ export const Welcome = () => {
   })
   button.text.cursor = 'pointer'
 
-  const points = [
-    [68.5, 185.5],
-    [1, 262.5],
-    [270.9, 281.9],
-    [345.5, 212.8],
-    [178, 155.7],
-    [240.3, 72.3],
-    [153.4, 0.6],
-    [52.6, 53.3],
-    [68.5, 185.5],
-  ]
-
-  for (let i = 0; i < points.length; i++) {
-    points[i] = new THREE.Vector3(points[i][0], 0, points[i][1])
-  }
-
-  const path = new THREE.CatmullRomCurve3(points)
-
-  // const geometry = new THREE.TubeGeometry(path, 10, 100, 20, true)
-  const geometry = new THREE.IcosahedronGeometry(300, 5)
+  const geometry = new THREE.IcosahedronGeometry(300, 4)
   const material = new THREE.MeshStandardMaterial({
-    color: '#0a0c10',
+    color: '#101319',
     side: THREE.DoubleSide,
     alphaTest: 0.5,
     wireframe: true,
-    transparent: true
+    transparent: true,
   })
   const alphaMap = new THREE.TextureLoader().load('../public/images/textures/alphaMapTexture.png')
   material.alphaMap = alphaMap
@@ -177,7 +158,7 @@ export const Welcome = () => {
   material.alphaMap.wrapT = material.alphaMap.wrapS = THREE.RepeatWrapping
   material.alphaMap.repeat.yz = 1
   const tube = new THREE.Mesh(geometry, material)
-  tube.position.set(-200, 0, -100)
+  tube.position.set(-200, 0, -200)
 
   welcomeScene.add(tube)
 
