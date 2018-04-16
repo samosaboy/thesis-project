@@ -1,6 +1,7 @@
 import {
   addToSceneList,
   resetMouseEvent,
+  sceneSetComplete,
   setCurrentScene,
 } from '../actions/actions'
 import { store } from '../index'
@@ -26,15 +27,13 @@ import 'three/crossfadeScene'
 import {
   PondScene,
   RootEvent,
+  SyriaEventScene,
   WelcomeScene,
 } from '../containers/App'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
-
-import * as Transition from './Utils/transition.js'
-import * as Scene from './Utils/scene.js'
 
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
@@ -52,7 +51,6 @@ export class Root {
   private sceneList: Array<any>
   private currentScene: any
   private nextScene: any
-  public isSceneInTransition: boolean
 
   public step: number
   public delta: number
@@ -62,10 +60,15 @@ export class Root {
 
   private defaultScene: string
 
+  public scene: THREE.Scene
+  public backToEvent: boolean
+
   constructor() {
     /*
      * Basic THREE setup
      * */
+    this.backToEvent = false
+    this.scene = new THREE.Scene()
     this.devicePixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1
     this.camera = new THREE.PerspectiveCamera(
       70,
@@ -75,12 +78,13 @@ export class Root {
     this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
-      preserveDrawingBuffer: true
+      preserveDrawingBuffer: true,
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.mouse = new THREE.Vector2()
     this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
+    this.scene.add(this.camera)
 
     /*
      * Instantiate Stats for Development
@@ -103,43 +107,41 @@ export class Root {
      * Custom camera functionality
      * for THREE.Camera prototype
      * */
-    this.camera.reset = () => {
+    this.camera.resetPosition = () => {
       new TWEEN.Tween(this.camera.position)
         .to({
           x: 0,
           y: 0,
           z: 300,
-        }, this.cameraSpeed * 1000)
-        .easing(TWEEN.Easing.Cubic.Out).start()
+        }, this.cameraSpeed * 2000)
+        .easing(TWEEN.Easing.Cubic.InOut).start()
+    }
+
+    this.camera.resetZoom = () => {
+      new TWEEN.Tween(this.camera.rotation)
+        .to({
+          x: 0,
+          y: 0,
+          z: 0,
+        }, this.cameraSpeed * 2000)
+        .easing(TWEEN.Easing.Cubic.InOut).start()
     }
 
     this.camera.zoom = object => {
-      if (object instanceof THREE.Mesh) {
-        const position = new THREE.Vector3()
-        position.setFromMatrixPosition(object.matrixWorld)
+      if (object instanceof THREE.Group) {
+        return new Promise(resolve => {
+          const position = new THREE.Vector3()
+          position.setFromMatrixPosition(object.matrixWorld)
 
-        new TWEEN.Tween(this.camera.position)
-          .to({
-            x: position.x,
-            y: position.y,
-            z: 30,
-          }, this.cameraSpeed * 1000)
-          .easing(TWEEN.Easing.Cubic.Out).start()
-      }
-    }
-
-    this.camera.fullZoom = object => {
-      if (object instanceof THREE.Mesh) {
-        const position = new THREE.Vector3()
-        position.setFromMatrixPosition(object.matrixWorld)
-
-        new TWEEN.Tween(this.camera.position)
-          .to({
-            x: position.x,
-            y: position.y,
-            z: 10,
-          }, this.cameraSpeed * 3000)
-          .easing(TWEEN.Easing.Cubic.Out).start()
+          new TWEEN.Tween(this.camera.position)
+            .to({
+              x: position.x,
+              y: position.y,
+              z: position.z - 35,
+            }, this.cameraSpeed * 2000)
+            .easing(TWEEN.Easing.Cubic.InOut).start()
+            .onComplete(() => resolve())
+        })
       }
     }
   }
@@ -195,14 +197,16 @@ export class Root {
   }
 
   private switchScreenPromise = (name): Promise<any> => {
-    this.currentScene = store.getState().sceneData.currentScene
     return new Promise(resolve => {
-      store.dispatch(setCurrentScene({ name }))
+      store.dispatch(setCurrentScene({
+        name,
+        isTransitioning: true,
+      }))
       resolve()
     })
   }
 
-  public addSections = (sections: Array<any>): void => {
+  public addScenes = (sections: Array<any>): void => {
     sections.forEach(section => {
       this.sceneList.push(section)
       store.dispatch(addToSceneList({ scene: section.el }))
@@ -219,13 +223,12 @@ export class Root {
   }
 
   public switchScreen = (name: string): void => {
-    this.isSceneInTransition = true
+    this.defaultScene = null
     this.nextScene = { name }
     this.switchScreenPromise(name)
       .then(() => {
-        this.switchSceneChangeOn()
+        this.switchSceneChangeOn(false)
         this.setCurrentSceneFromState()
-        this.isSceneInTransition = false
       })
   }
 
@@ -237,6 +240,10 @@ export class Root {
     this.postProcessing()
     this.currentScene.fog = new THREE.Fog(new THREE.Color('#000000'), 600, 1000)
     const interaction = new Interaction(this.renderer, this.currentScene, this.camera)
+    // This is our 'hacky' fade scene method
+    setTimeout(() => {
+      store.dispatch(sceneSetComplete({ isTransitioning: false }))
+    }, 500)
   }
 
   public switchSceneChangeOn = (setDefault = false) => {
@@ -245,12 +252,14 @@ export class Root {
       to: this.defaultScene,
     }
     if (!setDefault) {
-      data = {
-        from: this.currentScene.name,
-        to: this.nextScene.name,
+      if (this.currentScene.name !== this.nextScene.name) {
+        data = {
+          from: this.currentScene.name,
+          to: this.nextScene.name,
+        }
       }
     }
-    RootEvent.eventTrigger('sectionChangeStart', data)
+    RootEvent.eventTrigger('sceneChangeStart', data)
     if (!this.frameId) {
       this.animate()
     }
@@ -274,6 +283,9 @@ export class Root {
       case 'pondScene':
         renderSceneFromState = PondScene
         break
+      case 'syriaEvent':
+        renderSceneFromState = SyriaEventScene
+        break
       default:
         break
     }
@@ -290,7 +302,7 @@ export class Root {
 
     this.step += 1
 
-    this.renderer.render(renderSceneFromState.el, this.camera)
+    this.renderer.render(this.scene, this.camera)
   }
 
   public getCamera = () => this.camera

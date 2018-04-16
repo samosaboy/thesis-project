@@ -18,9 +18,9 @@ export const Pond = () => {
    * Step 1
    * */
 
-  const titleText = new TextGeometry(
+  const step1TextTitle = new TextGeometry(
     `T H I S    I S    T H E    U N I V E R S E 
-    \n A S    A N    A B S T R A C T I O N.`, {
+  \n A S    A N    A B S T R A C T I O N.`, {
       align: 'center',
       size: 200,
       lineSpacing: 20,
@@ -33,9 +33,9 @@ export const Pond = () => {
         z: 0,
       },
     })
-  pondScene.add(titleText.text)
+  pondScene.add(step1TextTitle.text)
 
-  const titleTextDesc = new TextGeometry(
+  const step1TextDesc1 = new TextGeometry(
     `T H E    S E A     B E N E A T H     I S     T H E     E A R T H.`, {
       align: 'center',
       size: 150,
@@ -49,9 +49,9 @@ export const Pond = () => {
         z: 0,
       },
     })
-  pondScene.add(titleTextDesc.text)
+  pondScene.add(step1TextDesc1.text)
 
-  const titleTextDesc2 = new TextGeometry(
+  const step1TextDesc2 = new TextGeometry(
     `T H E     S T A R S     A B O V E     IS     H U M A N I T Y.`, {
       align: 'center',
       size: 150,
@@ -65,9 +65,9 @@ export const Pond = () => {
         z: 0,
       },
     })
-  pondScene.add(titleTextDesc2.text)
+  pondScene.add(step1TextDesc2.text)
 
-  const step1 = new TextGeometry(
+  const Step1ContinueButton = new TextGeometry(
     'C O N T I N U E', {
       align: 'center',
       size: 200,
@@ -82,7 +82,7 @@ export const Pond = () => {
         z: 0,
       },
     })
-  pondScene.add(step1.text)
+  pondScene.add(Step1ContinueButton.text)
 
   /*
    * Step 2
@@ -95,7 +95,7 @@ export const Pond = () => {
     duration: 10000,
     position: {
       x: 0,
-      y: 40,
+      y: 70,
       z: 0,
     },
   })
@@ -103,7 +103,7 @@ export const Pond = () => {
   sprite.el().scale.set(0.8, 0.65, 0.8)
   pondScene.add(sprite.el())
 
-  const titleText2 = new TextGeometry(
+  const step2TextTitle = new TextGeometry(
     `E V E N T S     A R E     E X P L O R A B L E
     \n I N     T H E     F O R M     O F     S O U N D.`, {
       align: 'center',
@@ -118,9 +118,32 @@ export const Pond = () => {
         z: 0,
       },
     })
-  pondScene.add(titleText2.text)
+  pondScene.add(step2TextTitle.text)
 
-  const titleTextDesc3 = new TextGeometry(
+  const step2TextDesc1 = new TextGeometry(
+    `T H E     S E A     P R O P O G A T E S     E V E N T S     T H A T
+    \n O C C U R     A R O U N D     T H E     W O R L D.
+    \n W E     C O L L E C T I V E L Y     F E E L     T H E     R I P P L E S
+    \n O F     E A C H     E V E N T     T H A T     O C C U R S.`, {
+      align: 'center',
+      size: 150,
+      lineSpacing: 20,
+      font: 'Lora',
+      style: 'Normal',
+      color: '#cbcbcb',
+      position: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+    })
+  pondScene.add(step2TextDesc1.text)
+
+  /*
+   * Step 3
+   * */
+
+  const step3TextDesc1 = new TextGeometry(
     `T H R O U G H O U T     T H I S     E X P E R I E N C E
     \n U S E     Y O U R     M O U S E     T O     R O T A T E     A R O U N D.`, {
       align: 'center',
@@ -135,9 +158,26 @@ export const Pond = () => {
         z: 0,
       },
     })
-  pondScene.add(titleTextDesc3.text)
+  pondScene.add(step3TextDesc1.text)
 
-  const step2 = new TextGeometry(
+  const Step2ContinueButton = new TextGeometry(
+    'C O N T I N U E', {
+      align: 'center',
+      size: 200,
+      lineSpacing: 10,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#FFFFFF',
+      label: true,
+      position: {
+        x: 0,
+        y: -80,
+        z: 0,
+      },
+    })
+  pondScene.add(Step2ContinueButton.text)
+
+  const Step3ContinueButton = new TextGeometry(
     'B E G I N', {
       align: 'center',
       size: 200,
@@ -152,22 +192,31 @@ export const Pond = () => {
         z: 0,
       },
     })
-  pondScene.add(step2.text)
+  pondScene.add(Step3ContinueButton.text)
 
-  step1.text.cursor = 'pointer'
-  step1.text.on('click', () => {
+  Step1ContinueButton.text.cursor = 'pointer'
+  Step1ContinueButton.text.on('click', () => {
     //step1 out
-    titleText.out()
-    titleTextDesc.out()
-    titleTextDesc2.out()
-    step1.out()
+    step1TextTitle.out()
+    step1TextDesc1.out()
+    step1TextDesc2.out()
+    Step1ContinueButton.out()
 
+    Step2ContinueButton.in()
+    step2TextTitle.in()
+    step2TextDesc1.in(2000)
+
+  })
+
+  Step2ContinueButton.text.cursor = 'pointer'
+  Step2ContinueButton.text.on('click', () => {
+    step2TextDesc1.out()
+    step2TextTitle.out()
+    Step2ContinueButton.out()
     // Whatever is at the end is what you put in onOut()
-    // step2 in
-    step2.in(2000)
-    titleTextDesc3.in(2000)
-    titleText2.in(2000)
-    sprite.in(1500)
+    sprite.in(1000)
+    step3TextDesc1.in(2000)
+    Step3ContinueButton.in()
   })
 
   const eventViewHelperText = new TextGeometry(
@@ -186,7 +235,15 @@ export const Pond = () => {
     })
   pondScene.add(eventViewHelperText.text)
 
-  /* Events */
+  /*
+  *
+  *
+  * START Events
+  *
+  *
+  * */
+
+  // SYRIA EVENT
 
   const SyriaEvent = new EventParticles({
     x: 0,
@@ -214,12 +271,11 @@ export const Pond = () => {
   pondScene.add(SyriaEventTitle.text)
 
   // SyriaEvent.in() // uncomment for testing
-  step2.text.cursor = 'pointer'
-  step2.text.on('click', () => {
-    step2.out()
-    titleTextDesc3.out()
-    titleText2.out()
+  Step3ContinueButton.text.cursor = 'pointer'
+  Step3ContinueButton.text.on('click', () => {
     sprite.out()
+    step3TextDesc1.out()
+    Step3ContinueButton.out()
 
     // Event in
     eventViewHelperText.in()
@@ -235,6 +291,25 @@ export const Pond = () => {
     SyriaEvent.hoverOut()
     SyriaEventTitle.out(500)
   })
+
+  SyriaEvent.getElement().on('click', () => {
+    SyriaEvent.hoverOut()
+    SyriaEventTitle.out(500)
+    RootComponent.switchScreen('syriaEvent')
+    // RootComponent.getCamera().zoom(SyriaEvent.getElement())
+    //   .then(() => {
+    //     syriaEventClick = false
+    //     RootComponent.switchScreen('syriaEvent')
+    //   })
+  })
+
+  /*
+   *
+   *
+   * END Events
+   *
+   *
+   * */
 
   /*
    * Surface Plane
@@ -262,7 +337,7 @@ export const Pond = () => {
   // skyBox.position.set(0, 0, 0)
   // pondScene.add(skyBox)
 
-  const skyGeometry = new THREE.SphereBufferGeometry(1000, 4, 4)
+  const skyGeometry = new THREE.SphereBufferGeometry(1000, 5, 5)
   const skyMaterial = new THREE.ShaderMaterial({
     vertexShader: `varying vec3 vWorldPosition;
   	void main() {
@@ -283,7 +358,7 @@ export const Pond = () => {
       topColor: { value: new THREE.Color('#37414b') },
       bottomColor: { value: new THREE.Color('#141619') },
       offset: { value: 400 },
-      exponent: { value: 25 },
+      exponent: { value: 40 },
     },
     side: THREE.BackSide,
   })
@@ -350,15 +425,21 @@ export const Pond = () => {
   })
 
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
+  terrainMesh.visible = false
   terrainMesh.position.set(0, -150, -500)
   // terrainMesh.rotateY(110)
   pondScene.add(terrainMesh)
 
   pondScene.onIn(() => {
-    titleText.in()
-    titleTextDesc.in(3000)
-    titleTextDesc2.in(5000)
-    step1.in(5000)
+    if (!RootComponent.backToEvent) {
+      step1TextDesc2.in()
+      step1TextDesc1.in(3000)
+      step1TextTitle.in(5000)
+      Step1ContinueButton.in(5000)
+    } else {
+      SyriaEvent.in()
+      eventViewHelperText.in()
+    }
     backgroundParticles.in()
   })
 
@@ -371,11 +452,13 @@ export const Pond = () => {
   pondScene.onStart(() => {
     sky.visible = true
     planeMesh.visible = true
+    terrainMesh.visible = true
   })
 
   pondScene.onStop(() => {
     sky.visible = false
     planeMesh.visible = false
+    terrainMesh.visible = false
   })
 
   pondScene.onUpdate(() => {

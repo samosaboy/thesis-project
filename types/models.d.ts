@@ -14,9 +14,15 @@ declare interface sceneDataAdd {
 
 declare interface sceneDataSetCurrent {
   name: string
+  isTransitioning: boolean
+}
+
+declare interface sceneSetComplete {
+  isTransitioning: boolean
 }
 
 declare type mouseDataConfig = mouseData
 declare type sceneDataAddConfig = sceneDataAdd
 declare type sceneDataIndexConfig = sceneDataIndex
 declare type sceneDataSetCurrentConfig = sceneDataSetCurrent
+declare type sceneDataSetCurrentCompleteConfig = sceneSetComplete

@@ -4,6 +4,7 @@ import * as Actions from '../constants/actions'
 const initialState: sceneDataIndex | any = {
   currentScene: {},
   scenes: [],
+  isTransitioning: false
 }
 
 export default handleActions<any, any>(
@@ -22,8 +23,15 @@ export default handleActions<any, any>(
       return {
         ...state,
         currentScene,
+        isTransitioning: action.payload.isTransitioning
       }
     },
+    [Actions.SCENE_SET_COMPLETE]: (state, action) => {
+      return {
+        ...state,
+        ...action.payload
+      }
+    }
   },
   initialState
 )

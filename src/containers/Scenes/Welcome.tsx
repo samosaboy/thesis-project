@@ -49,7 +49,7 @@ export const Welcome = () => {
     color: '#FFFFFF',
     position: {
       x: 0,
-      y: 20,
+      y: 40,
       z: 0,
     },
   })
@@ -73,9 +73,9 @@ export const Welcome = () => {
   welcomeScene.add(keepHolding.text)
 
   const splashDescription = new TextGeometry(
-    'This experiences requires headphones.', {
+    'T H I S     E X P E R I E N C E     R E Q U I R E S     H E A D P H O N E S.', {
       align: 'center',
-      size: 200,
+      size: 150,
       lineSpacing: 10,
       font: 'Lora',
       style: 'Normal',
@@ -173,6 +173,7 @@ export const Welcome = () => {
     splashText.out()
     splashDescription.out()
     sprite.out()
+    console.log('out fired')
   })
 
   welcomeScene.onStart(() => {

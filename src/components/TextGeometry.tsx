@@ -101,6 +101,7 @@ export class TextGeometry {
 
     this.createAnimation = new createAnimation(this.text, {
       y: this.position.y < 0 / 2 ? -200 : 200,
+      x: this.position.x || 0,
       opacity: 0,
     })
   }
@@ -108,6 +109,7 @@ export class TextGeometry {
   public in = (dur?: number) => {
     this.createAnimation.in({
       y: this.position.y,
+      x: this.position.x,
       opacity: 1,
     }, dur || 1000)
   }

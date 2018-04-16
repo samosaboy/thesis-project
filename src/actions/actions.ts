@@ -15,3 +15,4 @@ export const addLastHoveredObject = createAction<mouseDataConfig>(Actions.MOUSE_
  * */
 export const addToSceneList = createAction<sceneDataAddConfig>(Actions.SCENE_ADD)
 export const setCurrentScene = createAction<sceneDataSetCurrentConfig>(Actions.SCENE_SET_CURRENT)
+export const sceneSetComplete = createAction<sceneDataSetCurrentCompleteConfig>(Actions.SCENE_SET_COMPLETE)
