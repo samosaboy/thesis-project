@@ -36,7 +36,8 @@ export namespace App {
   }
 
   export interface State {
-    isTransitioning: boolean
+    isTransitioning: boolean,
+    currentScene: string
   }
 }
 
@@ -55,6 +56,7 @@ class App extends React.Component<App.Props, App.State> {
     super(props, context)
     this.state = {
       isTransitioning: false,
+      currentScene: '',
     }
   }
 
@@ -69,7 +71,7 @@ class App extends React.Component<App.Props, App.State> {
         SyriaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('syriaEvent')
+      RootComponent.setDefaultScreen('welcomeScene')
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
 
@@ -77,7 +79,9 @@ class App extends React.Component<App.Props, App.State> {
           return
         }
 
-        console.log(scene)
+        this.setState({
+          currentScene: to,
+        })
 
         if (to === 'welcomeScene') {
           WelcomeScene.in()
@@ -113,11 +117,42 @@ class App extends React.Component<App.Props, App.State> {
   public render() {
     return (
       <main>
+        {
+          this.state.currentScene === 'syriaEvent' &&
+          <div>
+            <div className={style.header}>
+              <button
+                className={style.backButton}
+                onClick={() => {
+                  RootComponent.backToEvent = true
+                  RootComponent.switchScreen('pondScene')
+                }}>
+                Back
+              </button>
+              <div className={style.headerTitleContainer}>
+                <h2>Syria</h2>
+                <h4>Catastrophe as a result of the civil war</h4>
+              </div>
+              <div>Sd</div>
+            </div>
+            <div className={style.footer}>
+              <div style={{
+                color: '#E0E0E0',
+                borderTopColor: '#E0E0E0',
+              }}>One person becomes a refugee in this region every two seconds</div>
+              <div style={{
+                color: '#8cafc9',
+                borderTopColor: '#8cafc9',
+              }}>One civilian perishes in this region every five seconds
+              </div>
+            </div>
+          </div>
+        }
         <div
           className={style.sceneFadeDiv}
           style={{
             zIndex: this.state.isTransitioning ? 999 : -999,
-            opacity: 1
+            opacity: 1,
           }}
         />
         <div

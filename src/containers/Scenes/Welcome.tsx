@@ -128,6 +128,10 @@ export const Welcome = () => {
   let time = 0
   let mouseDown
 
+  button.text.on('click', () => {
+    return
+  })
+
   button.text.on('mousedown', () => {
     sprite.in(1000)
     splashText.out(500)

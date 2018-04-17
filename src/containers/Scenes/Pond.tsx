@@ -195,7 +195,7 @@ export const Pond = () => {
   pondScene.add(Step3ContinueButton.text)
 
   Step1ContinueButton.text.cursor = 'pointer'
-  Step1ContinueButton.text.on('click', () => {
+  Step1ContinueButton.text.on('pointerdown', () => {
     //step1 out
     step1TextTitle.out()
     step1TextDesc1.out()
@@ -432,9 +432,9 @@ export const Pond = () => {
 
   pondScene.onIn(() => {
     if (!RootComponent.backToEvent) {
-      step1TextDesc2.in()
+      step1TextDesc2.in(3000)
       step1TextDesc1.in(3000)
-      step1TextTitle.in(5000)
+      step1TextTitle.in(2000)
       Step1ContinueButton.in(5000)
     } else {
       SyriaEvent.in()

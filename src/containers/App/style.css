@@ -55,3 +55,72 @@ h1, h2, h3, h4, h5, h6 {
   background-color: black;
   opacity: 0 !important;
 }
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  padding: 3em;
+  overflow: hidden;
+  /*background: rgba(0, 0, 0, 0.3);*/
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  font-size: 18pt;
+  text-transform: uppercase;
+  letter-spacing: 4pt;
+}
+
+.header h2,
+.header h4 {
+  padding: 0;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.header h4 {
+  font-weight: normal;
+  font-family: Lora;
+}
+
+.headerTitleContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80vw;
+  /*background: rgba(0, 0, 0, 0.3);*/
+  overflow: hidden;
+  padding: 3em;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.footer div {
+  width: 25%;
+  margin-right: 3em;
+  padding-top: 0.25em;
+  border-top: 1px solid;
+}
+
+.backButton {
+  border: 1px solid white;
+  padding: 1em;
+}
+
+.backButton:hover {
+  cursor: pointer;
+}

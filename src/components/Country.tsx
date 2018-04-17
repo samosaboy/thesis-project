@@ -107,27 +107,27 @@ export class Country {
     this.terrain.position.set(0, 0, -25)
     this.terrain.rotateX(1.5)
 
-    this.backButton = new TextGeometry(
-      'B A C K', {
-        align: 'center',
-        size: 200,
-        lineSpacing: 10,
-        font: 'Lato',
-        style: 'Normal',
-        color: '#FFFFFF',
-        label: true,
-        position: {
-          x: -190,
-          y: 180,
-          z: 0,
-        },
-      })
-
-    this.backButton.text.cursor = 'pointer'
-    this.backButton.text.on('click', () => {
-      RootComponent.backToEvent = true
-      RootComponent.switchScreen('pondScene')
-    })
+    // this.backButton = new TextGeometry(
+    //   'B A C K', {
+    //     align: 'center',
+    //     size: 200,
+    //     lineSpacing: 10,
+    //     font: 'Lato',
+    //     style: 'Normal',
+    //     color: '#FFFFFF',
+    //     label: true,
+    //     position: {
+    //       x: -190,
+    //       y: 180,
+    //       z: 0,
+    //     },
+    //   })
+    //
+    // this.backButton.text.cursor = 'pointer'
+    // this.backButton.text.on('click', () => {
+    //   RootComponent.backToEvent = true
+    //   RootComponent.switchScreen('pondScene')
+    // })
 
     this.title = new TextGeometry(
       this.countryName.split('').join(' ').toUpperCase(), {

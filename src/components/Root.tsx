@@ -71,6 +71,7 @@ export class Root {
     /*
      * Basic THREE setup
      * */
+
     this.backToEvent = false
     this.scene = new THREE.Scene()
     this.devicePixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1
@@ -242,6 +243,8 @@ export class Root {
     this.postProcessing()
     this.currentScene.fog = new THREE.Fog(new THREE.Color('#000000'), 600, 1000)
     const interaction = new Interaction(this.renderer, this.currentScene, this.camera)
+    interaction.interactionFrequency = 1
+    interaction.moveWhenInside = false
     // This is our 'hacky' fade scene method
     setTimeout(() => {
       store.dispatch(sceneSetComplete({ isTransitioning: false }))

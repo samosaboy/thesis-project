@@ -1,3 +1,5 @@
+import { createAnimation } from './Utils'
+
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
@@ -22,6 +24,11 @@ export class Wave {
 
   private noisePos: number
 
+  private waveCount: number
+  private waveScale: number
+
+  private createAnimation: any
+
   constructor(options) {
     this.resolution = options.resolution
     this.radius = options.radius
@@ -29,6 +36,8 @@ export class Wave {
     this.tetaOffset = options.tetaOffset
     this.waveLength = options.waveLength
     this.waveType = options.waveType
+    this.waveCount = options.waveCount
+    this.waveScale = options.waveScale
 
     this.count = 0
     this.speed = 0.05
@@ -42,6 +51,12 @@ export class Wave {
     // this.mesh = new THREE.Line(waveGeom, waveMaterial)
 
     this.mesh = new THREE.Object3D()
+    this.mesh.visible = false
+    this.mesh.position.setZ(5)
+
+    this.createAnimation = new createAnimation(this.mesh, {
+      z: 300
+    })
 
     this.noisePos = 0.005
 
@@ -52,13 +67,15 @@ export class Wave {
     const waveMaterial = new THREE.LineBasicMaterial({
       color: options.color,
       linewidth: 1,
+      transparent: true,
+      blending: THREE.NormalBlending,
     })
 
     this.colorArray = []
     this.waveArray = []
-    for (let y = 0; y < 10; y++) {
+    for (let y = 0; y < this.waveCount; y++) {
       const waveMesh = new THREE.Line(this.waveGeom, waveMaterial)
-      waveMesh.scale.set((y * 0.1), (y * 0.1))
+      waveMesh.scale.set((y * this.waveScale), (y * this.waveScale))
       this.mesh.add(waveMesh)
       this.waveArray.push(waveMesh)
     }
@@ -66,16 +83,17 @@ export class Wave {
 
   public update = (audioData?: any): any => {
 
-    this.noisePos += 0.1
+    this.noisePos += 0.01
     const perlin = ImprovedNoise().noise
     const n = Math.abs(perlin(this.noisePos, 0, 0))
     this.colorArray.push(n)
 
-    for (let y = 0; y < 10; y++) {
+    for (let y = 0; y < this.waveCount; y++) {
       this.waveArray[y].scale.set(
         this.radius * 2 + this.colorArray[y] * audioData,
         this.radius * 2 + this.colorArray[y] * audioData
       )
+      this.waveArray[y].material.opacity = this.colorArray[y] > 1 ? this.colorArray[y] : 0.2
     }
     const scaleValue = 0.01
     // new TWEEN.Tween(this.mesh.scale)
@@ -130,5 +148,15 @@ export class Wave {
       this.waveGeom.vertices = newVertices
       this.waveGeom.verticesNeedUpdate = true
     }
+  }
+
+  public in = (dur) => {
+    this.createAnimation.in({
+      z: 5
+    }, dur)
+  }
+
+  public out = () => {
+    this.createAnimation.out(1000)
   }
 }

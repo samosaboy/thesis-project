@@ -17,9 +17,9 @@ export const SyriaEvent = () => {
 
   event.add(syriaEvent.sky)
   event.add(syriaEvent.terrain)
-  event.add(syriaEvent.backButton.text)
-  event.add(syriaEvent.title.text)
-  event.add(syriaEvent.description.text)
+  // event.add(syriaEvent.backButton.text)
+  // event.add(syriaEvent.title.text)
+  // event.add(syriaEvent.description.text)
 
   const light = new THREE.PointLight(0xFFFFFF, 10)
   light.position.set(0, 0, 10)
@@ -35,6 +35,21 @@ export const SyriaEvent = () => {
   const audioLoader = new THREE.AudioLoader()
 
   /*
+   * Country
+   */
+  let countryMesh = new THREE.Mesh()
+  const loader = new THREE.JSONLoader()
+  loader.load('../../public/objects/SyriaObj.json', obj => {
+    countryMesh.geometry = obj
+    countryMesh.material = new THREE.MeshBasicMaterial({
+      color: '#646962',
+    })
+    obj.center()
+    countryMesh.scale.multiplyScalar(1.2)
+  })
+  event.add(countryMesh)
+
+  /*
    * Ripple 1
    * */
   const ripple1: any = new Wave({
@@ -46,6 +61,8 @@ export const SyriaEvent = () => {
     tetaOffset: 120,
     waveLength: 1,
     waveType: 'crazy',
+    waveCount: 100,
+    waveScale: 0.5,
   })
   event.add(ripple1.mesh)
   const ripple1Audio = new WaveAudio('../../public/media/syria_damascus/cello_A4.mp3', {
@@ -68,12 +85,14 @@ export const SyriaEvent = () => {
     tetaOffset: 120,
     waveLength: 1,
     waveType: 'normal',
+    waveCount: 240,
+    waveScale: 0.1,
   })
   event.add(ripple2.mesh)
   const ripple2Audio = new WaveAudio('../../public/media/syria_damascus/cello_D2.mp3', {
     volume: 8,
     interval: 5000,
-    color: '#E0E0E0',
+    color: '#8cafc9',
   })
   event.add(ripple2Audio.audio)
   const ripple2Data = ripple2Audio.createAnalyzer()
@@ -81,7 +100,7 @@ export const SyriaEvent = () => {
   event.onIn(() => {
     syriaEvent.title.in()
     syriaEvent.description.in()
-    syriaEvent.backButton.in()
+    // syriaEvent.backButton.in()
 
     /*
      * Play Background Audio
@@ -89,22 +108,26 @@ export const SyriaEvent = () => {
     audioLoader.load('../../public/media/drone_01_sound.mp3', (buffer) => {
       backgroundAudio.setBuffer(buffer)
       backgroundAudio.setLoop(true)
-      backgroundAudio.setVolume(2)
+      backgroundAudio.setVolume(5)
       backgroundAudio.play()
     })
 
+    ripple1.in(2000)
     ripple1Audio.playAudio()
+    ripple2.in(3000)
     ripple2Audio.playAudio()
   })
 
   event.onOut(() => {
     syriaEvent.title.out()
     syriaEvent.description.out()
-    syriaEvent.backButton.out()
+    // syriaEvent.backButton.out()
 
     backgroundAudio.stop()
 
+    ripple1.out()
     ripple1Audio.stopAudio()
+    ripple2.out()
     ripple2Audio.stopAudio()
   })
 
