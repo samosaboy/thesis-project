@@ -60,14 +60,14 @@ export const SyriaEvent = () => {
    * Ripple 2
    * */
   const ripple2: any = new Wave({
-    color: '#e06361',
+    color: '#8cafc9',
     linewidth: 30,
     radius: 6,
     resolution: 360,
-    waveNumber: 10,
+    waveNumber: 5,
     tetaOffset: 120,
     waveLength: 1,
-    waveType: 'crazy',
+    waveType: 'normal',
   })
   event.add(ripple2.mesh)
   const ripple2Audio = new WaveAudio('../../public/media/syria_damascus/cello_D2.mp3', {
@@ -126,14 +126,14 @@ export const SyriaEvent = () => {
      * Ripple 1
      * */
     ripple1.update(ripple1Data.getAverageFrequency())
-    ripple1.mesh.geometry.verticesNeedUpdate = true
-    ripple1.mesh.geometry.dynamic = true
+    // ripple1.mesh.geometry.verticesNeedUpdate = true
+    // ripple1.mesh.geometry.dynamic = true
     /*
      * Ripple 2
      * */
     ripple2.update(ripple2Data.getAverageFrequency())
-    ripple2.mesh.geometry.verticesNeedUpdate = true
-    ripple2.mesh.geometry.dynamic = true
+    // ripple2.mesh.geometry.verticesNeedUpdate = true
+    // ripple2.mesh.geometry.dynamic = true
   })
 
 

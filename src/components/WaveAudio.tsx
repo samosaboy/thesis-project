@@ -3,7 +3,6 @@ import { RootComponent } from '../containers/App'
 // Implement THREE CACHE?
 
 const THREE = require('three')
-const TWEEN = require('@tweenjs/tween.js')
 
 export class WaveAudio {
   private sound: any

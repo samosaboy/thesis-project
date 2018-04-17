@@ -163,18 +163,7 @@ export class Root {
       window.innerWidth,
       window.innerHeight,
     )
-    this.renderer.setViewport(
-      0,
-      0,
-      window.innerWidth * this.devicePixelRatio,
-      window.innerHeight * this.devicePixelRatio,
-    )
     this.renderer.setPixelRatio(this.devicePixelRatio)
-    this.renderer.shadowMap.enabled = true
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
-    this.renderer.gammaInput = true
-    this.renderer.gammaOutput = true
-    this.renderer.shadowMap.enabled = true
     container.appendChild(this.renderer.domElement)
   }
 
@@ -245,7 +234,7 @@ export class Root {
       })
   }
 
-  public setCurrentSceneFromState = () => {
+  private setCurrentSceneFromState = () => {
     this.currentScene = store.getState().sceneData.currentScene
     /*
      * Instantiate the post-processing
@@ -259,7 +248,7 @@ export class Root {
     }, 500)
   }
 
-  public switchSceneChangeOn = (setDefault = false) => {
+  private switchSceneChangeOn = (setDefault = false) => {
     let data = {
       from: null,
       to: this.defaultScene,
@@ -278,7 +267,7 @@ export class Root {
     }
   }
 
-  public animate = () => {
+  private animate = () => {
     this.stats.update()
     TWEEN.update()
     this.render()
