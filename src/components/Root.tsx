@@ -78,7 +78,6 @@ export class Root {
     this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
-      preserveDrawingBuffer: true,
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.mouse = new THREE.Vector2()

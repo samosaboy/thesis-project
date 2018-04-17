@@ -282,11 +282,11 @@ export const Pond = () => {
     SyriaEvent.in()
   })
 
-  SyriaEvent.getElement().cursor = 'pointer'
-  SyriaEvent.getElement().on('mouseover', () => {
-    SyriaEvent.hoverIn()
-    SyriaEventTitle.in(500)
-  })
+  // SyriaEvent.getElement().cursor = 'pointer'
+  // SyriaEvent.getElement().on('mouseover', (q) => {
+  //   SyriaEvent.hoverIn()
+  //   SyriaEventTitle.in(500)
+  // })
   SyriaEvent.getElement().on('mouseout', () => {
     SyriaEvent.hoverOut()
     SyriaEventTitle.out(500)
@@ -441,9 +441,17 @@ export const Pond = () => {
       eventViewHelperText.in()
     }
     backgroundParticles.in()
+    SyriaEvent.getElement().cursor = 'pointer'
+    SyriaEvent.getElement().on('mouseover', () => {
+      SyriaEvent.hoverIn()
+      SyriaEventTitle.in(500)
+    })
   })
 
   pondScene.onOut(() => {
+    SyriaEvent.getElement().on('mouseover', (q) => {
+      q.stopped = true
+    })
     // put all Events in onOut()
     SyriaEvent.out()
     backgroundParticles.out()

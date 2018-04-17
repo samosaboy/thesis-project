@@ -73,7 +73,7 @@ export const Welcome = () => {
   welcomeScene.add(keepHolding.text)
 
   const splashDescription = new TextGeometry(
-    'T H I S     E X P E R I E N C E     R E Q U I R E S     H E A D P H O N E S.', {
+    'P L E A S E     P U T     O N     T H E     H E A D P H O N E S.', {
       align: 'center',
       size: 150,
       lineSpacing: 10,
@@ -82,7 +82,7 @@ export const Welcome = () => {
       color: '#FFFFFF',
       position: {
         x: 0,
-        y: -40,
+        y: -30,
         z: 0,
       },
     })
