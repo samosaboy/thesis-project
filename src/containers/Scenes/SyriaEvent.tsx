@@ -1,7 +1,10 @@
 import {
   Country,
   Scene,
+  Wave,
+  WaveAudio,
 } from '../../components'
+import { RootComponent } from '../App'
 
 const THREE = require('three')
 
@@ -18,27 +21,91 @@ export const SyriaEvent = () => {
   event.add(syriaEvent.title.text)
   event.add(syriaEvent.description.text)
 
-  const light = new THREE.SpotLight(0xFFFFFF, 10)
-  light.position.set(0, 0, 100)
+  const light = new THREE.PointLight(0xFFFFFF, 10)
+  light.position.set(0, 0, 10)
   light.castShadow = false
   event.add(light)
 
-  /* Ripple 1 */
-  const geometry = new THREE.TorusGeometry(20, 2, 2, 69)
-  const material = new THREE.MeshStandardMaterial({ color: '#a2b0e0' })
-  const torus = new THREE.Mesh(geometry, material)
-  event.add(torus)
+  /*
+   * Background Audio
+   */
+  const backgroundAudio = new THREE.Audio(RootComponent.listener)
+  event.add(backgroundAudio)
+
+  const audioLoader = new THREE.AudioLoader()
+
+  /*
+   * Ripple 1
+   * */
+  const ripple1: any = new Wave({
+    color: '#E0E0E0',
+    linewidth: 30,
+    radius: 4,
+    resolution: 360,
+    waveNumber: 30,
+    tetaOffset: 120,
+    waveLength: 1,
+    waveType: 'crazy',
+  })
+  event.add(ripple1.mesh)
+  const ripple1Audio = new WaveAudio('../../public/media/syria_damascus/cello_A4.mp3', {
+    volume: 2,
+    interval: 2000,
+    color: '#E0E0E0',
+  })
+  event.add(ripple1Audio.audio)
+  const ripple1Data = ripple1Audio.createAnalyzer()
+
+  /*
+   * Ripple 2
+   * */
+  const ripple2: any = new Wave({
+    color: '#e06361',
+    linewidth: 30,
+    radius: 6,
+    resolution: 360,
+    waveNumber: 10,
+    tetaOffset: 120,
+    waveLength: 1,
+    waveType: 'crazy',
+  })
+  event.add(ripple2.mesh)
+  const ripple2Audio = new WaveAudio('../../public/media/syria_damascus/cello_D2.mp3', {
+    volume: 8,
+    interval: 5000,
+    color: '#E0E0E0',
+  })
+  event.add(ripple2Audio.audio)
+  const ripple2Data = ripple2Audio.createAnalyzer()
 
   event.onIn(() => {
     syriaEvent.title.in()
     syriaEvent.description.in()
     syriaEvent.backButton.in()
+
+    /*
+     * Play Background Audio
+     * */
+    audioLoader.load('../../public/media/drone_01_sound.mp3', (buffer) => {
+      backgroundAudio.setBuffer(buffer)
+      backgroundAudio.setLoop(true)
+      backgroundAudio.setVolume(2)
+      backgroundAudio.play()
+    })
+
+    ripple1Audio.playAudio()
+    ripple2Audio.playAudio()
   })
 
   event.onOut(() => {
     syriaEvent.title.out()
     syriaEvent.description.out()
     syriaEvent.backButton.out()
+
+    backgroundAudio.stop()
+
+    ripple1Audio.stopAudio()
+    ripple2Audio.stopAudio()
   })
 
   event.onStart(() => {
@@ -53,6 +120,20 @@ export const SyriaEvent = () => {
 
   event.onUpdate(() => {
     syriaEvent.update()
+
+    // TODO: Simplify this
+    /*
+     * Ripple 1
+     * */
+    ripple1.update(ripple1Data.getAverageFrequency())
+    ripple1.mesh.geometry.verticesNeedUpdate = true
+    ripple1.mesh.geometry.dynamic = true
+    /*
+     * Ripple 2
+     * */
+    ripple2.update(ripple2Data.getAverageFrequency())
+    ripple2.mesh.geometry.verticesNeedUpdate = true
+    ripple2.mesh.geometry.dynamic = true
   })
 
 

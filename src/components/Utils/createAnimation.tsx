@@ -42,6 +42,10 @@ export class createAnimation {
       .onComplete(() => {
         this.isPlaying = false
         this.el.visible = false
+        // if (this.el.geometry && this.el.material) {
+        //   this.el.geometry.dispose()
+        //   this.el.material.dispose()
+        // }
       })
       .start()
   }

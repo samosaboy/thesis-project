@@ -13,6 +13,7 @@ import {
   EffectComposer,
   RenderPass,
   SMAAPass,
+  ShockWavePass
 } from 'postprocessing'
 
 import 'three/copyshader'
@@ -63,6 +64,9 @@ export class Root {
   public scene: THREE.Scene
   public backToEvent: boolean
 
+  /* Audio */
+  public listener: THREE.AudioListener
+
   constructor() {
     /*
      * Basic THREE setup
@@ -90,11 +94,20 @@ export class Root {
      * */
     this.stats = new Stats()
     this.stats.showPanel(0)
+    this.stats.dom.style.right = 0
+    this.stats.dom.style.left = 'auto'
     document.body.appendChild(this.stats.dom)
 
     this.step = 0
     this.cameraSpeed = 1
     this.cameraShake = 0
+
+    /*
+     * Setup audio Listener
+     * */
+
+    this.listener = new THREE.AudioListener()
+    this.camera.add(this.listener)
 
     /*
      * Set scene list
@@ -191,6 +204,7 @@ export class Root {
     bloomPass.renderToScreen = true
     const copyPass = new THREE.ShaderPass(THREE.CopyShader)
     copyPass.renderToScreen = true
+
     this.composer.addPass(copyPass)
     this.composer.addPass(bloomPass)
   }

@@ -51,7 +51,7 @@ export class Country {
     this.sky = new THREE.Mesh(skyGeometry, skyMaterial)
     this.sky.visible = false
 
-    const geometry = new THREE.PlaneBufferGeometry(2000, 2000, 300, 300)
+    const geometry = new THREE.PlaneBufferGeometry(window.innerWidth * 1.5, window.innerHeight * 1.5, 100, 100)
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
     const colors = new THREE.BufferAttribute(new Float32Array(60 * 3 * 4), 4)
 
@@ -68,7 +68,7 @@ export class Country {
       },
       radius: {
         type: 'f',
-        value: 2,
+        value: 10,
       },
     }
 
@@ -104,7 +104,7 @@ export class Country {
 
     this.terrain = new THREE.Mesh(geometry, shaderMaterial)
     this.terrain.visible = false
-    this.terrain.position.set(0, -400, 0)
+    this.terrain.position.set(0, 0, -25)
     this.terrain.rotateX(1.5)
 
     this.backButton = new TextGeometry(
@@ -155,7 +155,7 @@ export class Country {
         color: '#cbcbcb',
         position: {
           x: 0,
-          y: -180,
+          y: 175,
           z: 0,
         },
       },

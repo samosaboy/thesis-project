@@ -77,6 +77,8 @@ class App extends React.Component<App.Props, App.State> {
           return
         }
 
+        console.log(scene)
+
         if (to === 'welcomeScene') {
           WelcomeScene.in()
           WelcomeScene.start()
