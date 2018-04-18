@@ -85,6 +85,9 @@ export class Root {
       antialias: false,
     })
     this.composer = new THREE.EffectComposer(this.renderer)
+    const res = window.devicePixelRatio
+    this.composer.addPass(new THREE.RenderPass(this.scene, this.camera))
+    this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
     this.mouse = new THREE.Vector2()
     // this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
@@ -174,10 +177,6 @@ export class Root {
   }
 
   private postProcessing = () => {
-    const res = window.devicePixelRatio
-    this.composer.addPass(new THREE.RenderPass(this.scene, this.camera))
-    this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
-
     const bloomPass = new BloomPass(
       {
         resolutionScale: 0.04,
@@ -218,7 +217,7 @@ export class Root {
     setTimeout(() => {
       this.switchSceneChangeOn(false)
       this.startPostAndControls()
-    }, 1000)
+    }, 0)
   }
 
   private startPostAndControls = () => {
@@ -247,8 +246,7 @@ export class Root {
     this.stats.update()
     TWEEN.update()
     this.render()
-    this.delta = this.clock.getDelta()
-    this.composer.render()
+    // this.composer.render()
     this.frameId = requestAnimationFrame(this.animate)
   }
 

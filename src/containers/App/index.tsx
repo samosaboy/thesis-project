@@ -85,8 +85,6 @@ class App extends React.Component<App.Props, App.State> {
           currentScene: to,
         })
 
-        console.log(scene)
-
         if (to === 'welcomeScene') {
           RootComponent.getCamera().position.set(0, 2000, 300)
           WelcomeScene.in()

@@ -287,11 +287,11 @@ export const Pond = () => {
     SyriaEvent.in()
   })
 
-  // SyriaEvent.getElement().cursor = 'pointer'
-  // SyriaEvent.getElement().on('mouseover', (q) => {
-  //   SyriaEvent.hoverIn()
-  //   SyriaEventTitle.in(500)
-  // })
+  SyriaEvent.getElement().cursor = 'pointer'
+  SyriaEvent.getElement().on('mouseover', (q) => {
+    SyriaEvent.hoverIn()
+    SyriaEventTitle.in(500)
+  })
   SyriaEvent.getElement().on('mouseout', () => {
     SyriaEvent.hoverOut()
     SyriaEventTitle.out(500)
@@ -328,7 +328,7 @@ export const Pond = () => {
   planeMesh.receiveShadow = true
   planeMesh.visible = false
 
-  // pondScene.add(planeMesh)
+  pondScene.add(planeMesh)
 
   /*
    * Light Params
@@ -370,14 +370,14 @@ export const Pond = () => {
   })
   const sky = new THREE.Mesh(skyGeometry, skyMaterial)
   sky.visible = false
-  // pondScene.add(sky)
+  pondScene.add(sky)
 
   const backgroundParticles = new BackgroundParticles({
     count: 10000,
     particleSize: 0.9,
   })
-  pondScene.add(backgroundParticles.getElement())
   backgroundParticles.getElement().visible = false
+  pondScene.add(backgroundParticles.getElement())
 
   const geometry = new THREE.PlaneBufferGeometry(2000, 2000, 300, 300)
   geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
@@ -433,7 +433,7 @@ export const Pond = () => {
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
   terrainMesh.visible = false
   terrainMesh.position.set(0, -150, -500)
-  // pondScene.add(terrainMesh)
+  pondScene.add(terrainMesh)
 
   pondScene.onIn(() => {
     if (!RootComponent.backToEvent) {
@@ -454,15 +454,12 @@ export const Pond = () => {
   })
 
   pondScene.onOut(() => {
-    if (!RootComponent.backToEvent) {
-      step1TextDesc2.out()
-      step1TextDesc1.out()
-      step1TextTitle.out()
-      Step1ContinueButton.out()
-    } else {
-      SyriaEvent.out()
-      eventViewHelperText.out()
-    }
+    step1TextDesc2.out()
+    step1TextDesc1.out()
+    step1TextTitle.out()
+    Step1ContinueButton.out()
+    SyriaEvent.out()
+    eventViewHelperText.out()
     backgroundParticles.out()
   })
 
