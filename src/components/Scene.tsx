@@ -3,7 +3,7 @@ const THREE = require('three')
 export class Scene {
   private name: string
   private isPlaying: boolean
-  public el: THREE.Scene
+  public el: THREE.Object3D
   public _in: any
   public _out: any
   public _start: any
@@ -11,7 +11,7 @@ export class Scene {
   public _update: any
 
   constructor(name: string) {
-    this.el = new THREE.Scene()
+    this.el = new THREE.Object3D()
     this.el.name = name
     this.isPlaying = false
   }

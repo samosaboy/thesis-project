@@ -10,6 +10,7 @@ const THREE = require('three')
 
 export const SyriaEvent = () => {
   const event = new Scene('syriaEvent')
+  event.el.visible = false
   const syriaEvent = new Country({
     countryName: 'Syria',
     description: 'Catastrophe as a result of the civil war',
@@ -24,6 +25,7 @@ export const SyriaEvent = () => {
   const light = new THREE.PointLight(0xFFFFFF, 10)
   light.position.set(0, 0, 10)
   light.castShadow = false
+  light.visible = false
   event.add(light)
 
   /*
@@ -47,6 +49,7 @@ export const SyriaEvent = () => {
     obj.center()
     countryMesh.scale.multiplyScalar(1.2)
   })
+  countryMesh.visible = false
   event.add(countryMesh)
 
   /*
@@ -132,13 +135,19 @@ export const SyriaEvent = () => {
   })
 
   event.onStart(() => {
+    event.el.visible = true
     syriaEvent.sky.visible = true
     syriaEvent.terrain.visible = true
-    event.el.visible = true
+    countryMesh.visible = true
+    light.visible = true
   })
 
   event.onStop(() => {
     event.el.visible = false
+    syriaEvent.sky.visible = false
+    syriaEvent.terrain.visible = false
+    countryMesh.visible = false
+    light.visible = false
   })
 
   event.onUpdate(() => {

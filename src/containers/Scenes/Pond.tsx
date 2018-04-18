@@ -325,7 +325,7 @@ export const Pond = () => {
   const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
   planeMesh.position.set(0, -75, 0)
   planeMesh.receiveShadow = true
-  // planeMesh.visible = false
+  planeMesh.visible = false
 
   // pondScene.add(planeMesh)
 
@@ -335,6 +335,7 @@ export const Pond = () => {
   const spotLight = new THREE.SpotLight(0xFFFFFF)
   spotLight.penumbra = 1 // how soft the spotlight looks
   spotLight.position.set(0, 300, 200)
+  spotLight.visible = false
   pondScene.add(spotLight)
 
   // const skyBox = new THREE.HemisphereLight('#373f52', '#0e0e1d')
@@ -367,8 +368,7 @@ export const Pond = () => {
     side: THREE.BackSide,
   })
   const sky = new THREE.Mesh(skyGeometry, skyMaterial)
-  // sky.visible = false
-
+  sky.visible = false
   pondScene.add(sky)
 
   const backgroundParticles = new BackgroundParticles({
@@ -376,6 +376,7 @@ export const Pond = () => {
     particleSize: 0.9,
   })
   pondScene.add(backgroundParticles.getElement())
+  backgroundParticles.getElement().visible = false
 
   const geometry = new THREE.PlaneBufferGeometry(2000, 2000, 300, 300)
   geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
@@ -429,7 +430,7 @@ export const Pond = () => {
   })
 
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
-  // terrainMesh.visible = false
+  terrainMesh.visible = false
   terrainMesh.position.set(0, -150, -500)
   // terrainMesh.rotateY(110)
   pondScene.add(terrainMesh)
@@ -462,18 +463,19 @@ export const Pond = () => {
   })
 
   pondScene.onStart(() => {
-    // sky.visible = true
-    // planeMesh.visible = true
-    // terrainMesh.visible = true
-    PondScene.el.visible = true
+    pondScene.el.visible = true
+    sky.visible = true
+    planeMesh.visible = true
+    terrainMesh.visible = true
+    spotLight.visible = true
   })
 
   pondScene.onStop(() => {
-    // sky.visible = false
-    // planeMesh.visible = false
-    // terrainMesh.visible = false
-    // spotLight.visible = false
-    PondScene.el.visible = false
+    pondScene.el.visible = false
+    sky.visible = false
+    planeMesh.visible = false
+    terrainMesh.visible = false
+    spotLight.visible = false
   })
 
   pondScene.onUpdate(() => {

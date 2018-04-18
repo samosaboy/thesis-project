@@ -10,6 +10,7 @@ const TWEEN = require('@tweenjs/tween.js')
 
 export const Welcome = () => {
   const welcomeScene = new Scene('welcomeScene')
+  welcomeScene.el.position.set(0, 0, 0)
 
   const skyGeometry = new THREE.SphereBufferGeometry(1000, 4, 4)
   const skyMaterial = new THREE.ShaderMaterial({

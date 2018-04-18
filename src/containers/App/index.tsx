@@ -13,7 +13,7 @@ import {
   Root,
 } from '../../components'
 
-import {disposeNode} from '../../components/Utils/disposeNode.js'
+const THREE = require('three')
 
 import * as style from './style.css'
 
@@ -75,9 +75,10 @@ class App extends React.Component<App.Props, App.State> {
         SyriaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('syriaEvent')
+      RootComponent.setDefaultScreen('welcomeScene')
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
+
 
         if (to === null && from == null) {
           return
@@ -86,6 +87,10 @@ class App extends React.Component<App.Props, App.State> {
         this.setState({
           currentScene: to,
         })
+
+        console.log(scene)
+
+        RootComponent.getCamera().lookAt(new THREE.Vector3(0, 0, 0))
 
         if (to === 'welcomeScene') {
           WelcomeScene.in()
@@ -187,14 +192,14 @@ class App extends React.Component<App.Props, App.State> {
   public render() {
     return (
       <main>
-        {this.renderDOMByScene()}
-        <div
-          className={style.sceneFadeDiv}
-          style={{
-            zIndex: this.state.isTransitioning ? 999 : -999,
-            opacity: 1,
-          }}
-        />
+        {/*{this.renderDOMByScene()}*/}
+        {/*<div*/}
+          {/*className={style.sceneFadeDiv}*/}
+          {/*style={{*/}
+            {/*zIndex: this.state.isTransitioning ? 999 : -999,*/}
+            {/*opacity: 1,*/}
+          {/*}}*/}
+        {/*/>*/}
         <div
           style={{
             width: window.innerWidth,
@@ -202,14 +207,6 @@ class App extends React.Component<App.Props, App.State> {
             overflow: 'hidden',
           }}
           ref={node => this.svgContainer = node}
-        />
-        <div
-          style={{
-            width: window.innerWidth,
-            height: window.innerHeight,
-            overflow: 'hidden',
-          }}
-          ref={node => this.syriaEventContainer = node}
         />
       </main>
     )

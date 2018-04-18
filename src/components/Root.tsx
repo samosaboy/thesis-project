@@ -177,12 +177,6 @@ export class Root {
       this.renderer = null
       resolve()
     })
-
-  }
-
-  private resetHandleMouseMove = () => {
-    this.toName = ''
-    store.dispatch(resetMouseEvent({ object: null }))
   }
 
   public handleMouseMove = (event) => {
@@ -192,7 +186,7 @@ export class Root {
 
   private postProcessing = () => {
     const res = window.devicePixelRatio
-    this.composer.addPass(new THREE.RenderPass(this.currentScene, this.camera))
+    this.composer.addPass(new THREE.RenderPass(this.scene, this.camera))
     this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
 
     const bloomPass = new BloomPass(
@@ -213,18 +207,15 @@ export class Root {
 
   private switchScreenPromise = (name): Promise<any> => {
     return new Promise(resolve => {
-      store.dispatch(setCurrentScene({
-        name,
-        isTransitioning: true,
-      }))
+      this.currentScene = this.sceneList[name]
       resolve()
     })
   }
 
   public addScenes = (sections: Array<any>): void => {
     sections.forEach(section => {
-      this.sceneList.push(section)
-      store.dispatch(addToSceneList({ scene: section.el }))
+      this.sceneList[section.el.name] = section
+      this.scene.add(section.el)
     })
   }
 
@@ -248,19 +239,18 @@ export class Root {
   }
 
   private setCurrentSceneFromState = () => {
-    this.currentScene = store.getState().sceneData.currentScene
     /*
      * Instantiate the post-processing
      */
     this.postProcessing()
-    this.currentScene.fog = new THREE.Fog(new THREE.Color('#000000'), 600, 1000)
-    const interaction = new Interaction(this.renderer, this.currentScene, this.camera)
+    this.scene.fog = new THREE.Fog(new THREE.Color('#000000'), 600, 1000)
+    const interaction = new Interaction(this.renderer, this.scene, this.camera)
     interaction.interactionFrequency = 1
     interaction.moveWhenInside = false
     // This is our 'hacky' fade scene method
-    setTimeout(() => {
-      store.dispatch(sceneSetComplete({ isTransitioning: false }))
-    }, 500)
+    // setTimeout(() => {
+    //   store.dispatch(sceneSetComplete({ isTransitioning: false }))
+    // }, 500)
   }
 
   private switchSceneChangeOn = (setDefault = false) => {
@@ -271,7 +261,7 @@ export class Root {
     if (!setDefault) {
       if (this.currentScene.name !== this.nextScene.name) {
         data = {
-          from: this.currentScene.name,
+          from: this.currentScene.el.name,
           to: this.nextScene.name,
         }
       }
@@ -292,30 +282,32 @@ export class Root {
   }
 
   private render = () => {
-    let renderSceneFromState
-    switch (this.currentScene.name) {
-      case 'welcomeScene':
-        renderSceneFromState = WelcomeScene
-        break
-      case 'pondScene':
-        renderSceneFromState = PondScene
-        break
-      case 'syriaEvent':
-        renderSceneFromState = SyriaEventScene
-        break
-      default:
-        break
-    }
-    renderSceneFromState.update()
+    // let renderSceneFromState
+    // switch (this.currentScene.name) {
+    //   case 'welcomeScene':
+    //     renderSceneFromState = WelcomeScene
+    //     break
+    //   case 'pondScene':
+    //     renderSceneFromState = PondScene
+    //     break
+    //   case 'syriaEvent':
+    //     renderSceneFromState = SyriaEventScene
+    //     break
+    //   default:
+    //     break
+    // }
+    // renderSceneFromState.update()
 
-    this.camera.position.y += Math.cos(this.cameraShake) / 20
-    this.cameraShake += 0.005
+    this.currentScene.update()
 
-    if (this.mouse.mouseX) {
-      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.08
-      // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
-      this.camera.lookAt(new THREE.Vector3(0, this.camera.position.y, 0))
-    }
+    // this.camera.position.y += Math.cos(this.cameraShake) / 20
+    // this.cameraShake += 0.005
+
+    // if (this.mouse.mouseX) {
+    //   this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.08
+    //   // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
+    //   this.camera.lookAt(new THREE.Vector3(0, this.camera.position.y, 0))
+    // }
 
     this.step += 1
 
