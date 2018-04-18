@@ -64,8 +64,6 @@ class App extends React.Component<App.Props, App.State> {
 
   private svgContainer: any
 
-  private syriaEventContainer: any
-
   componentDidMount() {
     if (this.svgContainer) {
       RootComponent.setContainer(this.svgContainer)
@@ -79,8 +77,7 @@ class App extends React.Component<App.Props, App.State> {
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
 
-
-        if (to === null && from == null) {
+        if (to === null && from == null || to === from) {
           return
         }
 
@@ -90,12 +87,12 @@ class App extends React.Component<App.Props, App.State> {
 
         console.log(scene)
 
-        RootComponent.getCamera().lookAt(new THREE.Vector3(0, 0, 0))
-
         if (to === 'welcomeScene') {
+          RootComponent.getCamera().position.set(0, 2000, 300)
           WelcomeScene.in()
           WelcomeScene.start()
         } else if (to === 'pondScene') {
+          RootComponent.getCamera().position.set(0, 0, 300)
           PondScene.in()
           PondScene.start()
         } else if (to === 'syriaEvent') {
@@ -132,7 +129,7 @@ class App extends React.Component<App.Props, App.State> {
               className={style.backButton}
               onClick={() => {
                 RootComponent.backToEvent = true
-                RootComponent.switchScreen('pondScene')
+                RootComponent.switchScreen('syriaEventScene', 'pondScene')
               }}>
               Back
             </button>
@@ -162,7 +159,8 @@ class App extends React.Component<App.Props, App.State> {
             <button
               className={style.backButton}
               onClick={() => {
-                RootComponent.switchScreen('welcomeScene')
+                RootComponent.switchScreen('pondScene', 'welcomeScene')
+                RootComponent.getCamera().position.set(0, 0, 300)
               }}>
               Back
             </button>
@@ -192,7 +190,7 @@ class App extends React.Component<App.Props, App.State> {
   public render() {
     return (
       <main>
-        {/*{this.renderDOMByScene()}*/}
+        {this.renderDOMByScene()}
         {/*<div*/}
           {/*className={style.sceneFadeDiv}*/}
           {/*style={{*/}

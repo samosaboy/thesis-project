@@ -3,16 +3,20 @@ import {
   Scene,
   TextGeometry,
 } from '../../components'
-import { RootComponent } from '../App'
+import {
+  RootComponent,
+  WelcomeScene,
+} from '../App'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
 export const Welcome = () => {
   const welcomeScene = new Scene('welcomeScene')
-  welcomeScene.el.position.set(0, 0, 0)
+  welcomeScene.el.position.set(0, 2000, 0)
+  welcomeScene.el.visible = false
 
-  const skyGeometry = new THREE.SphereBufferGeometry(1000, 4, 4)
+  const skyGeometry = new THREE.SphereBufferGeometry(3000, 36, 36)
   const skyMaterial = new THREE.ShaderMaterial({
     vertexShader: `varying vec3 vWorldPosition;
   	void main() {
@@ -38,7 +42,7 @@ export const Welcome = () => {
     side: THREE.BackSide,
   })
   const sky = new THREE.Mesh(skyGeometry, skyMaterial)
-  sky.visible = true
+  sky.visible = false
   welcomeScene.add(sky)
 
   const splashText = new TextGeometry('T H E \n R I P P L E \n E F F E C T', {
@@ -54,7 +58,6 @@ export const Welcome = () => {
       z: 0,
     },
   })
-
   welcomeScene.add(splashText.text)
 
   const keepHolding = new TextGeometry('K E E P \n H O L D I N G', {
@@ -129,16 +132,13 @@ export const Welcome = () => {
   let time = 0
   let mouseDown
 
-  button.text.on('click', () => {
-    return
-  })
-
   button.text.on('mousedown', () => {
     sprite.in(1000)
     splashText.out(500)
     splashDescription.out()
     keepHolding.in()
     mouseDown = true
+    RootComponent.switchScreen('welcomeScene', 'pondScene')
   })
   button.text.on('mouseup', () => {
     sprite.out()
@@ -183,11 +183,13 @@ export const Welcome = () => {
   })
 
   welcomeScene.onStart(() => {
+    welcomeScene.el.visible = true
     sky.visible = true
     alphaMap.visible = true
   })
 
   welcomeScene.onStop(() => {
+    welcomeScene.el.visible = false
     sky.visible = false
     alphaMap.visible = false
   })
@@ -199,7 +201,7 @@ export const Welcome = () => {
     if (mouseDown) {
       time += 1 / 60
       if (time > 4) {
-        RootComponent.switchScreen('pondScene')
+        RootComponent.switchScreen('welcomeScene', 'pondScene')
       }
     } else {
       time = 0

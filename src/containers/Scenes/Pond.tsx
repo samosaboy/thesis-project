@@ -16,6 +16,7 @@ const TWEEN = require('@tweenjs/tween.js')
 
 export const Pond = () => {
   const pondScene = new Scene('pondScene')
+  pondScene.el.position.set(0, 0, 0)
   pondScene.el.visible = false
 
   /*
@@ -369,7 +370,7 @@ export const Pond = () => {
   })
   const sky = new THREE.Mesh(skyGeometry, skyMaterial)
   sky.visible = false
-  pondScene.add(sky)
+  // pondScene.add(sky)
 
   const backgroundParticles = new BackgroundParticles({
     count: 10000,
@@ -432,8 +433,7 @@ export const Pond = () => {
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
   terrainMesh.visible = false
   terrainMesh.position.set(0, -150, -500)
-  // terrainMesh.rotateY(110)
-  pondScene.add(terrainMesh)
+  // pondScene.add(terrainMesh)
 
   pondScene.onIn(() => {
     if (!RootComponent.backToEvent) {
@@ -454,15 +454,20 @@ export const Pond = () => {
   })
 
   pondScene.onOut(() => {
-    SyriaEvent.getElement().on('mouseover', (q) => {
-      q.stopped = true
-    })
-    // put all Events in onOut()
-    SyriaEvent.out()
+    if (!RootComponent.backToEvent) {
+      step1TextDesc2.out()
+      step1TextDesc1.out()
+      step1TextTitle.out()
+      Step1ContinueButton.out()
+    } else {
+      SyriaEvent.out()
+      eventViewHelperText.out()
+    }
     backgroundParticles.out()
   })
 
   pondScene.onStart(() => {
+    backgroundParticles.getElement().visible = true
     pondScene.el.visible = true
     sky.visible = true
     planeMesh.visible = true
@@ -471,6 +476,7 @@ export const Pond = () => {
   })
 
   pondScene.onStop(() => {
+    backgroundParticles.getElement().visible = false
     pondScene.el.visible = false
     sky.visible = false
     planeMesh.visible = false

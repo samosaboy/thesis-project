@@ -52,14 +52,13 @@ export class Root {
   private sceneList: Array<any>
   private currentScene: any
   private nextScene: any
+  private defaultScene: any
 
   public step: number
   public delta: number
 
   private cameraSpeed: number
   private cameraShake: number
-
-  private defaultScene: string
 
   public scene: THREE.Scene
   public backToEvent: boolean
@@ -81,13 +80,13 @@ export class Root {
       window.innerWidth / window.innerHeight,
       0.01,
       10000)
-    this.camera.position.set(0, 0, 300)
+    // this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.mouse = new THREE.Vector2()
-    this.camera.updateMatrixWorld()
+    // this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
     this.scene.add(this.camera)
 
@@ -169,16 +168,6 @@ export class Root {
     container.appendChild(this.renderer.domElement)
   }
 
-  public clearContext = () => {
-    return new Promise(resolve => {
-      this.renderer.forceContextLoss()
-      this.renderer.context = null
-      this.renderer.domElement = null
-      this.renderer = null
-      resolve()
-    })
-  }
-
   public handleMouseMove = (event) => {
     this.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
     // this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
@@ -205,12 +194,6 @@ export class Root {
     this.composer.addPass(bloomPass)
   }
 
-  private switchScreenPromise = (name): Promise<any> => {
-    return new Promise(resolve => {
-      this.currentScene = this.sceneList[name]
-      resolve()
-    })
-  }
 
   public addScenes = (sections: Array<any>): void => {
     sections.forEach(section => {
@@ -220,25 +203,25 @@ export class Root {
   }
 
   public setDefaultScreen = (name: string): void => {
-    this.defaultScene = name
-    this.switchScreenPromise(name)
-      .then(() => {
-        this.setCurrentSceneFromState()
-        this.switchSceneChangeOn(true)
-      })
+    // this.currentScene = this.sceneList[name]
+    this.defaultScene = this.sceneList[name]
+    setTimeout(() => {
+      this.switchSceneChangeOn(true)
+      this.startPostAndControls()
+    }, 0)
   }
 
-  public switchScreen = (name: string): void => {
+  public switchScreen = (from?: string, to?: string): any => {
     this.defaultScene = null
-    this.nextScene = { name }
-    this.switchScreenPromise(name)
-      .then(() => {
-        this.switchSceneChangeOn(false)
-        this.setCurrentSceneFromState()
-      })
+    this.currentScene = this.sceneList[from]
+    this.nextScene = this.sceneList[to]
+    setTimeout(() => {
+      this.switchSceneChangeOn(false)
+      this.startPostAndControls()
+    }, 1000)
   }
 
-  private setCurrentSceneFromState = () => {
+  private startPostAndControls = () => {
     /*
      * Instantiate the post-processing
      */
@@ -247,24 +230,12 @@ export class Root {
     const interaction = new Interaction(this.renderer, this.scene, this.camera)
     interaction.interactionFrequency = 1
     interaction.moveWhenInside = false
-    // This is our 'hacky' fade scene method
-    // setTimeout(() => {
-    //   store.dispatch(sceneSetComplete({ isTransitioning: false }))
-    // }, 500)
   }
 
-  private switchSceneChangeOn = (setDefault = false) => {
-    let data = {
-      from: null,
-      to: this.defaultScene,
-    }
-    if (!setDefault) {
-      if (this.currentScene.name !== this.nextScene.name) {
-        data = {
-          from: this.currentScene.el.name,
-          to: this.nextScene.name,
-        }
-      }
+  private switchSceneChangeOn = (isDefault: boolean = false) => {
+    const data = {
+      from: isDefault ? null : this.currentScene.el.name,
+      to: isDefault ? this.defaultScene.el.name : this.nextScene.el.name,
     }
     RootEvent.eventTrigger('sceneChangeStart', data)
     if (!this.frameId) {
@@ -298,7 +269,17 @@ export class Root {
     // }
     // renderSceneFromState.update()
 
-    this.currentScene.update()
+    // if (this.defaultScene) {
+    //   this.defaultScene.update()
+    // } else {
+    //   this.currentScene.update()
+    // }
+
+    if (this.defaultScene) {
+      this.defaultScene.update()
+    } else {
+      this.nextScene.update()
+    }
 
     // this.camera.position.y += Math.cos(this.cameraShake) / 20
     // this.cameraShake += 0.005
