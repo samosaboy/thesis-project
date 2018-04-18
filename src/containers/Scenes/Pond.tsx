@@ -6,13 +6,17 @@ import {
   TextGeometry,
 } from '../../components'
 
-import { RootComponent } from '../App'
+import {
+  PondScene,
+  RootComponent,
+} from '../App'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 
 export const Pond = () => {
   const pondScene = new Scene('pondScene')
+  pondScene.el.visible = false
 
   /*
    * Step 1
@@ -321,7 +325,7 @@ export const Pond = () => {
   const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
   planeMesh.position.set(0, -75, 0)
   planeMesh.receiveShadow = true
-  planeMesh.visible = false
+  // planeMesh.visible = false
 
   // pondScene.add(planeMesh)
 
@@ -363,7 +367,7 @@ export const Pond = () => {
     side: THREE.BackSide,
   })
   const sky = new THREE.Mesh(skyGeometry, skyMaterial)
-  sky.visible = false
+  // sky.visible = false
 
   pondScene.add(sky)
 
@@ -425,7 +429,7 @@ export const Pond = () => {
   })
 
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
-  terrainMesh.visible = false
+  // terrainMesh.visible = false
   terrainMesh.position.set(0, -150, -500)
   // terrainMesh.rotateY(110)
   pondScene.add(terrainMesh)
@@ -458,15 +462,18 @@ export const Pond = () => {
   })
 
   pondScene.onStart(() => {
-    sky.visible = true
-    planeMesh.visible = true
-    terrainMesh.visible = true
+    // sky.visible = true
+    // planeMesh.visible = true
+    // terrainMesh.visible = true
+    PondScene.el.visible = true
   })
 
   pondScene.onStop(() => {
-    sky.visible = false
-    planeMesh.visible = false
-    terrainMesh.visible = false
+    // sky.visible = false
+    // planeMesh.visible = false
+    // terrainMesh.visible = false
+    // spotLight.visible = false
+    PondScene.el.visible = false
   })
 
   pondScene.onUpdate(() => {

@@ -13,6 +13,8 @@ import {
   Root,
 } from '../../components'
 
+import {disposeNode} from '../../components/Utils/disposeNode.js'
+
 import * as style from './style.css'
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -62,6 +64,8 @@ class App extends React.Component<App.Props, App.State> {
 
   private svgContainer: any
 
+  private syriaEventContainer: any
+
   componentDidMount() {
     if (this.svgContainer) {
       RootComponent.setContainer(this.svgContainer)
@@ -71,7 +75,7 @@ class App extends React.Component<App.Props, App.State> {
         SyriaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('welcomeScene')
+      RootComponent.setDefaultScreen('syriaEvent')
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
 
@@ -114,40 +118,76 @@ class App extends React.Component<App.Props, App.State> {
     this.setState({ isTransitioning: nextProps.sceneData.isTransitioning })
   }
 
+  private renderDOMByScene = () => {
+    if (this.state.currentScene === 'syriaEvent') {
+      return (
+        <div>
+          <div className={style.header}>
+            <button
+              className={style.backButton}
+              onClick={() => {
+                RootComponent.backToEvent = true
+                RootComponent.switchScreen('pondScene')
+              }}>
+              Back
+            </button>
+            <div className={style.headerTitleContainer}>
+              <h2>Syria</h2>
+              <h4>Catastrophe as a result of the civil war</h4>
+            </div>
+            <div>Sd</div>
+          </div>
+          <div className={style.footer}>
+            <div style={{
+              color: '#E0E0E0',
+              borderTopColor: '#E0E0E0',
+            }}>One person becomes a refugee in this region every two seconds</div>
+            <div style={{
+              color: '#8cafc9',
+              borderTopColor: '#8cafc9',
+            }}>One civilian perishes in this region every five seconds
+            </div>
+          </div>
+        </div>
+      )
+    } else if (this.state.currentScene === 'pondScene') {
+      return (
+        <div>
+          <div className={style.header}>
+            <button
+              className={style.backButton}
+              onClick={() => {
+                RootComponent.switchScreen('welcomeScene')
+              }}>
+              Back
+            </button>
+            <div className={style.headerTitleContainer}>
+              <h2>Syria</h2>
+              <h4>Catastrophe as a result of the civil war</h4>
+            </div>
+            <div>Sd</div>
+          </div>
+          <div className={style.footer}>
+            <div style={{
+              color: '#E0E0E0',
+              borderTopColor: '#E0E0E0',
+            }}>One person becomes a refugee in this region every two seconds</div>
+            <div style={{
+              color: '#8cafc9',
+              borderTopColor: '#8cafc9',
+            }}>One civilian perishes in this region every five seconds
+            </div>
+          </div>
+        </div>
+      )
+    }
+    return null
+  }
+
   public render() {
     return (
       <main>
-        {
-          this.state.currentScene === 'syriaEvent' &&
-          <div>
-            <div className={style.header}>
-              <button
-                className={style.backButton}
-                onClick={() => {
-                  RootComponent.backToEvent = true
-                  RootComponent.switchScreen('pondScene')
-                }}>
-                Back
-              </button>
-              <div className={style.headerTitleContainer}>
-                <h2>Syria</h2>
-                <h4>Catastrophe as a result of the civil war</h4>
-              </div>
-              <div>Sd</div>
-            </div>
-            <div className={style.footer}>
-              <div style={{
-                color: '#E0E0E0',
-                borderTopColor: '#E0E0E0',
-              }}>One person becomes a refugee in this region every two seconds</div>
-              <div style={{
-                color: '#8cafc9',
-                borderTopColor: '#8cafc9',
-              }}>One civilian perishes in this region every five seconds
-              </div>
-            </div>
-          </div>
-        }
+        {this.renderDOMByScene()}
         <div
           className={style.sceneFadeDiv}
           style={{
@@ -162,6 +202,14 @@ class App extends React.Component<App.Props, App.State> {
             overflow: 'hidden',
           }}
           ref={node => this.svgContainer = node}
+        />
+        <div
+          style={{
+            width: window.innerWidth,
+            height: window.innerHeight,
+            overflow: 'hidden',
+          }}
+          ref={node => this.syriaEventContainer = node}
         />
       </main>
     )

@@ -134,11 +134,11 @@ export const SyriaEvent = () => {
   event.onStart(() => {
     syriaEvent.sky.visible = true
     syriaEvent.terrain.visible = true
+    event.el.visible = true
   })
 
   event.onStop(() => {
-    syriaEvent.sky.visible = false
-    syriaEvent.terrain.visible = false
+    event.el.visible = false
   })
 
   event.onUpdate(() => {

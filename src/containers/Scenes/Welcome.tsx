@@ -11,7 +11,7 @@ const TWEEN = require('@tweenjs/tween.js')
 export const Welcome = () => {
   const welcomeScene = new Scene('welcomeScene')
 
-  const skyGeometry = new THREE.SphereBufferGeometry(400, 4, 4)
+  const skyGeometry = new THREE.SphereBufferGeometry(1000, 4, 4)
   const skyMaterial = new THREE.ShaderMaterial({
     vertexShader: `varying vec3 vWorldPosition;
   	void main() {
@@ -29,7 +29,7 @@ export const Welcome = () => {
   		gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
   	}`,
     uniforms: {
-      topColor: { value: new THREE.Color('#16161b') },
+      topColor: { value: new THREE.Color('#26262f') },
       bottomColor: { value: new THREE.Color('#0e040a') },
       offset: { value: 100 },
       exponent: { value: 1.1 },
@@ -150,7 +150,7 @@ export const Welcome = () => {
 
   const geometry = new THREE.IcosahedronGeometry(300, 4)
   const material = new THREE.MeshStandardMaterial({
-    color: '#101319',
+    color: '#45526c',
     side: THREE.DoubleSide,
     alphaTest: 0.5,
     wireframe: true,
@@ -162,9 +162,11 @@ export const Welcome = () => {
   material.alphaMap.wrapT = material.alphaMap.wrapS = THREE.RepeatWrapping
   material.alphaMap.repeat.yz = 1
   const tube = new THREE.Mesh(geometry, material)
+  const tube2 = tube.clone()
+  tube2.position.set(500, 0, -700)
   tube.position.set(-200, 0, -200)
-
   welcomeScene.add(tube)
+  welcomeScene.add(tube2)
 
   welcomeScene.onIn(() => {
     button.in()
@@ -177,7 +179,6 @@ export const Welcome = () => {
     splashText.out()
     splashDescription.out()
     sprite.out()
-    console.log('out fired')
   })
 
   welcomeScene.onStart(() => {

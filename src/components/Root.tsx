@@ -74,6 +74,7 @@ export class Root {
 
     this.backToEvent = false
     this.scene = new THREE.Scene()
+    this.scene.matrixAutoUpdate = false
     this.devicePixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1
     this.camera = new THREE.PerspectiveCamera(
       70,
@@ -166,6 +167,17 @@ export class Root {
     )
     this.renderer.setPixelRatio(this.devicePixelRatio)
     container.appendChild(this.renderer.domElement)
+  }
+
+  public clearContext = () => {
+    return new Promise(resolve => {
+      this.renderer.forceContextLoss()
+      this.renderer.context = null
+      this.renderer.domElement = null
+      this.renderer = null
+      resolve()
+    })
+
   }
 
   private resetHandleMouseMove = () => {
