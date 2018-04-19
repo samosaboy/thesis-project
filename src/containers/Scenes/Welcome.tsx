@@ -132,19 +132,18 @@ export const Welcome = () => {
   let mouseDown
 
   button.text.on('mousedown', () => {
-    // sprite.in(1000)
-    // splashText.out(500)
-    // splashDescription.out()
-    // keepHolding.in()
-    // mouseDown = true
-    RootComponent.switchScreen('welcomeScene', 'pondScene')
+    sprite.in(1000)
+    splashText.out(500)
+    splashDescription.out()
+    keepHolding.in()
+    mouseDown = true
   })
   // button.text.on('mouseup', () => {
-  //   sprite.out()
-  //   splashText.in()
-  //   splashDescription.in()
-  //   keepHolding.out(500)
-  //   mouseDown = false
+    sprite.out()
+    splashText.in()
+    splashDescription.in()
+    keepHolding.out(500)
+    mouseDown = false
   // })
   button.text.cursor = 'pointer'
 
@@ -195,14 +194,14 @@ export const Welcome = () => {
     sprite.update(1000 * RootComponent.delta)
     tube.material.alphaMap.offset.y = RootComponent.step * 0.001
 
-    // if (mouseDown) {
-    //   time += 1 / 60
-    //   if (time > 4) {
-    //     RootComponent.switchScreen('welcomeScene', 'pondScene')
-    //   }
-    // } else {
-    //   time = 0
-    // }
+    if (mouseDown) {
+      time += 1 / 60
+      if (time > 4) {
+        RootComponent.switchScreen('welcomeScene', 'pondScene')
+      }
+    } else {
+      time = 0
+    }
   })
 
   return welcomeScene

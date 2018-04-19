@@ -18,16 +18,12 @@ import 'three/smaashader'
 import 'three/smaapass'
 import 'three/crossfadeScene'
 import { RootEvent } from '../containers/App'
+import { store } from '../index'
+import { setCurrentScene } from '../actions/actions'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
-
-import { store } from '../index'
-import {
-  sceneSetComplete,
-  setCurrentScene,
-} from '../actions/actions'
 
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
@@ -176,12 +172,11 @@ export class Root {
   }
 
   public setDefaultScreen = (name: string): void => {
-    // this.currentScene = this.sceneList[name]
     this.defaultScene = this.sceneList[name]
     this.camera.position.set(
       this.defaultScene.el.position.x,
       this.defaultScene.el.position.y,
-      this.defaultScene.el.position.z + 300
+      this.defaultScene.el.position.z + 300,
     )
     setTimeout(() => {
       this.switchSceneChangeOn(true)
@@ -202,12 +197,12 @@ export class Root {
       .easing(TWEEN.Easing.Circular.InOut)
       .onStart(() => {
         store.dispatch(setCurrentScene({
-          isTransitioning: true
+          isTransitioning: true,
         }))
       })
       .onComplete(() => {
         store.dispatch(setCurrentScene({
-          isTransitioning: false
+          isTransitioning: false,
         }))
         this.switchSceneChangeOn(false)
         this.startPostAndControls()
