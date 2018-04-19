@@ -89,10 +89,10 @@ export const Pond = () => {
    * */
 
   const sprite = new Icon('../../public/images/mouseiconmove-sprite.png', {
-    horizontal: 15,
-    vertical: 21,
+    horizontal: 16,
+    vertical: 20,
     total: 300,
-    duration: 10000,
+    duration: 1,
     position: {
       x: 0,
       y: 70,
@@ -344,7 +344,7 @@ export const Pond = () => {
   pondScene.add(sky)
 
   const backgroundParticles = new BackgroundParticles({
-    count: 10000,
+    count: 20000,
     particleSize: 0.9,
   })
   backgroundParticles.getElement().visible = false
@@ -403,7 +403,7 @@ export const Pond = () => {
 
   const terrainMesh = new THREE.Mesh(geometry, shaderMaterial)
   terrainMesh.visible = false
-  terrainMesh.position.set(0, -150, -500)
+  terrainMesh.position.set(0, -150, -700)
   pondScene.add(terrainMesh)
 
   pondScene.onIn(() => {

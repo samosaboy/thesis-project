@@ -107,20 +107,7 @@ export class EventParticles {
     this.createAnimation.out(1000)
   }
 
-  private update = () => {
-    this.group.children.forEach(child => {
-      child.position.y = this.cache.y
-      child.material.opacity = this.cache.opacity
-    })
-  }
-
   public getElement = () => this.group
-
-  public rotateElement = () => {
-    if (this.countryMesh) {
-      this.countryMesh.rotation.y += 0.005
-    }
-  }
 
   public hoverIn = () => {
     new TWEEN.Tween(this.sphereMaterial.uniforms['c'])

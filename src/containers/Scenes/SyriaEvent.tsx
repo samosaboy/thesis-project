@@ -1,6 +1,7 @@
 import {
   Country,
   Scene,
+  TextGeometry,
   Wave,
   WaveAudio,
 } from '../../components'
@@ -10,7 +11,7 @@ const THREE = require('three')
 
 export const SyriaEvent = () => {
   const event = new Scene('syriaEvent')
-  event.el.visible = false
+  event.el.position.set(0, -2000, 0)
   const syriaEvent = new Country({
     countryName: 'Syria',
     description: 'Catastrophe as a result of the civil war',
@@ -18,9 +19,6 @@ export const SyriaEvent = () => {
 
   event.add(syriaEvent.sky)
   event.add(syriaEvent.terrain)
-  // event.add(syriaEvent.backButton.text)
-  // event.add(syriaEvent.title.text)
-  // event.add(syriaEvent.description.text)
 
   const light = new THREE.PointLight(0xFFFFFF, 10)
   light.position.set(0, 0, 10)
@@ -51,6 +49,23 @@ export const SyriaEvent = () => {
   })
   countryMesh.visible = false
   event.add(countryMesh)
+
+  const city1 = new TextGeometry(
+    'D A M A S C U S', {
+      align: 'left',
+      size: 100,
+      lineSpacing: 15,
+      font: 'Lato',
+      style: 'Bold',
+      color: '#000000',
+      position: {
+        x: -125,
+        y: -75,
+        z: 2
+      }
+    }
+  )
+  event.add(city1.text)
 
   /*
    * Ripple 1
@@ -91,6 +106,8 @@ export const SyriaEvent = () => {
     waveCount: 240,
     waveScale: 0.1,
   })
+  ripple2.mesh.position.setX(-125)
+  ripple2.mesh.position.setY(-75)
   event.add(ripple2.mesh)
   const ripple2Audio = new WaveAudio('../../public/media/syria_damascus/cello_D2.mp3', {
     volume: 8,
@@ -101,9 +118,7 @@ export const SyriaEvent = () => {
   const ripple2Data = ripple2Audio.createAnalyzer()
 
   event.onIn(() => {
-    syriaEvent.title.in()
-    syriaEvent.description.in()
-    // syriaEvent.backButton.in()
+    city1.in()
 
     /*
      * Play Background Audio
@@ -122,9 +137,7 @@ export const SyriaEvent = () => {
   })
 
   event.onOut(() => {
-    syriaEvent.title.out()
-    syriaEvent.description.out()
-    // syriaEvent.backButton.out()
+    city1.out()
 
     backgroundAudio.stop()
 
@@ -135,7 +148,6 @@ export const SyriaEvent = () => {
   })
 
   event.onStart(() => {
-    event.el.visible = true
     syriaEvent.sky.visible = true
     syriaEvent.terrain.visible = true
     countryMesh.visible = true
@@ -143,7 +155,6 @@ export const SyriaEvent = () => {
   })
 
   event.onStop(() => {
-    event.el.visible = false
     syriaEvent.sky.visible = false
     syriaEvent.terrain.visible = false
     countryMesh.visible = false

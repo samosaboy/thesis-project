@@ -10,11 +10,17 @@ import { RootState } from '../../reducers/index'
 import { bindActionCreators } from 'redux'
 import {
   Event,
+  isDev,
   Root,
 } from '../../components'
 import * as style from './style.css'
 
-const THREE = require('three')
+if (!isDev) {
+  window.console.warn('😃 Hello! Check out my work @ nikunj.ca :)')
+  window.console.log = () => {}
+  window.console.warn = () => {}
+  window.console.error = () => {}
+}
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -75,7 +81,7 @@ class App extends React.Component<App.Props, App.State> {
         SyriaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('welcomeScene')
+      RootComponent.setDefaultScreen('syriaEvent')
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
 
@@ -109,7 +115,7 @@ class App extends React.Component<App.Props, App.State> {
           SyriaEventScene.stop()
         }
       })
-
+      window.addEventListener('resize', RootComponent.handleWindowResize, false)
       document.addEventListener('mousemove', RootComponent.handleMouseMove, false)
     }
   }
@@ -140,19 +146,20 @@ class App extends React.Component<App.Props, App.State> {
       return (
         <div>
           <div className={style.header}>
-            <button
-              className={style.backButton}
-              onClick={() => {
-                RootComponent.backToEvent = true
-                RootComponent.switchScreen('syriaEventScene', 'pondScene')
-              }}>
-              Back
-            </button>
+            <div>
+              <button
+                className={style.backButton}
+                onClick={() => {
+                  RootComponent.backToEvent = true
+                  RootComponent.switchScreen('syriaEvent', 'pondScene')
+                }}>
+                Back
+              </button>
+            </div>
             <div className={style.headerTitleContainer}>
               <h2>Syria</h2>
               <h4>Catastrophe as a result of the civil war</h4>
             </div>
-            <div>Sd</div>
           </div>
           <div className={style.footer}>
             <div style={{
@@ -164,6 +171,17 @@ class App extends React.Component<App.Props, App.State> {
               color: '#8cafc9',
               borderTopColor: '#8cafc9',
             }}>One civilian perishes in this region every five seconds
+            </div>
+            <div style={{
+              color: '#8cafc9',
+              borderTopColor: '#8cafc9',
+            }}>One civilian perishes in this region every five seconds
+            </div>
+            <div style={{
+              borderTop: 'none',
+              flexGrow: 1.2
+            }}>
+              Bob
             </div>
           </div>
         </div>
@@ -187,8 +205,8 @@ class App extends React.Component<App.Props, App.State> {
         />
         <div
           style={{
-            width: window.innerWidth,
-            height: window.innerHeight,
+            width: '100%',
+            height: '100%',
             overflow: 'hidden',
           }}
           ref={node => this.svgContainer = node}

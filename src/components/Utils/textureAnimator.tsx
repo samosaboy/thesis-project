@@ -21,7 +21,7 @@ export class TextureAnimator {
 
     this.texture.wrapS = this.texture.wrapT = THREE.RepeatWrapping
     this.texture.repeat.set(1 / this.tilesHorizontal, 1 / this.tilesVertical)
-    this.texture.offset.x = this.texture.offset.y = 1
+    // this.texture.offset.x = this.texture.offset.y = 1
 
     this.currentDisplayTime = 0
     this.currentTile = 0

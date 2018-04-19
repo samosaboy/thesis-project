@@ -25,7 +25,7 @@ const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
 
-const isDev = window.location.href.indexOf('http://localhost:3000') !== -1
+export const isDev = window.location.host.indexOf('localhost:3000') !== -1
 
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
@@ -82,7 +82,7 @@ export class Root {
       antialias: false,
     })
     this.composer = new THREE.EffectComposer(this.renderer)
-    this.composer.setSize(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio)
+    this.composer.setSize(window.innerWidth * this.devicePixelRatio, window.innerHeight * this.devicePixelRatio)
     this.mouse = new THREE.Vector2()
     this.clock = new THREE.Clock()
     this.scene.add(this.camera)
@@ -120,7 +120,7 @@ export class Root {
      * Custom camera functionality
      * for THREE.Camera prototype
      * */
-    this.camera.resetPosition = () => {
+    THREE.Camera.prototype.resetPosition = () => {
       new TWEEN.Tween(this.camera.position)
         .to({
           x: 0,
@@ -130,7 +130,7 @@ export class Root {
         .easing(TWEEN.Easing.Cubic.InOut).start()
     }
 
-    this.camera.resetZoom = () => {
+    THREE.Camera.prototype.resetZoom = () => {
       new TWEEN.Tween(this.camera.rotation)
         .to({
           x: 0,
@@ -140,7 +140,7 @@ export class Root {
         .easing(TWEEN.Easing.Cubic.InOut).start()
     }
 
-    this.camera.zoom = object => {
+    THREE.Camera.prototype.zoom = object => {
       if (object instanceof THREE.Group) {
         return new Promise(resolve => {
           const position = new THREE.Vector3()
@@ -175,7 +175,13 @@ export class Root {
 
   public handleMouseMove = (event) => {
     this.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
-    // this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
+    this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
+  }
+
+  public handleWindowResize = () => {
+    this.camera.aspect = window.innerWidth / window.innerHeight
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.composer.setSize(window.innerWidth * this.devicePixelRatio, window.innerHeight * this.devicePixelRatio)
   }
 
 
@@ -254,7 +260,7 @@ export class Root {
      * Instantiate the post-processing
      */
     this.postProcessing()
-    this.scene.fog = new THREE.Fog(new THREE.Color('#000000'), 600, 1000)
+    this.scene.fog = new THREE.Fog(new THREE.Color('#151515'), 250, 2300)
     const interaction = new Interaction(this.renderer, this.scene, this.camera)
     interaction.interactionFrequency = 1
     interaction.moveWhenInside = false
@@ -277,6 +283,7 @@ export class Root {
     TWEEN.update()
     this.render()
     this.composer.render()
+    this.delta = this.clock.getDelta()
     this.frameId = requestAnimationFrame(this.animate)
   }
 

@@ -12,7 +12,11 @@ export class Icon {
   private createAnimation: any
   private position: any
 
+  private time: any
+  private previousTime: any
+
   constructor(path, params) {
+    this.previousTime = Date.now()
     const loader = new THREE.TextureLoader(RootComponent.loadingManager)
     const iconTexture = loader.load(path)
     this.map = new TextureAnimator(iconTexture, params.horizontal, params.vertical, params.total, params.duration)

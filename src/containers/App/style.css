@@ -58,13 +58,10 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
   padding: 3em;
   overflow: hidden;
-  /*background: rgba(0, 0, 0, 0.3);*/
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
 }
 
@@ -91,31 +88,49 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  flex: 0.9;
 }
 
 .footer {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 80vw;
-  background: rgba(0, 0, 0, 0.3);
+  width: 100%;
   overflow: hidden;
-  padding: 3em;
   display: flex;
-  flex-direction: row;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: stretch;
+  padding: 0 3em;
 }
 
 .footer div {
-  width: 25%;
-  margin-right: 3em;
-  padding-top: 0.25em;
+  flex-basis: 0;
+  flex-grow: 1;
+  /*margin-right: 3em;*/
   border-top: 1px solid;
+  padding: 2em 1em;
+  transition: ease-in-out 0.35s;
+  background: linear-gradient(to bottom, transparent 50%, #2d2d37 50%);
+  background-size: 100% 300%;
+  background-position: top center;
+}
+
+.footer div:last-child:hover {
+  cursor: inherit;
+  background: none;
+  color: inherit !important;
+}
+
+.footer div:hover {
+  cursor: pointer;
+  color: white !important;
+  background-position: bottom center;
 }
 
 .backButton {
-  border: 1px solid white;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 1em;
 }
 
