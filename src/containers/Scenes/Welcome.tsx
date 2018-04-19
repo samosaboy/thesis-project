@@ -138,13 +138,13 @@ export const Welcome = () => {
     keepHolding.in()
     mouseDown = true
   })
-  // button.text.on('mouseup', () => {
+  button.text.on('mouseup', () => {
     sprite.out()
     splashText.in()
     splashDescription.in()
     keepHolding.out(500)
     mouseDown = false
-  // })
+  })
   button.text.cursor = 'pointer'
 
   const geometry = new THREE.IcosahedronGeometry(300, 4)

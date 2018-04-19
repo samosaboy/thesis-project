@@ -294,12 +294,7 @@ export const Pond = () => {
   SyriaEvent.getElement().on('click', () => {
     SyriaEvent.hoverOut()
     SyriaEventTitle.out(500)
-    RootComponent.switchScreen('syriaEvent')
-    // RootComponent.getCamera().zoom(SyriaEvent.getElement())
-    //   .then(() => {
-    //     syriaEventClick = false
-    //     RootComponent.switchScreen('syriaEvent')
-    //   })
+    RootComponent.switchScreen('pondScene', 'syriaEvent')
   })
 
   /*

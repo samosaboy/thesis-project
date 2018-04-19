@@ -2,6 +2,7 @@ import {
   createAnimation,
   TextureAnimator,
 } from './Utils'
+import { RootComponent } from '../containers/App'
 
 const THREE = require('three')
 
@@ -12,7 +13,8 @@ export class Icon {
   private position: any
 
   constructor(path, params) {
-    const iconTexture = new THREE.ImageUtils.loadTexture(path)
+    const loader = new THREE.TextureLoader(RootComponent.loadingManager)
+    const iconTexture = loader.load(path)
     this.map = new TextureAnimator(iconTexture, params.horizontal, params.vertical, params.total, params.duration)
     const material = new THREE.MeshBasicMaterial({
       map: this.map.get(),

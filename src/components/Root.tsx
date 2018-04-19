@@ -28,6 +28,10 @@ const Stats = require('three/stats')
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
 
+// TODO: Implement loading screen with TextureLoader and LoadingManager
+// put stuff into an array
+// https://threejs.org/docs/#api/loaders/managers/LoadingManager
+
 export class Root {
   private devicePixelRatio: number
   private camera: THREE.PerspectiveCamera | any
@@ -48,13 +52,15 @@ export class Root {
   private cameraSpeed: number
   private cameraShake: number
 
-  public scene: THREE.Scene
+  private scene: THREE.Scene
   public backToEvent: boolean
 
   public sceneTransitionTime: number
 
-  /* Audio */
   public listener: THREE.AudioListener
+
+  public loadingManager: THREE.LoadingManager
+  public isLoaded: boolean
 
   constructor() {
     /*
@@ -147,6 +153,11 @@ export class Root {
         })
       }
     }
+
+    /*
+     * Set up LoadingManager
+     */
+    this.loadingManager = new THREE.LoadingManager()
   }
 
   public setContainer = (container) => {
@@ -172,6 +183,9 @@ export class Root {
   }
 
   public setDefaultScreen = (name: string): void => {
+    store.dispatch(setCurrentScene({
+      isTransitioning: true,
+    }))
     this.defaultScene = this.sceneList[name]
     this.camera.position.set(
       this.defaultScene.el.position.x,
@@ -179,9 +193,11 @@ export class Root {
       this.defaultScene.el.position.z + 300,
     )
     setTimeout(() => {
+      store.dispatch(setCurrentScene({
+        isTransitioning: false,
+      }))
       this.switchSceneChangeOn(true)
-      this.startPostAndControls()
-    }, 0)
+    }, this.sceneTransitionTime)
   }
 
   public switchScreen = (from?: string, to?: string): any => {
@@ -205,7 +221,6 @@ export class Root {
           isTransitioning: false,
         }))
         this.switchSceneChangeOn(false)
-        this.startPostAndControls()
       })
       .start()
   }
@@ -247,6 +262,7 @@ export class Root {
       to: isDefault ? this.defaultScene.el.name : this.nextScene.el.name,
     }
     RootEvent.eventTrigger('sceneChangeStart', data)
+    this.startPostAndControls()
     if (!this.frameId) {
       this.animate()
     }
