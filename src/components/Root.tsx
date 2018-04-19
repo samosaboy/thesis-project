@@ -1,19 +1,11 @@
-import {
-  addToSceneList,
-  resetMouseEvent,
-  sceneSetComplete,
-  setCurrentScene,
-} from '../actions/actions'
-import { store } from '../index'
-
 import { Interaction } from 'three.interaction'
 
 import {
   BloomPass,
   EffectComposer,
   RenderPass,
+  ShockWavePass,
   SMAAPass,
-  ShockWavePass
 } from 'postprocessing'
 
 import 'three/copyshader'
@@ -25,16 +17,17 @@ import 'three/maskpass'
 import 'three/smaashader'
 import 'three/smaapass'
 import 'three/crossfadeScene'
-import {
-  PondScene,
-  RootEvent,
-  SyriaEventScene,
-  WelcomeScene,
-} from '../containers/App'
+import { RootEvent } from '../containers/App'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
+
+import { store } from '../index'
+import {
+  sceneSetComplete,
+  setCurrentScene,
+} from '../actions/actions'
 
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
@@ -46,7 +39,6 @@ export class Root {
   private frameId: any
   private mouse: THREE.Vector2 | any
   private clock: THREE.Clock
-  private toName: string
   private composer: any
   private stats: any
   private sceneList: Array<any>
@@ -62,6 +54,8 @@ export class Root {
 
   public scene: THREE.Scene
   public backToEvent: boolean
+
+  public sceneTransitionTime: number
 
   /* Audio */
   public listener: THREE.AudioListener
@@ -80,16 +74,12 @@ export class Root {
       window.innerWidth / window.innerHeight,
       0.01,
       10000)
-    // this.camera.position.set(0, 0, 300)
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
     })
     this.composer = new THREE.EffectComposer(this.renderer)
-    const res = window.devicePixelRatio
-    this.composer.addPass(new THREE.RenderPass(this.scene, this.camera))
-    this.composer.setSize(window.innerWidth * res, window.innerHeight * res)
+    this.composer.setSize(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio)
     this.mouse = new THREE.Vector2()
-    // this.camera.updateMatrixWorld()
     this.clock = new THREE.Clock()
     this.scene.add(this.camera)
 
@@ -105,6 +95,7 @@ export class Root {
     this.step = 0
     this.cameraSpeed = 1
     this.cameraShake = 0
+    this.sceneTransitionTime = 2000
 
     /*
      * Setup audio Listener
@@ -176,23 +167,6 @@ export class Root {
     // this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
   }
 
-  private postProcessing = () => {
-    const bloomPass = new BloomPass(
-      {
-        resolutionScale: 0.04,
-        intensity: 2,
-        distinction: 0.5,
-      },
-    )
-
-    bloomPass.renderToScreen = true
-    const copyPass = new THREE.ShaderPass(THREE.CopyShader)
-    copyPass.renderToScreen = true
-
-    this.composer.addPass(copyPass)
-    this.composer.addPass(bloomPass)
-  }
-
 
   public addScenes = (sections: Array<any>): void => {
     sections.forEach(section => {
@@ -204,6 +178,11 @@ export class Root {
   public setDefaultScreen = (name: string): void => {
     // this.currentScene = this.sceneList[name]
     this.defaultScene = this.sceneList[name]
+    this.camera.position.set(
+      this.defaultScene.el.position.x,
+      this.defaultScene.el.position.y,
+      this.defaultScene.el.position.z + 300
+    )
     setTimeout(() => {
       this.switchSceneChangeOn(true)
       this.startPostAndControls()
@@ -214,10 +193,46 @@ export class Root {
     this.defaultScene = null
     this.currentScene = this.sceneList[from]
     this.nextScene = this.sceneList[to]
-    setTimeout(() => {
-      this.switchSceneChangeOn(false)
-      this.startPostAndControls()
-    }, 0)
+    new TWEEN.Tween(this.camera.position)
+      .to({
+        x: this.nextScene.el.position.x,
+        y: this.nextScene.el.position.y,
+        z: this.nextScene.el.position.z + 300,
+      }, this.sceneTransitionTime)
+      .easing(TWEEN.Easing.Circular.InOut)
+      .onStart(() => {
+        store.dispatch(setCurrentScene({
+          isTransitioning: true
+        }))
+      })
+      .onComplete(() => {
+        store.dispatch(setCurrentScene({
+          isTransitioning: false
+        }))
+        this.switchSceneChangeOn(false)
+        this.startPostAndControls()
+      })
+      .start()
+  }
+
+  private postProcessing = () => {
+    if (!this.composer.passes.length) {
+      this.composer.addPass(new THREE.RenderPass(this.scene, this.camera))
+      const bloomPass = new BloomPass(
+        {
+          resolutionScale: 0.04,
+          intensity: 2,
+          distinction: 0.5,
+        },
+      )
+
+      bloomPass.renderToScreen = true
+      const copyPass = new THREE.ShaderPass(THREE.CopyShader)
+      copyPass.renderToScreen = true
+
+      this.composer.addPass(copyPass)
+      this.composer.addPass(bloomPass)
+    }
   }
 
   private startPostAndControls = () => {
@@ -246,47 +261,25 @@ export class Root {
     this.stats.update()
     TWEEN.update()
     this.render()
-    // this.composer.render()
+    this.composer.render()
     this.frameId = requestAnimationFrame(this.animate)
   }
 
   private render = () => {
-    // let renderSceneFromState
-    // switch (this.currentScene.name) {
-    //   case 'welcomeScene':
-    //     renderSceneFromState = WelcomeScene
-    //     break
-    //   case 'pondScene':
-    //     renderSceneFromState = PondScene
-    //     break
-    //   case 'syriaEvent':
-    //     renderSceneFromState = SyriaEventScene
-    //     break
-    //   default:
-    //     break
-    // }
-    // renderSceneFromState.update()
-
-    // if (this.defaultScene) {
-    //   this.defaultScene.update()
-    // } else {
-    //   this.currentScene.update()
-    // }
-
     if (this.defaultScene) {
       this.defaultScene.update()
     } else {
       this.nextScene.update()
     }
 
-    // this.camera.position.y += Math.cos(this.cameraShake) / 20
-    // this.cameraShake += 0.005
+    this.camera.position.y += Math.cos(this.cameraShake) / 20
+    this.cameraShake += 0.005
 
-    // if (this.mouse.mouseX) {
-    //   this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.08
-    //   // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
-    //   this.camera.lookAt(new THREE.Vector3(0, this.camera.position.y, 0))
-    // }
+    if (this.mouse.mouseX) {
+      this.camera.position.x += (this.mouse.mouseX - this.camera.position.x) * 0.08
+      // this.camera.position.y += (-this.mouse.mouseY - this.camera.position.y) * 0.005
+      this.camera.lookAt(new THREE.Vector3(0, this.camera.position.y, 0))
+    }
 
     this.step += 1
 

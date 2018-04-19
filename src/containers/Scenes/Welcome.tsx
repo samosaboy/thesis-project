@@ -14,7 +14,6 @@ const TWEEN = require('@tweenjs/tween.js')
 export const Welcome = () => {
   const welcomeScene = new Scene('welcomeScene')
   welcomeScene.el.position.set(0, 2000, 0)
-  welcomeScene.el.visible = false
 
   const skyGeometry = new THREE.SphereBufferGeometry(3000, 36, 36)
   const skyMaterial = new THREE.ShaderMaterial({
@@ -183,13 +182,11 @@ export const Welcome = () => {
   })
 
   welcomeScene.onStart(() => {
-    welcomeScene.el.visible = true
     sky.visible = true
     alphaMap.visible = true
   })
 
   welcomeScene.onStop(() => {
-    welcomeScene.el.visible = false
     sky.visible = false
     alphaMap.visible = false
   })

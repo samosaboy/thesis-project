@@ -13,7 +13,6 @@ declare interface sceneDataAdd {
 }
 
 declare interface sceneDataSetCurrent {
-  name: string
   isTransitioning: boolean
 }
 

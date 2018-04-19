@@ -50,10 +50,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .sceneFadeDiv {
   display: block;
-  z-index: 999;
-  transition: opacity 1s !important;
-  background-color: black;
-  opacity: 0 !important;
+  transition: opacity 1s ease-in-out !important;
+  background-color: black !important;
 }
 
 .header {

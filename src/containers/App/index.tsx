@@ -12,10 +12,9 @@ import {
   Event,
   Root,
 } from '../../components'
+import * as style from './style.css'
 
 const THREE = require('three')
-
-import * as style from './style.css'
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -38,7 +37,8 @@ export namespace App {
   }
 
   export interface State {
-    isTransitioning: boolean,
+    isTransitioningStart: boolean,
+    isTransitioningSuccess: boolean,
     currentScene: string
   }
 }
@@ -57,12 +57,14 @@ class App extends React.Component<App.Props, App.State> {
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
-      isTransitioning: false,
+      isTransitioningStart: false,
+      isTransitioningSuccess: true,
       currentScene: '',
     }
   }
 
   private svgContainer: any
+  private transitionId: any
 
   componentDidMount() {
     if (this.svgContainer) {
@@ -73,7 +75,7 @@ class App extends React.Component<App.Props, App.State> {
         SyriaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('welcomeScene')
+      RootComponent.setDefaultScreen('pondScene')
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
 
@@ -86,11 +88,9 @@ class App extends React.Component<App.Props, App.State> {
         })
 
         if (to === 'welcomeScene') {
-          RootComponent.getCamera().position.set(0, 2000, 300)
           WelcomeScene.in()
           WelcomeScene.start()
         } else if (to === 'pondScene') {
-          RootComponent.getCamera().position.set(0, 0, 300)
           PondScene.in()
           PondScene.start()
         } else if (to === 'syriaEvent') {
@@ -115,7 +115,22 @@ class App extends React.Component<App.Props, App.State> {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ isTransitioning: nextProps.sceneData.isTransitioning })
+    if (nextProps.sceneData) {
+      this.setState({
+        isTransitioningStart: nextProps.sceneData.isTransitioning,
+        isTransitioningSuccess: false,
+      }, () => {
+        this.transitionId = setTimeout(() => {
+          this.setState({ isTransitioningSuccess: true })
+        }, RootComponent.sceneTransitionTime / 2)
+      })
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.transitionId) {
+      clearTimeout(this.transitionId)
+    }
   }
 
   private renderDOMByScene = () => {
@@ -141,7 +156,8 @@ class App extends React.Component<App.Props, App.State> {
             <div style={{
               color: '#E0E0E0',
               borderTopColor: '#E0E0E0',
-            }}>One person becomes a refugee in this region every two seconds</div>
+            }}>One person becomes a refugee in this region every two seconds
+            </div>
             <div style={{
               color: '#8cafc9',
               borderTopColor: '#8cafc9',
@@ -172,7 +188,8 @@ class App extends React.Component<App.Props, App.State> {
             <div style={{
               color: '#E0E0E0',
               borderTopColor: '#E0E0E0',
-            }}>One person becomes a refugee in this region every two seconds</div>
+            }}>One person becomes a refugee in this region every two seconds
+            </div>
             <div style={{
               color: '#8cafc9',
               borderTopColor: '#8cafc9',
@@ -189,13 +206,15 @@ class App extends React.Component<App.Props, App.State> {
     return (
       <main>
         {this.renderDOMByScene()}
-        {/*<div*/}
-          {/*className={style.sceneFadeDiv}*/}
-          {/*style={{*/}
-            {/*zIndex: this.state.isTransitioning ? 999 : -999,*/}
-            {/*opacity: 1,*/}
-          {/*}}*/}
-        {/*/>*/}
+        <div
+          className={style.sceneFadeDiv}
+          style={{
+            zIndex: this.state.isTransitioningStart
+              ? 999
+              : this.state.isTransitioningSuccess ? -999 : 999,
+            opacity: this.state.isTransitioningStart ? 1 : 0,
+          }}
+        />
         <div
           style={{
             width: window.innerWidth,

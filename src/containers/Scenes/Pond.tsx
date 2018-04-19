@@ -6,18 +6,13 @@ import {
   TextGeometry,
 } from '../../components'
 
-import {
-  PondScene,
-  RootComponent,
-} from '../App'
+import { RootComponent } from '../App'
 
 const THREE = require('three')
-const TWEEN = require('@tweenjs/tween.js')
 
 export const Pond = () => {
   const pondScene = new Scene('pondScene')
   pondScene.el.position.set(0, 0, 0)
-  pondScene.el.visible = false
 
   /*
    * Step 1
@@ -218,7 +213,6 @@ export const Pond = () => {
     step2TextDesc1.out()
     step2TextTitle.out()
     Step2ContinueButton.out()
-    // Whatever is at the end is what you put in onOut()
     sprite.in(1000)
     step3TextDesc1.in(2000)
     Step3ContinueButton.in()
@@ -241,12 +235,12 @@ export const Pond = () => {
   pondScene.add(eventViewHelperText.text)
 
   /*
-  *
-  *
-  * START Events
-  *
-  *
-  * */
+   *
+   *
+   * START Events
+   *
+   *
+   * */
 
   // SYRIA EVENT
 
@@ -317,20 +311,6 @@ export const Pond = () => {
    * */
 
   /*
-   * Surface Plane
-   * */
-  const planeGeometry = new THREE.BoxBufferGeometry(1000, 1, 1000)
-  const planeMaterial = new THREE.MeshPhongMaterial({
-    color: '#060615',
-  })
-  const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial)
-  planeMesh.position.set(0, -75, 0)
-  planeMesh.receiveShadow = true
-  planeMesh.visible = false
-
-  pondScene.add(planeMesh)
-
-  /*
    * Light Params
    * */
   const spotLight = new THREE.SpotLight(0xFFFFFF)
@@ -338,10 +318,6 @@ export const Pond = () => {
   spotLight.position.set(0, 300, 200)
   spotLight.visible = false
   pondScene.add(spotLight)
-
-  // const skyBox = new THREE.HemisphereLight('#373f52', '#0e0e1d')
-  // skyBox.position.set(0, 0, 0)
-  // pondScene.add(skyBox)
 
   const skyGeometry = new THREE.SphereBufferGeometry(1000, 5, 5)
   const skyMaterial = new THREE.ShaderMaterial({
@@ -465,18 +441,14 @@ export const Pond = () => {
 
   pondScene.onStart(() => {
     backgroundParticles.getElement().visible = true
-    pondScene.el.visible = true
     sky.visible = true
-    planeMesh.visible = true
     terrainMesh.visible = true
     spotLight.visible = true
   })
 
   pondScene.onStop(() => {
     backgroundParticles.getElement().visible = false
-    pondScene.el.visible = false
     sky.visible = false
-    planeMesh.visible = false
     terrainMesh.visible = false
     spotLight.visible = false
   })
