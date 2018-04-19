@@ -25,6 +25,8 @@ const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
 const Stats = require('three/stats')
 
+const isDev = window.location.href.indexOf('http://localhost:3000') !== -1
+
 // Look how they implement animation:
 // https://github.com/zadvorsky/three.bas/blob/master/examples/_js/root.js
 
@@ -88,11 +90,13 @@ export class Root {
     /*
      * Instantiate Stats for Development
      * */
-    this.stats = new Stats()
-    this.stats.showPanel(0)
-    this.stats.dom.style.right = 0
-    this.stats.dom.style.left = 'auto'
-    document.body.appendChild(this.stats.dom)
+    if (isDev) {
+      this.stats = new Stats()
+      this.stats.showPanel(0)
+      this.stats.dom.style.right = 0
+      this.stats.dom.style.left = 'auto'
+      document.body.appendChild(this.stats.dom)
+    }
 
     this.step = 0
     this.cameraSpeed = 1
@@ -269,7 +273,7 @@ export class Root {
   }
 
   private animate = () => {
-    this.stats.update()
+    if (isDev) this.stats.update()
     TWEEN.update()
     this.render()
     this.composer.render()
