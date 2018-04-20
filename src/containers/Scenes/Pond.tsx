@@ -266,6 +266,8 @@ export const Pond = () => {
 
   pondScene.add(SyriaEventTitle.text)
 
+  // PEURTO RICO EVENT
+
   const PeurtoRicoEvent = new EventParticles('../public/objects/PeurtoRicoObj.json', {
     x: -60,
     y: 50,
@@ -275,7 +277,7 @@ export const Pond = () => {
   pondScene.add(PeurtoRicoEvent.getElement())
 
   const PeurtoRicoEventTitle = new TextGeometry(
-    'P E U R T O    R I C O', {
+    'P U E R T O    R I C O', {
       align: 'center',
       size: 200,
       lineSpacing: 20,
@@ -291,6 +293,34 @@ export const Pond = () => {
   )
 
   pondScene.add(PeurtoRicoEventTitle.text)
+
+  // ETHIOPIA EVENT
+
+  const EthiopiaEvent = new EventParticles('../public/objects/EthiopiaObj.json', {
+    x: 60,
+    y: 50,
+    z: 30,
+    scale: 0.06
+  })
+  pondScene.add(EthiopiaEvent.getElement())
+
+  const EthiopiaEventTitle = new TextGeometry(
+    'E T H I O P I A', {
+      align: 'center',
+      size: 200,
+      lineSpacing: 20,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#cbcbcb',
+      position: {
+        x: EthiopiaEvent.getElement().position.x,
+        y: EthiopiaEvent.getElement().position.y + 150,
+        z: EthiopiaEvent.getElement().position.z,
+      },
+    },
+  )
+
+  pondScene.add(EthiopiaEventTitle.text)
 
   Step3ContinueButton.text.cursor = 'pointer'
   Step3ContinueButton.text.on('click', () => {
@@ -334,6 +364,22 @@ export const Pond = () => {
     PeurtoRicoEvent.hoverOut()
     PeurtoRicoEventTitle.out(500)
     RootComponent.switchScreen('pondScene', 'peurtoRicoEvent')
+  })
+
+  EthiopiaEvent.getElement().cursor = 'pointer'
+  EthiopiaEvent.getElement().on('mouseover', () => {
+    EthiopiaEvent.hoverIn()
+    EthiopiaEventTitle.in(500)
+  })
+  EthiopiaEvent.getElement().on('mouseout', () => {
+    EthiopiaEvent.hoverOut()
+    EthiopiaEventTitle.out(500)
+  })
+
+  EthiopiaEvent.getElement().on('click', () => {
+    EthiopiaEvent.hoverOut()
+    EthiopiaEventTitle.out(500)
+    RootComponent.switchScreen('pondScene', 'ethiopiaEvent')
   })
 
   /*
@@ -453,6 +499,7 @@ export const Pond = () => {
     } else {
       SyriaEvent.in()
       PeurtoRicoEvent.in()
+      EthiopiaEvent.in()
 
       eventViewHelperText.in()
     }
@@ -467,6 +514,7 @@ export const Pond = () => {
     Step1ContinueButton.out()
     SyriaEvent.out()
     PeurtoRicoEvent.out()
+    EthiopiaEvent.out()
     eventViewHelperText.out()
     backgroundParticles.out()
   })
@@ -490,6 +538,7 @@ export const Pond = () => {
     uniforms.time.value += 0.05
     SyriaEvent.updateCameraPosition(RootComponent.getCamera().position)
     PeurtoRicoEvent.updateCameraPosition(RootComponent.getCamera().position)
+    EthiopiaEvent.updateCameraPosition(RootComponent.getCamera().position)
     backgroundParticles.animateParticles()
   })
 

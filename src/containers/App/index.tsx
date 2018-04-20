@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+  EthiopiaEvent,
   PeurtoRicoEvent,
   Pond,
   SyriaEvent,
@@ -60,6 +61,7 @@ export const WelcomeScene = Welcome()
 // Events
 export const SyriaEventScene = SyriaEvent()
 export const PeurtoRicoEventScene = PeurtoRicoEvent()
+export const EthiopiaEventScene = EthiopiaEvent()
 
 @connect(mapStateToProps, mapDispatchToProps)
 class App extends React.Component<App.Props, App.State> {
@@ -84,10 +86,11 @@ class App extends React.Component<App.Props, App.State> {
         PondScene,
         SyriaEventScene,
         PeurtoRicoEventScene,
+        EthiopiaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('peurtoRicoEvent')
-      RootComponent.backToEvent = true
+      RootComponent.setDefaultScreen('ethiopiaEvent')
+      // RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
 
@@ -111,6 +114,9 @@ class App extends React.Component<App.Props, App.State> {
         }  else if (to === 'peurtoRicoEvent') {
           PeurtoRicoEventScene.in()
           PeurtoRicoEventScene.start()
+        } else if (to === 'ethiopiaEvent') {
+          EthiopiaEventScene.in()
+          EthiopiaEventScene.start()
         }
 
         if (from === 'welcomeScene') {
@@ -125,6 +131,9 @@ class App extends React.Component<App.Props, App.State> {
         } else if (from === 'peurtoRicoEvent') {
           PeurtoRicoEventScene.out()
           PeurtoRicoEventScene.stop()
+        } else if (from === 'ethiopiaEvent') {
+          EthiopiaEventScene.out()
+          EthiopiaEventScene.stop()
         }
       })
       window.addEventListener('resize', RootComponent.handleWindowResize, false)
@@ -262,6 +271,39 @@ class App extends React.Component<App.Props, App.State> {
             to survivors. By January 2018, only 65% of the electricity had been restored. Fortunately, 86% of the population had
             access to clean, drinking water.`,
             color: '#67c9b5',
+          },
+        ],
+      )
+    } else if (this.state.currentScene === 'ethiopiaEvent') {
+      return this.renderRippleDom(
+        {
+          from: 'ethiopiaEvent',
+          name: 'Ethiopia',
+          description: 'March 2017',
+          information: 'As part of the East African Crisis, Ethiopia is seeing millions of men, women and children in severe starvation.',
+        }, [
+          {
+            id: 1,
+            text: '<b>Every 2 - 6 seconds,</b> one person is struggling with a disease as a result of lack of clean water.',
+            hoverText: `Lack of clean water results in stomach infections which can lead to diarrhea and other symptoms
+            which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
+            constraints from the government and the United Nations.`,
+            color: '#6269e0',
+          },
+          {
+            id: 2,
+            text: 'All people in this region are extremely dehyrated and starving, <b>every second</b>.',
+            hoverText: `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
+            its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
+            region is under a famine.`,
+            color: '#c970be',
+          },
+          {
+            id: 3,
+            text: 'One person in this region is able to get access to food <b>every 20 seconds</b>.',
+            hoverText: `Fortunately, some parts of Ethiopia have access to food, water and medications to combat
+            the many infections and diseases from the lack of essential resources. `,
+            color: '#e05d00',
           },
         ],
       )
