@@ -91,7 +91,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer {
-  font-family: Lato;
+  font-family: Lato, Arial, Helvetica, sans-serif;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -107,9 +107,9 @@ h1, h2, h3, h4, h5, h6 {
   flex-grow: 1;
   height: 100px;
   /*margin-right: 3em;*/
-  padding: 2em 1em;
-  transition: ease-in-out 0.35s;
-  background: linear-gradient(to bottom, transparent 50%, #2d2d37 50%);
+  padding: 1em;
+  transition: ease-in-out 0.25s;
+  background: linear-gradient(to bottom, transparent 50%, #45526c 50%);
   background-size: 100% 300%;
   background-position: top center;
 }
@@ -117,8 +117,9 @@ h1, h2, h3, h4, h5, h6 {
 .footer div:hover {
   flex-grow: 2;
   cursor: pointer;
-  color: white !important;
+  color: #dce6f2 !important;
   background-position: bottom center;
+  padding: 2em 1em;
 }
 
 .eventInfo {
@@ -129,6 +130,8 @@ h1, h2, h3, h4, h5, h6 {
   cursor: inherit !important;
   background: none !important;
   color: inherit !important;
+  flex-grow: 1 !important;
+  padding: 1em !important;
 }
 
 .backButton {

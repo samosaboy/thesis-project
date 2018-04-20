@@ -240,7 +240,7 @@ export const Pond = () => {
 
   // SYRIA EVENT
 
-  const SyriaEvent = new EventParticles({
+  const SyriaEvent = new EventParticles('../public/objects/SyriaObj.json', {
     x: 0,
     y: 50,
     z: 50,

@@ -13,7 +13,7 @@ export class EventParticles {
   private createAnimation: any
   private position: THREE.Vector3
 
-  constructor(position) {
+  constructor(object, position) {
     this.position = position
     this.sphereMaterial = new THREE.ShaderMaterial({
       uniforms:
@@ -67,7 +67,7 @@ export class EventParticles {
 
     const loader = new THREE.JSONLoader()
 
-    loader.load('../public/objects/SyriaObj.json', obj => {
+    loader.load(object, obj => {
       this.countryMesh = new THREE.Mesh(obj, new THREE.MeshStandardMaterial({
         color: '#f4ffee',
       }))

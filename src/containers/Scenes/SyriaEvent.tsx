@@ -123,6 +123,41 @@ export const SyriaEvent = () => {
   event.add(city3.getCity().text)
   event.add(city3.getMarker())
 
+  const city4 = new CapitalCityMarker({
+    city: 'D A R A A',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: -160,
+      y: -145,
+      z: 2
+    }
+  })
+  event.add(city4.getCity().text)
+  event.add(city4.getMarker())
+
+  const city5 = new CapitalCityMarker({
+    city: 'I D L E B',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: -105,
+      y: 55,
+      z: 2
+    }
+  })
+
+  event.add(city5.getCity().text)
+  event.add(city5.getMarker())
+
   const contextCity1 = new TextGeometry(
     'T U R K E Y', {
       align: 'left',
@@ -217,7 +252,7 @@ export const SyriaEvent = () => {
     waveCount: 240,
     waveScale: 0.1,
     volume: 1,
-    interval: 5000,
+    interval: 60000 * 5,
     duration: 5000,
     position: {
       x: -125,
@@ -266,6 +301,8 @@ export const SyriaEvent = () => {
     city1.getCity().in()
     city2.getCity().in()
     city3.getCity().in()
+    city4.getCity().in()
+    city5.getCity().in()
     contextCity1.in()
     contextCity2.in()
     contextCity3.in()
@@ -292,6 +329,8 @@ export const SyriaEvent = () => {
     city1.getCity().out()
     city2.getCity().out()
     city3.getCity().out()
+    city4.getCity().out()
+    city5.getCity().in()
     contextCity1.out()
     contextCity2.out()
     contextCity3.out()

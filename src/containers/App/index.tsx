@@ -83,7 +83,8 @@ class App extends React.Component<App.Props, App.State> {
         SyriaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('syriaEvent')
+      RootComponent.setDefaultScreen('pondScene')
+      RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
 
@@ -170,14 +171,13 @@ class App extends React.Component<App.Props, App.State> {
                   onMouseOut={(e) => {
                     e.currentTarget.innerHTML = ripple.text
                   }}
+                  dangerouslySetInnerHTML={{__html: ripple.text}}
                   style={{
                     color: ripple.color,
                     borderTopColor: ripple.color,
                     borderTopWidth: 1,
                     borderTopStyle: 'solid',
-                  }}>
-                  {ripple.text}
-                </div>
+                  }} />
               )
             })}
           <div className={style.eventInfo}>
@@ -196,19 +196,30 @@ class App extends React.Component<App.Props, App.State> {
         {
           from: 'syriaEvent',
           name: 'Syria',
-          description: 'Description',
-          information: 'This is a test',
+          description: 'March 2011',
+          information: 'March 2011 was the outbreak of the Syrian Civil War, which is still ongoing today.',
         }, [
           {
             id: 1,
-            text: 'Syria 1',
-            hoverText: 'Syria WOO',
+            text: 'On average, one person had died as a direct result of the civil war every <b>5 minutes</b>.',
+            hoverText: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
+            died in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
+            towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
             color: '#8cafc9',
           },
           {
             id: 2,
-            text: 'Syria 2',
-            hoverText: 'Syria WOO',
+            text: 'Every <b>10 seconds</b>, one person in Syria had to make the decision to leave their homes.',
+            hoverText: `Refugees have to walk or travel on makeshift boats to neighbouring countries and continents.
+            It is estimated that 5 million people (in a country that had 22 million people) have been forced out, with 6.3
+            million still inside but displaced from their homes.`,
+            color: '#E0E0E0',
+          },
+          {
+            id: 3,
+            text: 'A Syrian\'s footstep as they walked their 2253 kilometre journey to Serbia.',
+            hoverText: `Horgos, Serbia is 2253 KM away, a journey that that takes approximately 50 days to complete if you were to walk 40 kilometres per day. This is roughly
+            the duration of a full-time job. This sound plays every second to represent each footstep for one person.`,
             color: '#b7c980',
           },
         ],

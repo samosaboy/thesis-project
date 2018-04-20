@@ -41,7 +41,7 @@ export class WaveAudio {
       this.audio.setVolume(this.volume)
       if (this.interval > -1) {
         this.intervalId = setInterval(() => {
-          if (this.audio.isPlaying) {
+          if (this.audio.isPlaying && this.audio) {
             this.audio.stop()
           }
           this.audio.play()
@@ -53,11 +53,11 @@ export class WaveAudio {
   }
 
   public stopAudio = () => {
-    if (this.audio) {
+    if (this.audio.isPlaying && this.audio) {
       this.audio.stop()
-      if (this.intervalId) {
-        clearInterval(this.intervalId)
-      }
+    }
+    if (this.intervalId) {
+      clearInterval(this.intervalId)
     }
   }
 
