@@ -59,7 +59,7 @@ h1, h2, h3, h4, h5, h6 {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 3em;
+  padding: 2em;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -80,7 +80,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .header h4 {
   font-weight: normal;
-  font-family: Lora;
 }
 
 .headerTitleContainer {
@@ -92,6 +91,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .footer {
+  font-family: Lato;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -100,14 +100,13 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: flex-start;
   align-items: stretch;
-  padding: 0 3em;
 }
 
 .footer div {
   flex-basis: 0;
   flex-grow: 1;
+  height: 100px;
   /*margin-right: 3em;*/
-  border-top: 1px solid;
   padding: 2em 1em;
   transition: ease-in-out 0.35s;
   background: linear-gradient(to bottom, transparent 50%, #2d2d37 50%);
@@ -115,25 +114,58 @@ h1, h2, h3, h4, h5, h6 {
   background-position: top center;
 }
 
-.footer div:last-child:hover {
-  cursor: inherit;
-  background: none;
-  color: inherit !important;
-}
-
 .footer div:hover {
+  flex-grow: 2;
   cursor: pointer;
   color: white !important;
   background-position: bottom center;
+}
+
+.eventInfo {
+  border-top: 0 !important;
+}
+
+.eventInfo:hover {
+  cursor: inherit !important;
+  background: none !important;
+  color: inherit !important;
 }
 
 .backButton {
   font-size: 0.8em;
   text-transform: uppercase;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  padding: 1em;
+  width: 30px;
+  height: 30px;
+  border-radius: 64px;
+  display: block;
+}
+
+.backButton:after {
+  animation: hoverButton 0.3
+  s ease-in-out;
 }
 
 .backButton:hover {
   cursor: pointer;
+  border: none;
+}
+
+.backButton:hover:after {
+  text-align: center;
+  content: 'Back To Pond';
+  margin-left: -2px;
+  margin-top: -6px;
+  display: block;
+}
+
+@keyframes hoverButton {
+  0% {
+    content: 'Back To Pond';
+    opacity: 0;
+  }
+  100% {
+    content: 'Back To Pond';
+    opacity: 1;
+  }
 }

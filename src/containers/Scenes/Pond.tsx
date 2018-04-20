@@ -2,8 +2,10 @@ import {
   BackgroundParticles,
   EventParticles,
   Icon,
+  Ripple,
   Scene,
   TextGeometry,
+  WaveAudio,
 } from '../../components'
 
 import { RootComponent } from '../App'
@@ -14,13 +16,19 @@ export const Pond = () => {
   const pondScene = new Scene('pondScene')
   pondScene.el.position.set(0, 0, 0)
 
+  const pondAudio = new WaveAudio('../../public/media/pond_sound.wav', {
+    volume: 1,
+    interval: -1,
+    loop: true
+  })
+
   /*
    * Step 1
    * */
 
   const step1TextTitle = new TextGeometry(
-    `T H I S    I S    T H E    U N I V E R S E 
-  \n A S    A N    A B S T R A C T I O N.`, {
+    `T H I S    I S    T H E    E A R T H
+    \n A S    A N    A B S T R A C T I O N.`, {
       align: 'center',
       size: 200,
       lineSpacing: 20,
@@ -36,11 +44,14 @@ export const Pond = () => {
   pondScene.add(step1TextTitle.text)
 
   const step1TextDesc1 = new TextGeometry(
-    `T H E    S E A     B E N E A T H     I S     T H E     E A R T H.`, {
+    `I N    T H I S    R E P R E S E N T A T I O N,    T H E    W O R L D
+    \n I S    C O N D E N S E D    I N T O    A    P O N D.
+    \n \n T H E    S E A    B E N E A T H    I S    T H E    E A R T H    A N D    T H E
+    \n S T A R S    A B O V E    A R E    H U M A N S.`, {
       align: 'center',
       size: 150,
       lineSpacing: 20,
-      font: 'Lora',
+      font: 'Lato',
       style: 'Normal',
       color: '#cbcbcb',
       position: {
@@ -50,22 +61,6 @@ export const Pond = () => {
       },
     })
   pondScene.add(step1TextDesc1.text)
-
-  const step1TextDesc2 = new TextGeometry(
-    `T H E     S T A R S     A B O V E     IS     H U M A N I T Y.`, {
-      align: 'center',
-      size: 150,
-      lineSpacing: 20,
-      font: 'Lora',
-      style: 'Normal',
-      color: '#cbcbcb',
-      position: {
-        x: 0,
-        y: -20,
-        z: 0,
-      },
-    })
-  pondScene.add(step1TextDesc2.text)
 
   const Step1ContinueButton = new TextGeometry(
     'C O N T I N U E', {
@@ -104,8 +99,9 @@ export const Pond = () => {
   pondScene.add(sprite.el())
 
   const step2TextTitle = new TextGeometry(
-    `E V E N T S     A R E     E X P L O R A B L E
-    \n I N     T H E     F O R M     O F     S O U N D.`, {
+    `I N    T H I S    A B S T R A C T I O N,    E V E N T S     T H A T
+    \n O C C U R    I N     T H E    S E A    P R O P O G A T E    T O    T H E
+    \n T H E    G R E A T E S T    D I S T A N C E S    T O    U S.`, {
       align: 'center',
       size: 200,
       lineSpacing: 20,
@@ -121,14 +117,15 @@ export const Pond = () => {
   pondScene.add(step2TextTitle.text)
 
   const step2TextDesc1 = new TextGeometry(
-    `T H E     S E A     P R O P O G A T E S     E V E N T S     T H A T
-    \n O C C U R     A R O U N D     T H E     W O R L D.
-    \n W E     C O L L E C T I V E L Y     F E E L     T H E     R I P P L E S
-    \n O F     E A C H     E V E N T     T H A T     O C C U R S.`, {
+    `E A C H    P R O P O G A T I O N    T H A T    O C C U R S    C A U S E S
+    \n R I P P L E S     I N    O U R    A B S T R A C T I O N.    T H E S E    R I P P L E S
+    \n C A R R Y    T H E    S O U N D S    O F    M I L L I O N S:    T H E I R    S T E P S,
+    \n T H E I R    J O Y S,    T H E I R    F E A R S.
+    \n \n Y O U    W I L L    E X P L O R E    S O M E    O F    T H E S E    S O U N D S.`, {
       align: 'center',
       size: 150,
       lineSpacing: 20,
-      font: 'Lora',
+      font: 'Lato',
       style: 'Normal',
       color: '#cbcbcb',
       position: {
@@ -149,7 +146,7 @@ export const Pond = () => {
       align: 'center',
       size: 150,
       lineSpacing: 20,
-      font: 'Lora',
+      font: 'Lato',
       style: 'Normal',
       color: '#cbcbcb',
       position: {
@@ -199,7 +196,6 @@ export const Pond = () => {
     //step1 out
     step1TextTitle.out()
     step1TextDesc1.out()
-    step1TextDesc2.out()
     Step1ContinueButton.out()
 
     Step2ContinueButton.in()
@@ -223,13 +219,13 @@ export const Pond = () => {
       align: 'center',
       size: 150,
       lineSpacing: 20,
-      font: 'Lora',
+      font: 'Lato',
       style: 'Normal',
       color: '#cbcbcb',
       position: {
         x: 0,
-        y: -150,
-        z: 200,
+        y: -100,
+        z: 0,
       },
     })
   pondScene.add(eventViewHelperText.text)
@@ -269,7 +265,6 @@ export const Pond = () => {
 
   pondScene.add(SyriaEventTitle.text)
 
-  // SyriaEvent.in() // uncomment for testing
   Step3ContinueButton.text.cursor = 'pointer'
   Step3ContinueButton.text.on('click', () => {
     sprite.out()
@@ -282,7 +277,7 @@ export const Pond = () => {
   })
 
   SyriaEvent.getElement().cursor = 'pointer'
-  SyriaEvent.getElement().on('mouseover', (q) => {
+  SyriaEvent.getElement().on('mouseover', () => {
     SyriaEvent.hoverIn()
     SyriaEventTitle.in(500)
   })
@@ -408,7 +403,6 @@ export const Pond = () => {
 
   pondScene.onIn(() => {
     if (!RootComponent.backToEvent) {
-      step1TextDesc2.in(3000)
       step1TextDesc1.in(3000)
       step1TextTitle.in(2000)
       Step1ContinueButton.in(5000)
@@ -416,6 +410,7 @@ export const Pond = () => {
       SyriaEvent.in()
       eventViewHelperText.in()
     }
+    pondAudio.playAudio()
     backgroundParticles.in()
     SyriaEvent.getElement().cursor = 'pointer'
     SyriaEvent.getElement().on('mouseover', () => {
@@ -425,7 +420,7 @@ export const Pond = () => {
   })
 
   pondScene.onOut(() => {
-    step1TextDesc2.out()
+    pondAudio.stopAudio()
     step1TextDesc1.out()
     step1TextTitle.out()
     Step1ContinueButton.out()

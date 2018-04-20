@@ -6,7 +6,7 @@ import {
 } from '../Scenes'
 import { connect } from 'react-redux'
 import * as actions from '../../actions/actions'
-import { RootState } from '../../reducers/index'
+import { RootState } from '../../reducers'
 import { bindActionCreators } from 'redux'
 import {
   Event,
@@ -45,7 +45,8 @@ export namespace App {
   export interface State {
     isTransitioningStart: boolean,
     isTransitioningSuccess: boolean,
-    currentScene: string
+    currentScene: string,
+    text: any
   }
 }
 
@@ -66,6 +67,7 @@ class App extends React.Component<App.Props, App.State> {
       isTransitioningStart: false,
       isTransitioningSuccess: true,
       currentScene: '',
+      text: [],
     }
   }
 
@@ -139,53 +141,129 @@ class App extends React.Component<App.Props, App.State> {
     }
   }
 
+  private renderRippleDom = (event, ripples) => {
+    return (
+      <div>
+        <div className={style.header}>
+          <div className={style.backButtonContainer}>
+            <button
+              className={style.backButton}
+              onClick={() => {
+                RootComponent.backToEvent = true
+                RootComponent.switchScreen(event.from, 'pondScene')
+              }}/>
+          </div>
+          <div className={style.headerTitleContainer}>
+            <h2>{event.name}</h2>
+            <h4>{event.description}</h4>
+          </div>
+        </div>
+        <div className={style.footer}>
+          {
+            ripples.map(ripple => {
+              return (
+                <div
+                  key={ripple.id}
+                  onMouseOver={(e) => {
+                    e.currentTarget.innerHTML = ripple.hoverText
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.innerHTML = ripple.text
+                  }}
+                  style={{
+                    color: ripple.color,
+                    borderTopColor: ripple.color,
+                    borderTopWidth: 1,
+                    borderTopStyle: 'solid',
+                  }}>
+                  {ripple.text}
+                </div>
+              )
+            })}
+          <div className={style.eventInfo}>
+            {event.information}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   private renderDOMByScene = () => {
     if (this.state.currentScene === 'pondScene') {
       return null
     } else if (this.state.currentScene === 'syriaEvent') {
-      return (
-        <div>
-          <div className={style.header}>
-            <div>
-              <button
-                className={style.backButton}
-                onClick={() => {
-                  RootComponent.backToEvent = true
-                  RootComponent.switchScreen('syriaEvent', 'pondScene')
-                }}>
-                Back
-              </button>
-            </div>
-            <div className={style.headerTitleContainer}>
-              <h2>Syria</h2>
-              <h4>Catastrophe as a result of the civil war</h4>
-            </div>
-          </div>
-          <div className={style.footer}>
-            <div style={{
-              color: '#E0E0E0',
-              borderTopColor: '#E0E0E0',
-            }}>One person becomes a refugee in this region every two seconds
-            </div>
-            <div style={{
-              color: '#8cafc9',
-              borderTopColor: '#8cafc9',
-            }}>One civilian perishes in this region every five seconds
-            </div>
-            <div style={{
-              color: '#8cafc9',
-              borderTopColor: '#8cafc9',
-            }}>One civilian perishes in this region every five seconds
-            </div>
-            <div style={{
-              borderTop: 'none',
-              flexGrow: 1.2
-            }}>
-              Bob
-            </div>
-          </div>
-        </div>
+      return this.renderRippleDom(
+        {
+          from: 'syriaEvent',
+          name: 'Syria',
+          description: 'Description',
+          information: 'This is a test',
+        }, [
+          {
+            id: 1,
+            text: 'Syria 1',
+            hoverText: 'Syria WOO',
+            color: '#8cafc9',
+          },
+          {
+            id: 2,
+            text: 'Syria 2',
+            hoverText: 'Syria WOO',
+            color: '#b7c980',
+          },
+        ],
       )
+      // return (
+      //   <div>
+      //     <div className={style.header}>
+      //       <div>
+      //         <div className={style.backButtonContainer}>
+      //           <button
+      //             className={style.backButton}
+      //             onClick={() => {
+      //               RootComponent.backToEvent = true
+      //               RootComponent.switchScreen('syriaEvent', 'pondScene')
+      //             }}/>
+      //         </div>
+      //       </div>
+      //       <div className={style.headerTitleContainer}>
+      //         <h2>Syria</h2>
+      //         <h4>The sounds of March 2012</h4>
+      //       </div>
+      //     </div>
+      //     <div className={style.footer}>
+      //       <div
+      //         onMouseOver={() => whichElementIsHovered = 'syriaEvent:ripple1'}
+      //         onMouseOut={() => whichElementIsHovered = null}
+      //         style={{
+      //           color: '#E0E0E0',
+      //           borderTopColor: '#E0E0E0',
+      //         }}>
+      //         {
+      //           whichElementIsHovered === 'syriaEvent:ripple1'
+      //             ? <span>Bob</span>
+      //             : <span>One person becomes a refugee in this region every two seconds.</span>
+      //         }
+      //       </div>
+      //       <div style={{
+      //         color: '#8cafc9',
+      //         borderTopColor: '#8cafc9',
+      //       }}>One civilian perishes in this region every five seconds.
+      //       </div>
+      //       <div style={{
+      //         color: '#b7c980',
+      //         borderTopColor: '#b7c980',
+      //       }}>A person is walking to the nearest safe haven 50,000 steps away.
+      //       </div>
+      //       <div style={{
+      //         borderTop: 'none',
+      //         flexGrow: 1.2,
+      //       }}>
+      //
+      //       </div>
+      //     </div>
+      //   </div>
+      // )
     }
     return null
   }

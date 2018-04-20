@@ -150,7 +150,7 @@ export class Country {
         align: 'center',
         size: 150,
         lineSpacing: 20,
-        font: 'Lora',
+        font: 'Lato',
         style: 'Normal',
         color: '#cbcbcb',
         position: {

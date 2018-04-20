@@ -80,7 +80,7 @@ export const Welcome = () => {
       align: 'center',
       size: 150,
       lineSpacing: 10,
-      font: 'Lora',
+      font: 'Lato',
       style: 'Normal',
       color: '#FFFFFF',
       position: {
@@ -160,12 +160,8 @@ export const Welcome = () => {
   material.alphaMap.magFilter = THREE.NearestFilter
   material.alphaMap.wrapT = material.alphaMap.wrapS = THREE.RepeatWrapping
   material.alphaMap.repeat.yz = 1
-  const tube = new THREE.Mesh(geometry, material)
-  const tube2 = tube.clone()
-  tube2.position.set(500, 0, -700)
-  tube.position.set(-200, 0, -200)
-  welcomeScene.add(tube)
-  welcomeScene.add(tube2)
+  const earthMesh = new THREE.Mesh(geometry, material)
+  welcomeScene.add(earthMesh)
 
   welcomeScene.onIn(() => {
     button.in()
@@ -192,7 +188,7 @@ export const Welcome = () => {
 
   welcomeScene.onUpdate(() => {
     sprite.update(1000 * RootComponent.delta)
-    tube.material.alphaMap.offset.y = RootComponent.step * 0.001
+    earthMesh.material.alphaMap.offset.y = RootComponent.step * 0.001
 
     if (mouseDown) {
       time += 1 / 60
