@@ -225,7 +225,7 @@ export const SyriaEvent = () => {
     waveType: 'crazy',
     waveCount: 100,
     waveScale: 0.1,
-    volume: 1.1,
+    volume: 2.2,
     interval: 10000,
     duration: 5000
   })
@@ -251,7 +251,7 @@ export const SyriaEvent = () => {
     waveType: 'normal',
     waveCount: 240,
     waveScale: 0.1,
-    volume: 1,
+    volume: 2,
     interval: 60000 * 5,
     duration: 5000,
     position: {
@@ -282,7 +282,7 @@ export const SyriaEvent = () => {
     waveType: 'normal',
     waveCount: 100,
     waveScale: 0.1,
-    volume: 0.85,
+    volume: 1.85,
     interval: 1500, // duration + interval
     duration: 7000,
     position: {
@@ -303,6 +303,13 @@ export const SyriaEvent = () => {
     city3.getCity().in()
     city4.getCity().in()
     city5.getCity().in()
+
+    city1.in()
+    city2.in()
+    city3.in()
+    city4.in()
+    city5.in()
+
     contextCity1.in()
     contextCity2.in()
     contextCity3.in()
@@ -313,7 +320,7 @@ export const SyriaEvent = () => {
     audioLoader.load('../../public/media/drone_01_sound.mp3', (buffer) => {
       backgroundAudio.setBuffer(buffer)
       backgroundAudio.setLoop(true)
-      backgroundAudio.setVolume(1)
+      backgroundAudio.setVolume(2)
       backgroundAudio.play()
     })
 
@@ -330,7 +337,14 @@ export const SyriaEvent = () => {
     city2.getCity().out()
     city3.getCity().out()
     city4.getCity().out()
-    city5.getCity().in()
+    city5.getCity().out()
+
+    city1.out()
+    city2.out()
+    city3.out()
+    city4.out()
+    city5.out()
+
     contextCity1.out()
     contextCity2.out()
     contextCity3.out()
@@ -350,6 +364,12 @@ export const SyriaEvent = () => {
     syriaEvent.terrain.visible = true
     countryMesh.visible = true
     light.visible = true
+
+    city1.getMarker().visible = true
+    city2.getMarker().visible = true
+    city3.getMarker().visible = true
+    city4.getMarker().visible = true
+    city5.getMarker().visible = true
   })
 
   event.onStop(() => {
@@ -357,6 +377,12 @@ export const SyriaEvent = () => {
     syriaEvent.terrain.visible = false
     countryMesh.visible = false
     light.visible = false
+
+    city1.getMarker().visible = false
+    city2.getMarker().visible = false
+    city3.getMarker().visible = false
+    city4.getMarker().visible = false
+    city5.getMarker().visible = false
   })
 
   event.onUpdate(() => {

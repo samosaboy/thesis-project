@@ -13,8 +13,8 @@ export class EventParticles {
   private createAnimation: any
   private position: THREE.Vector3
 
-  constructor(object, position) {
-    this.position = position
+  constructor(object, params) {
+    this.position = new THREE.Vector3(params.x, params.y, params.z)
     this.sphereMaterial = new THREE.ShaderMaterial({
       uniforms:
         {
@@ -72,11 +72,11 @@ export class EventParticles {
         color: '#f4ffee',
       }))
       obj.center()
-      this.countryMesh.scale.multiplyScalar(0.09)
+      this.countryMesh.scale.multiplyScalar(params.scale)
       this.group.add(this.countryMesh)
 
       this.sphereMesh = new THREE.Mesh(geometry.clone(), this.sphereMaterial)
-      this.group.position.set(position.x, position.y, position.z)
+      this.group.position.set(params.x, params.y, params.z)
       this.group.add(this.sphereMesh)
     })
 

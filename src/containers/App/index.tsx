@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+  PeurtoRicoEvent,
   Pond,
   SyriaEvent,
   Welcome,
@@ -58,6 +59,7 @@ export const WelcomeScene = Welcome()
 
 // Events
 export const SyriaEventScene = SyriaEvent()
+export const PeurtoRicoEventScene = PeurtoRicoEvent()
 
 @connect(mapStateToProps, mapDispatchToProps)
 class App extends React.Component<App.Props, App.State> {
@@ -81,9 +83,10 @@ class App extends React.Component<App.Props, App.State> {
         WelcomeScene,
         PondScene,
         SyriaEventScene,
+        PeurtoRicoEventScene,
       ])
 
-      RootComponent.setDefaultScreen('pondScene')
+      RootComponent.setDefaultScreen('peurtoRicoEvent')
       RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
@@ -105,6 +108,9 @@ class App extends React.Component<App.Props, App.State> {
         } else if (to === 'syriaEvent') {
           SyriaEventScene.in()
           SyriaEventScene.start()
+        }  else if (to === 'peurtoRicoEvent') {
+          PeurtoRicoEventScene.in()
+          PeurtoRicoEventScene.start()
         }
 
         if (from === 'welcomeScene') {
@@ -116,6 +122,9 @@ class App extends React.Component<App.Props, App.State> {
         } else if (from === 'syriaEvent') {
           SyriaEventScene.out()
           SyriaEventScene.stop()
+        } else if (from === 'peurtoRicoEvent') {
+          PeurtoRicoEventScene.out()
+          PeurtoRicoEventScene.stop()
         }
       })
       window.addEventListener('resize', RootComponent.handleWindowResize, false)
@@ -203,7 +212,7 @@ class App extends React.Component<App.Props, App.State> {
             id: 1,
             text: 'On average, one person had died as a direct result of the civil war every <b>5 minutes</b>.',
             hoverText: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
-            died in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
+            died every 5 minutes in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
             towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
             color: '#8cafc9',
           },
@@ -224,57 +233,38 @@ class App extends React.Component<App.Props, App.State> {
           },
         ],
       )
-      // return (
-      //   <div>
-      //     <div className={style.header}>
-      //       <div>
-      //         <div className={style.backButtonContainer}>
-      //           <button
-      //             className={style.backButton}
-      //             onClick={() => {
-      //               RootComponent.backToEvent = true
-      //               RootComponent.switchScreen('syriaEvent', 'pondScene')
-      //             }}/>
-      //         </div>
-      //       </div>
-      //       <div className={style.headerTitleContainer}>
-      //         <h2>Syria</h2>
-      //         <h4>The sounds of March 2012</h4>
-      //       </div>
-      //     </div>
-      //     <div className={style.footer}>
-      //       <div
-      //         onMouseOver={() => whichElementIsHovered = 'syriaEvent:ripple1'}
-      //         onMouseOut={() => whichElementIsHovered = null}
-      //         style={{
-      //           color: '#E0E0E0',
-      //           borderTopColor: '#E0E0E0',
-      //         }}>
-      //         {
-      //           whichElementIsHovered === 'syriaEvent:ripple1'
-      //             ? <span>Bob</span>
-      //             : <span>One person becomes a refugee in this region every two seconds.</span>
-      //         }
-      //       </div>
-      //       <div style={{
-      //         color: '#8cafc9',
-      //         borderTopColor: '#8cafc9',
-      //       }}>One civilian perishes in this region every five seconds.
-      //       </div>
-      //       <div style={{
-      //         color: '#b7c980',
-      //         borderTopColor: '#b7c980',
-      //       }}>A person is walking to the nearest safe haven 50,000 steps away.
-      //       </div>
-      //       <div style={{
-      //         borderTop: 'none',
-      //         flexGrow: 1.2,
-      //       }}>
-      //
-      //       </div>
-      //     </div>
-      //   </div>
-      // )
+    } else if (this.state.currentScene === 'peurtoRicoEvent') {
+      return this.renderRippleDom(
+        {
+          from: 'peurtoRicoEvent',
+          name: 'Puerto Rico',
+          description: 'September 2017',
+          information: 'Hurricane Maria struck the small island of Puerto Rico which left the country without power and resources.',
+        }, [
+          {
+            id: 1,
+            text: 'One person had lost their home due to the flooding <b>every one - two seconds</b>',
+            hoverText: `Majority of the island's homes were built on faulty, unstable land. Majority of the homes were also
+            built poorly. As a result, homes were easily destroyed and people were displaced.`,
+            color: '#e0817d',
+          },
+          {
+            id: 2,
+            text: '<b>Every 30 seconds</b>, someone required serious medical attention.',
+            hoverText: `Data from the Puerto Rico Institute states that in September 2017, 94 people died per day from the
+            impact of the hurricane. In total, the month of September 2887 people died.`,
+            color: '#c5c968',
+          },
+          {
+            id: 3,
+            text: '<b>Every 15 seconds</b>, a family lost electricity, access to potable water and cell service.',
+            hoverText: `Unfortunately, power was not restored until four months later; neither was distribution of potable water
+            to survivors. By January 2018, only 65% of the electricity had been restored. Fortunately, 86% of the population had
+            access to clean, drinking water.`,
+            color: '#67c9b5',
+          },
+        ],
+      )
     }
     return null
   }

@@ -17,7 +17,7 @@ export const Pond = () => {
   pondScene.el.position.set(0, 0, 0)
 
   const pondAudio = new WaveAudio('../../public/media/pond_sound.wav', {
-    volume: 1,
+    volume: 2,
     interval: -1,
     loop: true
   })
@@ -244,6 +244,7 @@ export const Pond = () => {
     x: 0,
     y: 50,
     z: 50,
+    scale: 0.09
   })
   pondScene.add(SyriaEvent.getElement())
 
@@ -265,6 +266,32 @@ export const Pond = () => {
 
   pondScene.add(SyriaEventTitle.text)
 
+  const PeurtoRicoEvent = new EventParticles('../public/objects/PeurtoRicoObj.json', {
+    x: -60,
+    y: 50,
+    z: 30,
+    scale: 0.21
+  })
+  pondScene.add(PeurtoRicoEvent.getElement())
+
+  const PeurtoRicoEventTitle = new TextGeometry(
+    'P E U R T O    R I C O', {
+      align: 'center',
+      size: 200,
+      lineSpacing: 20,
+      font: 'Lato',
+      style: 'Normal',
+      color: '#cbcbcb',
+      position: {
+        x: PeurtoRicoEvent.getElement().position.x,
+        y: PeurtoRicoEvent.getElement().position.y + 150,
+        z: PeurtoRicoEvent.getElement().position.z,
+      },
+    },
+  )
+
+  pondScene.add(PeurtoRicoEventTitle.text)
+
   Step3ContinueButton.text.cursor = 'pointer'
   Step3ContinueButton.text.on('click', () => {
     sprite.out()
@@ -274,6 +301,7 @@ export const Pond = () => {
     // Event in
     eventViewHelperText.in()
     SyriaEvent.in()
+    PeurtoRicoEvent.in()
   })
 
   SyriaEvent.getElement().cursor = 'pointer'
@@ -290,6 +318,22 @@ export const Pond = () => {
     SyriaEvent.hoverOut()
     SyriaEventTitle.out(500)
     RootComponent.switchScreen('pondScene', 'syriaEvent')
+  })
+
+  PeurtoRicoEvent.getElement().cursor = 'pointer'
+  PeurtoRicoEvent.getElement().on('mouseover', () => {
+    PeurtoRicoEvent.hoverIn()
+    PeurtoRicoEventTitle.in(500)
+  })
+  PeurtoRicoEvent.getElement().on('mouseout', () => {
+    PeurtoRicoEvent.hoverOut()
+    PeurtoRicoEventTitle.out(500)
+  })
+
+  PeurtoRicoEvent.getElement().on('click', () => {
+    PeurtoRicoEvent.hoverOut()
+    PeurtoRicoEventTitle.out(500)
+    RootComponent.switchScreen('pondScene', 'peurtoRicoEvent')
   })
 
   /*
@@ -408,15 +452,12 @@ export const Pond = () => {
       Step1ContinueButton.in(5000)
     } else {
       SyriaEvent.in()
+      PeurtoRicoEvent.in()
+
       eventViewHelperText.in()
     }
     pondAudio.playAudio()
     backgroundParticles.in()
-    SyriaEvent.getElement().cursor = 'pointer'
-    SyriaEvent.getElement().on('mouseover', () => {
-      SyriaEvent.hoverIn()
-      SyriaEventTitle.in(500)
-    })
   })
 
   pondScene.onOut(() => {
@@ -425,6 +466,7 @@ export const Pond = () => {
     step1TextTitle.out()
     Step1ContinueButton.out()
     SyriaEvent.out()
+    PeurtoRicoEvent.out()
     eventViewHelperText.out()
     backgroundParticles.out()
   })
@@ -447,6 +489,7 @@ export const Pond = () => {
     sky.rotation.z += 0.001
     uniforms.time.value += 0.05
     SyriaEvent.updateCameraPosition(RootComponent.getCamera().position)
+    PeurtoRicoEvent.updateCameraPosition(RootComponent.getCamera().position)
     backgroundParticles.animateParticles()
   })
 
