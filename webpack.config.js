@@ -1,57 +1,64 @@
-const Webpack = require('webpack');
-const Path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+var webpack = require('webpack');
+var path = require('path');
 
-const isProduction = process.argv.indexOf('-p') >= 0;
-const outPath = Path.join(__dirname, './dist');
-const sourcePath = Path.join(__dirname, './src');
+// variables
+var isProduction = process.argv.indexOf('-p') >= 0;
+var sourcePath = path.join(__dirname, './src');
+var outPath = path.join(__dirname, './dist');
+
+// plugins
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 module.exports = {
   context: sourcePath,
   entry: {
-    main: './index.tsx',
-    vendor: [
-      'react',
-      'react-dom',
-      'react-redux',
-      'react-router',
-      'redux'
-    ]
+    app: './index.tsx'
   },
   output: {
     path: outPath,
-    publicPath: '/',
     filename: 'bundle.js',
+    chunkFilename: '[chunkhash].js',
+    publicPath: !isProduction ? '/' : './'
   },
   target: 'web',
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
     // Fix webpack's default behavior to not load packages with jsnext:main module
-    // https://github.com/Microsoft/TypeScript/issues/11677
+    // (jsnext:main directs not usually distributable es6 format, but es6 sources)
     mainFields: ['module', 'browser', 'main'],
     alias: {
-      'three/bokehpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/BokehPass.js'),
-      'three/effectcomposer': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/EffectComposer.js'),
-      'three/renderpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/RenderPass.js'),
-      'three/shaderpass': Path.join(__dirname, 'node_modules/three/examples/js/postprocessing/ShaderPass.js'),
-      'three/bokehshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/BokehShader.js'),
-      'three/copyshader': Path.join(__dirname, 'node_modules/three/examples/js/shaders/CopyShader.js'),
-      'three/gui': Path.join(__dirname, 'node_modules/three/examples/js/libs/dat.gui.min.js'),
-      'three/trackballcontrols': Path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.js'),
-    },
+      app: path.resolve(__dirname, 'src/app/'),
+      'three/bokehpass': path.join(__dirname, 'node_modules/three/examples/js/postprocessing/BokehPass.js'),
+      'three/effectcomposer': path.join(__dirname, 'node_modules/three/examples/js/postprocessing/EffectComposer.js'),
+      'three/renderpass': path.join(__dirname, 'node_modules/three/examples/js/postprocessing/RenderPass.js'),
+      'three/shaderpass': path.join(__dirname, 'node_modules/three/examples/js/postprocessing/ShaderPass.js'),
+      'three/bokehshader': path.join(__dirname, 'node_modules/three/examples/js/shaders/BokehShader.js'),
+      'three/copyshader': path.join(__dirname, 'node_modules/three/examples/js/shaders/CopyShader.js'),
+      'three/ssaoshader': path.join(__dirname, 'node_modules/three/examples/js/shaders/SSAOShader.js'),
+      'three/fxaashader': path.join(__dirname, 'node_modules/three/examples/js/shaders/FXAAShader.js'),
+      'three/maskpass': path.join(__dirname, 'node_modules/three/examples/js/postprocessing/MaskPass.js'),
+      'three/smaapass': path.join(__dirname, 'node_modules/three/examples/js/postprocessing/SMAAPass.js'),
+      'three/smaashader': path.join(__dirname, 'node_modules/three/examples/js/shaders/SMAAShader.js'),
+      'three/gui': path.join(__dirname, 'node_modules/three/examples/js/libs/dat.gui.min.js'),
+      'three/stats': path.join(__dirname, 'node_modules/three/examples/js/libs/stats.min.js'),
+      'three/crossfadeScene': path.join(__dirname, 'node_modules/three/examples/js/crossfade/scenes.js'),
+      'three/crossfadeTransition': path.join(__dirname, 'node_modules/three/examples/js/crossfade/transition.js'),
+      'three/trackballcontrols': path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.tsx'),
+      'three/flycontrols': path.join(__dirname, 'node_modules/three/examples/js/controls/FlyControls.js'),
+      'three/firstpersoncontrols': path.join(__dirname, 'node_modules/three/examples/js/controls/FirstPersonControls.js'),
+      'three/geometryutils': path.join(__dirname, 'node_modules/three/examples/js/utils/GeometryUtils.js'),
+    }
   },
   module: {
-    loaders: [
+    rules: [
       // .ts, .tsx
       {
         test: /\.tsx?$/,
         use: isProduction
-          ? 'awesome-typescript-loader?module=es6'
-          : [
-            'react-hot-loader/webpack',
-            'awesome-typescript-loader'
-          ]
+          ? 'ts-loader'
+          : ['babel-loader?plugins=react-hot-loader/babel', 'ts-loader']
       },
       // css
       {
@@ -73,71 +80,71 @@ module.exports = {
               options: {
                 ident: 'postcss',
                 plugins: [
-                  require('postcss-import')({ addDependencyTo: Webpack }),
+                  require('postcss-import')({ addDependencyTo: webpack }),
                   require('postcss-url')(),
                   require('postcss-cssnext')(),
                   require('postcss-reporter')(),
-                  require('postcss-browser-reporter')({ disabled: isProduction }),
+                  require('postcss-browser-reporter')({
+                    disabled: isProduction
+                  })
                 ]
               }
             }
           ]
         })
       },
-      // svg
-      {
-        test: /\.svg$/,
-        use: [
-          {
-            loader: "babel-loader"
-          },
-          {
-            loader: "react-svg-loader",
-            options: {
-              jsx: false // true outputs JSX tags
-            }
-          }
-        ]
-      },
-      {
-        test: /three\/examples\/js/,
-        use: 'imports-loader?THREE=three'
-      },
       // static assets
       { test: /\.html$/, use: 'html-loader' },
-      { test: /\.png$/, use: 'file-loader' },
-      { test: /\.jpg$/, use: 'file-loader' },
-      { test: /\.mp3$/, use: 'file-loader' },
-      { test: /\.wav$/, use: 'file-loader' },
+      { test: /\.(svg)$/, use: 'url-loader?limit=10000' },
+      { test: /\.(jpg|gif|png|mp3|wav)$/, use: 'file-loader' },
+      {
+        test: /\.json$/,
+        loader: 'url-loader',
+        type: "javascript/auto"
+      }
     ]
   },
+  optimization: {
+    splitChunks: {
+      name: true,
+      cacheGroups: {
+        commons: {
+          chunks: 'initial',
+          minChunks: 2
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          chunks: 'all',
+          priority: -10
+        }
+      }
+    },
+    runtimeChunk: true
+  },
   plugins: [
-    new Webpack.DefinePlugin({
-      'process.env.NODE_ENV': isProduction === true ? JSON.stringify('production') : JSON.stringify('development')
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development', // use 'development' unless process.env.NODE_ENV is defined
+      DEBUG: false
     }),
-    new Webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'vendor.bundle.js',
-      minChunks: Infinity
-    }),
-    new Webpack.optimize.AggressiveMergingPlugin(),
+    new WebpackCleanupPlugin(),
     new ExtractTextPlugin({
       filename: 'styles.css',
-      disable: !isProduction
     }),
     new HtmlWebpackPlugin({
-      template: 'index.html'
+      template: 'assets/index.html'
     }),
-    new Webpack.ProvidePlugin({
+    new webpack.ProvidePlugin({
       THREE: 'three'
     })
   ],
   devServer: {
     contentBase: sourcePath,
     hot: true,
-    stats: {
-      warnings: false
+    inline: true,
+    historyApiFallback: {
+      disableDotRule: true
     },
+    stats: 'minimal'
   },
   node: {
     // workaround for webpack-dev-server issue

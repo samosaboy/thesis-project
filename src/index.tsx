@@ -3,12 +3,10 @@ import * as ReactDOM from 'react-dom'
 import {Provider} from 'react-redux'
 import {Redirect, Route, Router} from 'react-router'
 import {createBrowserHistory} from 'history'
-import {configureStore} from './store'
-import App from './containers/App'
+import {configureStore} from './app/store'
+import App from './app/containers/App'
 
-import 'normalize.css/normalize.css'
-
-const store = configureStore()
+export const store = configureStore()
 export const history = createBrowserHistory()
 
 ReactDOM.render(

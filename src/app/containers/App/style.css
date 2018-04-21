@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css?family=Lora:400,400i,700');
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900');
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 100%;
+  vertical-align: baseline;
+  font-family: inherit;
+  font-weight: inherit;
+  color: inherit;
+  appearance: none;
+  font-smoothing: antialiased;
+}
+
+body {
+  font: 1rem 'Lora', "Times New Roman", "Georgia", serif;
+  color: #FFFFFF;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -ms-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  overflow: hidden !important;
+}
+
+button,
+input[type="checkbox"] {
+  outline: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lato', 'Arial', 'Helvetica', sans-serif;
+}
+
+.sceneFadeDiv,
+.hideDiv {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+}
+
+.sceneFadeDiv {
+  display: block;
+  transition: opacity 1s ease-in-out !important;
+  background-color: black !important;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2em;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.header h2 {
+  font-size: 18pt;
+  text-transform: uppercase;
+  letter-spacing: 4pt;
+}
+
+.header h2,
+.header h4 {
+  padding: 0;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.header h4 {
+  font-weight: normal;
+}
+
+.headerTitleContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  flex: 0.9;
+}
+
+.footer {
+  font-family: Lato, Arial, Helvetica, sans-serif;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.footer div {
+  flex-basis: 0;
+  flex-grow: 1;
+  height: 100px;
+  /*margin-right: 3em;*/
+  padding: 1em;
+  transition: ease-in-out 0.25s;
+  background: linear-gradient(to bottom, transparent 50%, #45526c 50%);
+  background-size: 100% 300%;
+  background-position: top center;
+}
+
+.footer div:hover {
+  flex-grow: 2;
+  cursor: pointer;
+  color: #dce6f2 !important;
+  background-position: bottom center;
+  padding: 2em 1em;
+}
+
+.eventInfo {
+  border-top: 0 !important;
+}
+
+.eventInfo:hover {
+  cursor: inherit !important;
+  background: none !important;
+  color: inherit !important;
+  flex-grow: 1 !important;
+  padding: 1em !important;
+}
+
+.backButton {
+  font-size: 0.8em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  width: 30px;
+  height: 30px;
+  border-radius: 64px;
+  display: block;
+}
+
+.backButton:after {
+  animation: hoverButton 0.3
+  s ease-in-out;
+}
+
+.backButton:hover {
+  cursor: pointer;
+  border: none;
+}
+
+.backButton:hover:after {
+  text-align: center;
+  content: 'Back To Pond';
+  margin-left: -2px;
+  margin-top: -6px;
+  display: block;
+}
+
+@keyframes hoverButton {
+  0% {
+    content: 'Back To Pond';
+    opacity: 0;
+  }
+  100% {
+    content: 'Back To Pond';
+    opacity: 1;
+  }
+}

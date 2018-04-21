@@ -1,0 +1,63 @@
+{
+  "id": 2234,
+  "name": "New Composed Shader",
+  "fragment": "#define tau 6.2831853\n\nprecision highp float;\nprecision highp int;\nuniform float time;\nuniform float contrast;\nuniform float distortion;\nuniform float speed;\nuniform vec3 color;\nuniform float brightness;\nuniform sampler2D noiseImage;\nuniform vec2 resolution;\nvarying vec2 vUv;\nmat2 makem2(in float theta) \n{\n    float c = cos(theta);\n    float s = sin(theta);\n    return mat2(c, -s, s, c);\n}\nfloat noise(in vec2 x) \n{\n    return texture2D(noiseImage, x * .01).x;\n}\nfloat fbm(in vec2 p) \n{\n    float z = 2.;\n    float rz = 0.;\n    vec2 bp = p;\n    for (float i = 1.;\n i < 6.0; i++) \n    {\n        rz += abs((noise(p) - 0.5) * 2.0) / z;\n        z = z * 2.;\n        p = p * 2.;\n    }\n    return rz;\n}\nfloat dualfbm(in vec2 p) \n{\n    vec2 p2 = p * distortion;\n    vec2 basis = vec2(fbm(p2 - time * speed * 1.6), fbm(p2 + time * speed * 1.7));\n    basis = (basis - .5) * .2;\n    p += basis;\n    return fbm(p * makem2(time * speed * 0.2));\n}\nvec4 Noise_Ripples1523398509944_38_main() \n{\n    vec4 Noise_Ripples1523398509944_38_gl_FragColor = vec4(0.0);\n    vec2 p = (vUv.xy - 0.5) * resolution;\n    float rz = dualfbm(p);\n    vec3 col = (color / rz) * brightness;\n    col = ((col - 0.5) * max(contrast, 0.0)) + 0.5;\n    Noise_Ripples1523398509944_38_gl_FragColor = vec4(col, 1.0);\n    return Noise_Ripples1523398509944_38_gl_FragColor *= 1.0;\n}\nvoid main() \n{\n    gl_FragColor = Noise_Ripples1523398509944_38_main();}\n",
+  "vertex": "precision highp float;\nprecision highp int;\nuniform mat4 modelMatrix;\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\nuniform mat4 viewMatrix;\nuniform mat3 normalMatrix;\nuniform vec3 cameraPosition;\nuniform float time;\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 uv;\nattribute vec2 uv2;\nvarying vec3 vPosition;\nvarying vec3 vNormal;\nvarying vec2 vUv;\nvarying vec2 vUv2;\nvec4 Noise_Ripples1523398509944_38_main() \n{\n    vec4 Noise_Ripples1523398509944_38_gl_Position = vec4(0.0);\n    vNormal = normal;\n    vUv = uv;\n    vUv2 = uv2;\n    vPosition = position;\n    Noise_Ripples1523398509944_38_gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n    return Noise_Ripples1523398509944_38_gl_Position *= 1.0;\n}\nvoid main() \n{\n    gl_Position = Noise_Ripples1523398509944_38_main();}\n",
+  "uniforms": {
+    "cameraPosition": {
+      "type": "v3",
+      "glslType": "vec3"
+    },
+    "time": {
+      "type": "f",
+      "glslType": "float"
+    },
+    "resolution": {
+      "value": {
+        "x": "1",
+        "y": "1"
+      },
+      "type": "v2",
+      "glslType": "vec2"
+    },
+    "speed": {
+      "value": "0.1",
+      "type": "f",
+      "glslType": "float"
+    },
+    "color": {
+      "value": {
+        "r": 0.3333333333333333,
+        "g": 0.4745098039215686,
+        "b": 1
+      },
+      "type": "c",
+      "glslType": "vec3"
+    },
+    "brightness": {
+      "value": "0.1",
+      "type": "f",
+      "glslType": "float"
+    },
+    "noiseImage": {
+      "value": null,
+      "type": "t",
+      "glslType": "sampler2D"
+    },
+    "distortion": {
+      "value": "10",
+      "type": "f",
+      "glslType": "float"
+    },
+    "contrast": {
+      "value": "1",
+      "type": "f",
+      "glslType": "float"
+    }
+  },
+  "url": "http://shaderfrog.com/app/view/2234",
+  "user": {
+    "username": "nvarsh",
+    "url": "http://shaderfrog.com/app/profile/andrewray"
+  }
+}
