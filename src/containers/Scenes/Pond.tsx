@@ -332,6 +332,7 @@ export const Pond = () => {
     eventViewHelperText.in()
     SyriaEvent.in()
     PeurtoRicoEvent.in()
+    EthiopiaEvent.in()
   })
 
   SyriaEvent.getElement().cursor = 'pointer'

@@ -89,7 +89,7 @@ class App extends React.Component<App.Props, App.State> {
         EthiopiaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('ethiopiaEvent')
+      RootComponent.setDefaultScreen('welcomeScene')
       // RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
