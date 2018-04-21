@@ -4,12 +4,16 @@ import {
   Ripple,
   Scene,
   TextGeometry,
-  Wave,
-  WaveAudio,
 } from '../../components'
 import { RootComponent } from '../App'
 
 const THREE = require('three')
+
+import countryObj from '../../../assets/objects/SyriaObj.json'
+import * as Csound from '../../../assets/media/syria_damascus/C.mp3'
+import * as Asound from '../../../assets/media/syria_damascus/A.mp3'
+import * as Gsound from '../../../assets/media/syria_damascus/G.mp3'
+import * as droneSound from '../../../assets/media/drone_01_sound.mp3'
 
 export const SyriaEvent = () => {
   const event = new Scene('syriaEvent')
@@ -41,7 +45,7 @@ export const SyriaEvent = () => {
    */
   let countryMesh = new THREE.Mesh()
   const loader = new THREE.JSONLoader()
-  loader.load('../../public/objects/SyriaObj.json', obj => {
+  loader.load(countryObj, obj => {
     countryMesh.geometry = obj
     countryMesh.material = new THREE.MeshBasicMaterial({
       color: '#646962',
@@ -80,8 +84,8 @@ export const SyriaEvent = () => {
     position: {
       x: -125,
       y: -75,
-      z: 2
-    }
+      z: 2,
+    },
   })
 
   event.add(city1.getCity().text)
@@ -98,8 +102,8 @@ export const SyriaEvent = () => {
     position: {
       x: -105,
       y: -15,
-      z: 2
-    }
+      z: 2,
+    },
   })
 
   event.add(city2.getCity().text)
@@ -116,8 +120,8 @@ export const SyriaEvent = () => {
     position: {
       x: -85,
       y: 70,
-      z: 2
-    }
+      z: 2,
+    },
   })
 
   event.add(city3.getCity().text)
@@ -134,8 +138,8 @@ export const SyriaEvent = () => {
     position: {
       x: -160,
       y: -145,
-      z: 2
-    }
+      z: 2,
+    },
   })
   event.add(city4.getCity().text)
   event.add(city4.getMarker())
@@ -151,8 +155,8 @@ export const SyriaEvent = () => {
     position: {
       x: -105,
       y: 55,
-      z: 2
-    }
+      z: 2,
+    },
   })
 
   event.add(city5.getCity().text)
@@ -169,9 +173,9 @@ export const SyriaEvent = () => {
       position: {
         x: 0,
         y: 150,
-        z: 2
-      }
-    }
+        z: 2,
+      },
+    },
   )
   event.add(contextCity1.text)
 
@@ -186,9 +190,9 @@ export const SyriaEvent = () => {
       position: {
         x: 155,
         y: -10,
-        z: 2
-      }
-    }
+        z: 2,
+      },
+    },
   )
   event.add(contextCity2.text)
 
@@ -203,9 +207,9 @@ export const SyriaEvent = () => {
       position: {
         x: -175,
         y: -45,
-        z: 2
-      }
-    }
+        z: 2,
+      },
+    },
   )
   event.add(contextCity3.text)
 
@@ -214,7 +218,7 @@ export const SyriaEvent = () => {
    * */
 
   const ripple1 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/C.mp3',
+    soundUrl: Csound,
     color: '#E0E0E0',
     linewidth: 30,
     radius: 10,
@@ -227,7 +231,7 @@ export const SyriaEvent = () => {
     waveScale: 0.1,
     volume: 2.2,
     interval: 10000,
-    duration: 5000
+    duration: 5000,
   })
 
   const ripple1Data = ripple1.analyzer()
@@ -240,7 +244,7 @@ export const SyriaEvent = () => {
    * */
 
   const ripple2 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/A.mp3',
+    soundUrl: Asound,
     color: '#8cafc9',
     linewidth: 30,
     radius: 3,
@@ -258,7 +262,7 @@ export const SyriaEvent = () => {
       x: -125,
       y: -75,
       z: 3,
-    }
+    },
   })
 
   const ripple2Data = ripple2.analyzer()
@@ -271,7 +275,7 @@ export const SyriaEvent = () => {
    * */
 
   const ripple3 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/G.mp3',
+    soundUrl: Gsound,
     color: '#b7c980',
     linewidth: 30,
     radius: 1,
@@ -289,7 +293,7 @@ export const SyriaEvent = () => {
       x: -130,
       y: -20,
       z: 3,
-    }
+    },
   })
 
   const ripple3Data = ripple3.analyzer()
@@ -317,12 +321,12 @@ export const SyriaEvent = () => {
     /*
      * Play Background Audio
      * */
-    audioLoader.load('../../public/media/drone_01_sound.mp3', (buffer) => {
-      backgroundAudio.setBuffer(buffer)
-      backgroundAudio.setLoop(true)
-      backgroundAudio.setVolume(2)
-      backgroundAudio.play()
-    })
+    // audioLoader.load(droneSound, (buffer) => {
+    //   backgroundAudio.setBuffer(buffer)
+    //   backgroundAudio.setLoop(true)
+    //   backgroundAudio.setVolume(2)
+    //   backgroundAudio.play()
+    // })
 
     ripple1.in(1500)
     ripple1.play()
@@ -349,7 +353,7 @@ export const SyriaEvent = () => {
     contextCity2.out()
     contextCity3.out()
 
-    backgroundAudio.stop()
+    // backgroundAudio.stop()
 
     ripple1.out()
     ripple1.stop()

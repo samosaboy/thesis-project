@@ -32,7 +32,6 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    mouseData: state.mouseData,
     sceneData: state.sceneData,
   }
 }

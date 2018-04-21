@@ -18,7 +18,7 @@ import 'three/smaashader'
 import 'three/smaapass'
 import 'three/crossfadeScene'
 import { RootEvent } from '../containers/App'
-import { store } from '../index'
+import { store } from '../../index'
 import { setCurrentScene } from '../actions/actions'
 
 const THREE = require('three')

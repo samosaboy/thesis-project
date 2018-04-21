@@ -2,13 +2,17 @@ import {
   BackgroundParticles,
   EventParticles,
   Icon,
-  Ripple,
   Scene,
   TextGeometry,
   WaveAudio,
 } from '../../components'
 
 import { RootComponent } from '../App'
+import * as pondSound from '../../../assets/media/pond_sound.wav'
+import * as mouseMoveIcon from '../../../assets/images/mouseiconmove-sprite.png'
+import syriaObj from '../../../assets/objects/SyriaObj.json'
+import puertoRicoObj from '../../../assets/objects/PeurtoRicoObj.json'
+import ethiopiaObj from '../../../assets/objects/EthiopiaObj.json'
 
 const THREE = require('three')
 
@@ -16,10 +20,10 @@ export const Pond = () => {
   const pondScene = new Scene('pondScene')
   pondScene.el.position.set(0, 0, 0)
 
-  const pondAudio = new WaveAudio('../../public/media/pond_sound.wav', {
+  const pondAudio = new WaveAudio(pondSound, {
     volume: 2,
     interval: -1,
-    loop: true
+    loop: true,
   })
 
   /*
@@ -83,7 +87,7 @@ export const Pond = () => {
    * Step 2
    * */
 
-  const sprite = new Icon('../../public/images/mouseiconmove-sprite.png', {
+  const sprite = new Icon(mouseMoveIcon, {
     horizontal: 16,
     vertical: 20,
     total: 300,
@@ -240,11 +244,11 @@ export const Pond = () => {
 
   // SYRIA EVENT
 
-  const SyriaEvent = new EventParticles('../public/objects/SyriaObj.json', {
+  const SyriaEvent = new EventParticles(syriaObj, {
     x: 0,
     y: 50,
     z: 50,
-    scale: 0.09
+    scale: 0.09,
   })
   pondScene.add(SyriaEvent.getElement())
 
@@ -268,11 +272,11 @@ export const Pond = () => {
 
   // PEURTO RICO EVENT
 
-  const PeurtoRicoEvent = new EventParticles('../public/objects/PeurtoRicoObj.json', {
+  const PeurtoRicoEvent = new EventParticles(puertoRicoObj, {
     x: -60,
     y: 50,
     z: 30,
-    scale: 0.21
+    scale: 0.21,
   })
   pondScene.add(PeurtoRicoEvent.getElement())
 
@@ -296,11 +300,11 @@ export const Pond = () => {
 
   // ETHIOPIA EVENT
 
-  const EthiopiaEvent = new EventParticles('../public/objects/EthiopiaObj.json', {
+  const EthiopiaEvent = new EventParticles(ethiopiaObj, {
     x: 60,
     y: 50,
     z: 30,
-    scale: 0.06
+    scale: 0.06,
   })
   pondScene.add(EthiopiaEvent.getElement())
 

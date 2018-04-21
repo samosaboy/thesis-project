@@ -5,13 +5,10 @@ import {
   random,
 } from './Utils'
 
-const TWEEN = require('@tweenjs/tween.js')
-
 export class BackgroundParticles {
   private group: any
   private geometry: any
   private mesh: any
-  private cache: any
   private devicePixelRatio: number
 
   private createAnimation: any

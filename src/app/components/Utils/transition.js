@@ -1,5 +1,7 @@
 // Modified Transition Lib from THREE.JS
 
+const transition = require('../../assets/images/textures/transition/transition4.png')
+
 function Transition(sceneA, sceneB) {
 
   this.scene = new THREE.Scene()
@@ -10,7 +12,7 @@ function Transition(sceneA, sceneB) {
 
   var loader = new THREE.TextureLoader()
 
-  for (var i = 0; i < 6; i++) this.textures[i] = loader.load('../../public/images/textures/transition/transition4.png')
+  for (var i = 0; i < 6; i++) this.textures[i] = loader.load(transition)
 
   this.quadmaterial = new THREE.ShaderMaterial({
 

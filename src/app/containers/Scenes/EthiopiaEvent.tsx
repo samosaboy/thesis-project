@@ -4,15 +4,21 @@ import {
   Ripple,
   Scene,
   TextGeometry,
-  Wave,
-  WaveAudio,
 } from '../../components'
 import { RootComponent } from '../App'
 
+import ethiopiaObj from '../../../assets/objects/EthiopiaObj.json'
+import * as Csound from '../../../assets/media/syria_damascus/C.mp3'
+import * as Csound2 from '../../../assets/media/syria_damascus/C(1).mp3'
+import * as Asound from '../../../assets/media/syria_damascus/A.mp3'
+import * as Gsound from '../../../assets/media/syria_damascus/HighG.mp3'
+import * as lowGsound from '../../../assets/media/syria_damascus/LowG.mp3'
+import * as dronesound from '../../../assets/media/drone_02_sound.mp3'
+
 const THREE = require('three')
 
-export const PeurtoRicoEvent = () => {
-  const event = new Scene('peurtoRicoEvent')
+export const EthiopiaEvent = () => {
+  const event = new Scene('ethiopiaEvent')
   event.el.position.set(0, -2000, 0)
   const eventCountry = new Country({
     countryName: 'Syria',
@@ -34,44 +40,60 @@ export const PeurtoRicoEvent = () => {
   const backgroundAudio = new THREE.Audio(RootComponent.listener)
   event.add(backgroundAudio)
 
-  const audioLoader = new THREE.AudioLoader()
-
   /*
    * Country
    */
   let countryMesh = new THREE.Mesh()
   const loader = new THREE.JSONLoader()
-  loader.load('../../public/objects/PeurtoRicoObj.json', obj => {
+  loader.load(ethiopiaObj, obj => {
     countryMesh.geometry = obj
     countryMesh.material = new THREE.MeshBasicMaterial({
       color: '#646962',
     })
     obj.center()
-    countryMesh.scale.multiplyScalar(2.5)
+    countryMesh.scale.multiplyScalar(0.65)
   })
   countryMesh.visible = false
   event.add(countryMesh)
 
   const city1 = new CapitalCityMarker({
-    city: 'S A N     J U A N',
+    city: 'A D D I S     A B A B A',
     align: 'left',
     size: 100,
     lineSpacing: 15,
     font: 'Lato',
     style: 'Bold',
-    color: '#cacaca',
+    color: '#000000',
     position: {
-      x: 30,
-      y: 60,
-      z: 2
-    }
+      x: -60,
+      y: 0,
+      z: 2,
+    },
   })
 
   event.add(city1.getCity().text)
   event.add(city1.getMarker())
 
+  const city2 = new CapitalCityMarker({
+    city: 'G O N D A R',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: -75,
+      y: 70,
+      z: 2,
+    },
+  })
+
+  event.add(city2.getCity().text)
+  event.add(city2.getMarker())
+
   const contextRegion1 = new TextGeometry(
-    'A T L A N T I C     O C E A N', {
+    'R E D     S E A', {
       align: 'left',
       size: 100,
       lineSpacing: 15,
@@ -79,16 +101,16 @@ export const PeurtoRicoEvent = () => {
       style: 'Bold',
       color: '#afafaf',
       position: {
-        x: 0,
+        x: 80,
         y: 150,
-        z: 2
-      }
-    }
+        z: 2,
+      },
+    },
   )
   event.add(contextRegion1.text)
 
   const contextRegion2 = new TextGeometry(
-    'C A R I B B E A N     S E A', {
+    'K E N Y A', {
       align: 'left',
       size: 100,
       lineSpacing: 15,
@@ -96,23 +118,40 @@ export const PeurtoRicoEvent = () => {
       style: 'Bold',
       color: '#afafaf',
       position: {
-        x: 0,
-        y: -150,
-        z: 2
-      }
-    }
+        x: -75,
+        y: -180,
+        z: 2,
+      },
+    },
   )
   event.add(contextRegion2.text)
+
+  const contextRegion3 = new TextGeometry(
+    'S U D A N', {
+      align: 'left',
+      size: 100,
+      lineSpacing: 15,
+      font: 'Lato',
+      style: 'Bold',
+      color: '#afafaf',
+      position: {
+        x: -165,
+        y: 110,
+        z: 2,
+      },
+    },
+  )
+  event.add(contextRegion3.text)
 
   /*
    * Ripple 1
    * */
 
   const ripple1 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/C.mp3',
-    color: '#e0817d',
+    soundUrl: Csound,
+    color: '#6269e0',
     linewidth: 30,
-    radius: 1,
+    radius: 3,
     resolution: 360,
     waveNumber: 2,
     tetaOffset: 50,
@@ -121,12 +160,12 @@ export const PeurtoRicoEvent = () => {
     waveCount: 100,
     waveScale: 0.1,
     volume: 1.85,
-    interval: 1000,
+    interval: 1200,
     position: {
-      x: 30,
-      y: 55,
+      x: -60,
+      y: 0,
       z: 1.5,
-    }
+    },
   })
 
   const ripple1Data = ripple1.analyzer()
@@ -139,10 +178,10 @@ export const PeurtoRicoEvent = () => {
    * */
 
   const ripple1_2 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/C(1).mp3',
-    color: '#e0817d',
+    soundUrl: Csound2,
+    color: '#6269e0',
     linewidth: 30,
-    radius: 1,
+    radius: 3,
     resolution: 360,
     waveNumber: 3,
     tetaOffset: 50,
@@ -151,12 +190,12 @@ export const PeurtoRicoEvent = () => {
     waveCount: 100,
     waveScale: 0.05,
     volume: 2.1,
-    interval: 1300,
+    interval: 6000,
     position: {
-      x: 40,
-      y: 53,
+      x: -90,
+      y: 100,
       z: 1.5,
-    }
+    },
   })
 
   const ripple1_2Data = ripple1_2.analyzer()
@@ -169,10 +208,10 @@ export const PeurtoRicoEvent = () => {
    * */
 
   const ripple2 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/HighG.mp3',
-    color: '#c5c968',
+    soundUrl: Asound,
+    color: '#c970be',
     linewidth: 30,
-    radius: 1.5,
+    radius: 2,
     resolution: 360,
     waveNumber: 1,
     tetaOffset: 120,
@@ -180,13 +219,13 @@ export const PeurtoRicoEvent = () => {
     waveType: 'normal',
     waveCount: 240,
     waveScale: 0.1,
-    volume: 1.55,
-    interval: 5000,
+    volume: 1,
+    interval: 500,
     position: {
-      x: -115,
+      x: 130,
       y: -50,
       z: 3,
-    }
+    },
   })
 
   const ripple2Data = ripple2.analyzer()
@@ -199,10 +238,10 @@ export const PeurtoRicoEvent = () => {
    * */
 
   const ripple2_2 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/HighG(1).mp3',
-    color: '#c5c968',
+    soundUrl: Gsound,
+    color: '#c970be',
     linewidth: 30,
-    radius: 1.2,
+    radius: 2.5,
     resolution: 360,
     waveNumber: 1.5,
     tetaOffset: 120,
@@ -210,13 +249,13 @@ export const PeurtoRicoEvent = () => {
     waveType: 'normal',
     waveCount: 240,
     waveScale: 0.2,
-    volume: 1.55,
-    interval: 5300,
+    volume: 2,
+    interval: 1500,
     position: {
-      x: -105,
-      y: 60,
+      x: 150,
+      y: -80,
       z: 3,
-    }
+    },
   })
 
   const ripple2_2Data = ripple2_2.analyzer()
@@ -229,10 +268,10 @@ export const PeurtoRicoEvent = () => {
    * */
 
   const ripple3 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/LowG.mp3',
-    color: '#67c9b5',
+    soundUrl: lowGsound,
+    color: '#e05d00',
     linewidth: 30,
-    radius: 1,
+    radius: 1.5,
     resolution: 360,
     waveNumber: 2,
     tetaOffset: 50,
@@ -241,12 +280,12 @@ export const PeurtoRicoEvent = () => {
     waveCount: 100,
     waveScale: 0.1,
     volume: 2.1,
-    interval: 1500, // duration + interval
+    interval: 20000, // duration + interval
     position: {
       x: -130,
       y: -20,
       z: 3,
-    }
+    },
   })
 
   const ripple3Data = ripple3.analyzer()
@@ -256,21 +295,24 @@ export const PeurtoRicoEvent = () => {
 
   event.onIn(() => {
     city1.getCity().in()
+    city2.getCity().in()
     contextRegion1.in()
     contextRegion2.in()
     contextRegion2.in()
+    contextRegion3.in()
 
     city1.in()
+    city2.in()
 
     /*
      * Play Background Audio
      * */
-    audioLoader.load('../../public/media/atmosphereic_drone_03.wav', (buffer) => {
-      backgroundAudio.setBuffer(buffer)
-      backgroundAudio.setLoop(true)
-      backgroundAudio.setVolume(2)
-      backgroundAudio.play()
-    })
+    // audioLoader.load(dronesound, (buffer) => {
+    //   backgroundAudio.setBuffer(buffer)
+    //   backgroundAudio.setLoop(true)
+    //   backgroundAudio.setVolume(1)
+    //   backgroundAudio.play()
+    // })
 
     ripple1.in(1500)
     ripple1.play()
@@ -286,13 +328,16 @@ export const PeurtoRicoEvent = () => {
 
   event.onOut(() => {
     city1.getCity().out()
+    city2.getCity().out()
     contextRegion1.out()
     contextRegion2.out()
     contextRegion2.out()
+    contextRegion3.out()
 
     city1.out()
+    city2.out()
 
-    backgroundAudio.stop()
+    // backgroundAudio.stop()
 
     ripple1.out()
     ripple1.stop()
@@ -313,6 +358,7 @@ export const PeurtoRicoEvent = () => {
     light.visible = true
 
     city1.getMarker().visible = true
+    city2.getMarker().visible = true
   })
 
   event.onStop(() => {
@@ -322,6 +368,7 @@ export const PeurtoRicoEvent = () => {
     light.visible = false
 
     city1.getMarker().visible = false
+    city2.getMarker().visible = false
   })
 
   event.onUpdate(() => {

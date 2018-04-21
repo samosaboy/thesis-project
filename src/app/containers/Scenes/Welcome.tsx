@@ -3,13 +3,12 @@ import {
   Scene,
   TextGeometry,
 } from '../../components'
-import {
-  RootComponent,
-  WelcomeScene,
-} from '../App'
+import { RootComponent } from '../App'
+
+import * as alphaTexture from './../../../assets/images/textures/alphaMapTexture.png'
+import * as mousedownIcon from './../../../assets/images/mouseicondown-sprite.png'
 
 const THREE = require('three')
-const TWEEN = require('@tweenjs/tween.js')
 
 export const Welcome = () => {
   const welcomeScene = new Scene('welcomeScene')
@@ -114,7 +113,7 @@ export const Welcome = () => {
   light.position.set(0, 0, -100)
   welcomeScene.add(light)
 
-  const sprite = new Icon('../../public/images/mouseicondown-sprite.png', {
+  const sprite = new Icon(mousedownIcon, {
     horizontal: 1,
     vertical: 70,
     total: 70,
@@ -155,7 +154,7 @@ export const Welcome = () => {
     wireframe: true,
     transparent: true,
   })
-  const alphaMap = new THREE.TextureLoader().load('../public/images/textures/alphaMapTexture.png')
+  const alphaMap = new THREE.TextureLoader().load(alphaTexture)
   material.alphaMap = alphaMap
   material.alphaMap.magFilter = THREE.NearestFilter
   material.alphaMap.wrapT = material.alphaMap.wrapS = THREE.RepeatWrapping

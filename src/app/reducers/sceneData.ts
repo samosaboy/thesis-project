@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions'
 import * as Actions from '../constants/actions'
 
-const initialState: sceneDataIndex | any = {
+const initialState: any = {
   currentScene: {},
   scenes: [],
   isTransitioning: false

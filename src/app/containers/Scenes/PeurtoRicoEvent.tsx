@@ -4,15 +4,21 @@ import {
   Ripple,
   Scene,
   TextGeometry,
-  Wave,
-  WaveAudio,
 } from '../../components'
 import { RootComponent } from '../App'
 
+import countryObj from '../../../assets/objects/PeurtoRicoObj.json'
+import * as Csound from '../../../assets/media/syria_damascus/C.mp3'
+import * as Csound2 from '../../../assets/media/syria_damascus/C(1).mp3'
+import * as highGsound from '../../../assets/media/syria_damascus/HighG.mp3'
+import * as highGsound2 from '../../../assets/media/syria_damascus/HighG(1).mp3'
+import * as lowGsound from '../../../assets/media/syria_damascus/LowG.mp3'
+import * as droneSound from '../../../assets/media/atmosphereic_drone_03.wav'
+
 const THREE = require('three')
 
-export const EthiopiaEvent = () => {
-  const event = new Scene('ethiopiaEvent')
+export const PeurtoRicoEvent = () => {
+  const event = new Scene('peurtoRicoEvent')
   event.el.position.set(0, -2000, 0)
   const eventCountry = new Country({
     countryName: 'Syria',
@@ -41,55 +47,37 @@ export const EthiopiaEvent = () => {
    */
   let countryMesh = new THREE.Mesh()
   const loader = new THREE.JSONLoader()
-  loader.load('../../public/objects/EthiopiaObj.json', obj => {
+  loader.load(countryObj, obj => {
     countryMesh.geometry = obj
     countryMesh.material = new THREE.MeshBasicMaterial({
       color: '#646962',
     })
     obj.center()
-    countryMesh.scale.multiplyScalar(0.65)
+    countryMesh.scale.multiplyScalar(2.5)
   })
   countryMesh.visible = false
   event.add(countryMesh)
 
   const city1 = new CapitalCityMarker({
-    city: 'A D D I S     A B A B A',
+    city: 'S A N     J U A N',
     align: 'left',
     size: 100,
     lineSpacing: 15,
     font: 'Lato',
     style: 'Bold',
-    color: '#000000',
+    color: '#cacaca',
     position: {
-      x: -60,
-      y: 0,
-      z: 2
-    }
+      x: 30,
+      y: 60,
+      z: 2,
+    },
   })
 
   event.add(city1.getCity().text)
   event.add(city1.getMarker())
 
-  const city2 = new CapitalCityMarker({
-    city: 'G O N D A R',
-    align: 'left',
-    size: 100,
-    lineSpacing: 15,
-    font: 'Lato',
-    style: 'Bold',
-    color: '#000000',
-    position: {
-      x: -75,
-      y: 70,
-      z: 2
-    }
-  })
-
-  event.add(city2.getCity().text)
-  event.add(city2.getMarker())
-
   const contextRegion1 = new TextGeometry(
-    'R E D     S E A', {
+    'A T L A N T I C     O C E A N', {
       align: 'left',
       size: 100,
       lineSpacing: 15,
@@ -97,16 +85,16 @@ export const EthiopiaEvent = () => {
       style: 'Bold',
       color: '#afafaf',
       position: {
-        x: 80,
+        x: 0,
         y: 150,
-        z: 2
-      }
-    }
+        z: 2,
+      },
+    },
   )
   event.add(contextRegion1.text)
 
   const contextRegion2 = new TextGeometry(
-    'K E N Y A', {
+    'C A R I B B E A N     S E A', {
       align: 'left',
       size: 100,
       lineSpacing: 15,
@@ -114,40 +102,23 @@ export const EthiopiaEvent = () => {
       style: 'Bold',
       color: '#afafaf',
       position: {
-        x: -75,
-        y: -180,
-        z: 2
-      }
-    }
+        x: 0,
+        y: -150,
+        z: 2,
+      },
+    },
   )
   event.add(contextRegion2.text)
-
-  const contextRegion3 = new TextGeometry(
-    'S U D A N', {
-      align: 'left',
-      size: 100,
-      lineSpacing: 15,
-      font: 'Lato',
-      style: 'Bold',
-      color: '#afafaf',
-      position: {
-        x: -165,
-        y: 110,
-        z: 2
-      }
-    }
-  )
-  event.add(contextRegion3.text)
 
   /*
    * Ripple 1
    * */
 
   const ripple1 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/C.mp3',
-    color: '#6269e0',
+    soundUrl: Csound,
+    color: '#e0817d',
     linewidth: 30,
-    radius: 3,
+    radius: 1,
     resolution: 360,
     waveNumber: 2,
     tetaOffset: 50,
@@ -156,12 +127,12 @@ export const EthiopiaEvent = () => {
     waveCount: 100,
     waveScale: 0.1,
     volume: 1.85,
-    interval: 1200,
+    interval: 1000,
     position: {
-      x: -60,
-      y: 0,
+      x: 30,
+      y: 55,
       z: 1.5,
-    }
+    },
   })
 
   const ripple1Data = ripple1.analyzer()
@@ -174,10 +145,10 @@ export const EthiopiaEvent = () => {
    * */
 
   const ripple1_2 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/C(1).mp3',
-    color: '#6269e0',
+    soundUrl: Csound2,
+    color: '#e0817d',
     linewidth: 30,
-    radius: 3,
+    radius: 1,
     resolution: 360,
     waveNumber: 3,
     tetaOffset: 50,
@@ -186,12 +157,12 @@ export const EthiopiaEvent = () => {
     waveCount: 100,
     waveScale: 0.05,
     volume: 2.1,
-    interval: 6000,
+    interval: 1300,
     position: {
-      x: -90,
-      y: 100,
+      x: 40,
+      y: 53,
       z: 1.5,
-    }
+    },
   })
 
   const ripple1_2Data = ripple1_2.analyzer()
@@ -204,10 +175,10 @@ export const EthiopiaEvent = () => {
    * */
 
   const ripple2 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/A.mp3',
-    color: '#c970be',
+    soundUrl: highGsound,
+    color: '#c5c968',
     linewidth: 30,
-    radius: 2,
+    radius: 1.5,
     resolution: 360,
     waveNumber: 1,
     tetaOffset: 120,
@@ -215,13 +186,13 @@ export const EthiopiaEvent = () => {
     waveType: 'normal',
     waveCount: 240,
     waveScale: 0.1,
-    volume: 1,
-    interval: 500,
+    volume: 1.55,
+    interval: 5000,
     position: {
-      x: 130,
+      x: -115,
       y: -50,
       z: 3,
-    }
+    },
   })
 
   const ripple2Data = ripple2.analyzer()
@@ -234,10 +205,10 @@ export const EthiopiaEvent = () => {
    * */
 
   const ripple2_2 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/HighG.mp3',
-    color: '#c970be',
+    soundUrl: highGsound2,
+    color: '#c5c968',
     linewidth: 30,
-    radius: 2.5,
+    radius: 1.2,
     resolution: 360,
     waveNumber: 1.5,
     tetaOffset: 120,
@@ -245,13 +216,13 @@ export const EthiopiaEvent = () => {
     waveType: 'normal',
     waveCount: 240,
     waveScale: 0.2,
-    volume: 2,
-    interval: 1500,
+    volume: 1.55,
+    interval: 5300,
     position: {
-      x: 150,
-      y: -80,
+      x: -105,
+      y: 60,
       z: 3,
-    }
+    },
   })
 
   const ripple2_2Data = ripple2_2.analyzer()
@@ -264,10 +235,10 @@ export const EthiopiaEvent = () => {
    * */
 
   const ripple3 = new Ripple({
-    soundUrl: '../../public/media/syria_damascus/LowG.mp3',
-    color: '#e05d00',
+    soundUrl: lowGsound,
+    color: '#67c9b5',
     linewidth: 30,
-    radius: 1.5,
+    radius: 1,
     resolution: 360,
     waveNumber: 2,
     tetaOffset: 50,
@@ -276,12 +247,12 @@ export const EthiopiaEvent = () => {
     waveCount: 100,
     waveScale: 0.1,
     volume: 2.1,
-    interval: 20000, // duration + interval
+    interval: 1500, // duration + interval
     position: {
       x: -130,
       y: -20,
       z: 3,
-    }
+    },
   })
 
   const ripple3Data = ripple3.analyzer()
@@ -291,24 +262,21 @@ export const EthiopiaEvent = () => {
 
   event.onIn(() => {
     city1.getCity().in()
-    city2.getCity().in()
     contextRegion1.in()
     contextRegion2.in()
     contextRegion2.in()
-    contextRegion3.in()
 
     city1.in()
-    city2.in()
 
     /*
      * Play Background Audio
      * */
-    audioLoader.load('../../public/media/drone_02_sound.mp3', (buffer) => {
-      backgroundAudio.setBuffer(buffer)
-      backgroundAudio.setLoop(true)
-      backgroundAudio.setVolume(1)
-      backgroundAudio.play()
-    })
+    // audioLoader.load(droneSound, (buffer) => {
+    //   backgroundAudio.setBuffer(buffer)
+    //   backgroundAudio.setLoop(true)
+    //   backgroundAudio.setVolume(2)
+    //   backgroundAudio.play()
+    // })
 
     ripple1.in(1500)
     ripple1.play()
@@ -324,16 +292,13 @@ export const EthiopiaEvent = () => {
 
   event.onOut(() => {
     city1.getCity().out()
-    city2.getCity().out()
     contextRegion1.out()
     contextRegion2.out()
     contextRegion2.out()
-    contextRegion3.out()
 
     city1.out()
-    city2.out()
 
-    backgroundAudio.stop()
+    // backgroundAudio.stop()
 
     ripple1.out()
     ripple1.stop()
@@ -354,7 +319,6 @@ export const EthiopiaEvent = () => {
     light.visible = true
 
     city1.getMarker().visible = true
-    city2.getMarker().visible = true
   })
 
   event.onStop(() => {
@@ -364,7 +328,6 @@ export const EthiopiaEvent = () => {
     light.visible = false
 
     city1.getMarker().visible = false
-    city2.getMarker().visible = false
   })
 
   event.onUpdate(() => {

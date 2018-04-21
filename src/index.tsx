@@ -3,10 +3,8 @@ import * as ReactDOM from 'react-dom'
 import {Provider} from 'react-redux'
 import {Redirect, Route, Router} from 'react-router'
 import {createBrowserHistory} from 'history'
-import {configureStore} from './store'
-import App from './containers/App'
-
-import 'normalize.css/normalize.css'
+import {configureStore} from './app/store'
+import App from './app/containers/App'
 
 export const store = configureStore()
 export const history = createBrowserHistory()
@@ -17,5 +15,5 @@ ReactDOM.render(
       <App />
     </Router>
   </Provider>,
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root')
 )

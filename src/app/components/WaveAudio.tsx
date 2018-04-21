@@ -49,7 +49,10 @@ export class WaveAudio {
       } else {
         this.audio.play()
       }
-    })
+    },
+        // xhr => console.log((xhr.loaded / xhr.total * 100) + '% loaded' ),
+        // e => console.warn(e)
+    )
   }
 
   public stopAudio = () => {
