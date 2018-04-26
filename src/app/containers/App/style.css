@@ -22,7 +22,7 @@ button {
 }
 
 body {
-  font: 1rem 'Lora', "Times New Roman", "Georgia", serif;
+  font-family: 'Lato', 'Arial', 'Helvetica', sans-serif;
   color: #FFFFFF;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
@@ -35,10 +35,6 @@ body {
 button,
 input[type="checkbox"] {
   outline: none;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Lato', 'Arial', 'Helvetica', sans-serif;
 }
 
 .sceneFadeDiv,
@@ -146,7 +142,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .backButton:after {
   animation: hoverButton 0.3
-  s ease-in-out;
 }
 
 .backButton:hover {
