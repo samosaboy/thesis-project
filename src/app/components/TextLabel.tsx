@@ -3,13 +3,7 @@ import * as TWEEN from '@tweenjs/tween.js'
 
 import { RootComponent } from '../containers/App'
 
-interface TextLabelParams {
-  parent?: any,
-  text: string,
-  style: any
-}
-
-export default class TextLabel {
+export class TextLabel {
   private parent: any
   private position: THREE.Vector3
   private camera: THREE.Camera
@@ -19,7 +13,7 @@ export default class TextLabel {
 
   public span: any
 
-  constructor(params?: TextLabelParams) {
+  constructor(params) {
     this.span = document.createElement('span')
     this.span.className = 'text-label'
     this.span.style.color = params.style.color || '#FFFFFF'
@@ -27,7 +21,7 @@ export default class TextLabel {
     this.span.style.fontSize = `${params.style.size}px` || '20px'
     this.span.style.fontWeight = params.style.weight || 400
     this.span.style.position = 'absolute'
-    this.span.style.opacity = 0
+    this.span.style.opacity = 1
     this.span.innerHTML = params.text
 
     this.text = params.text.split('')
@@ -37,17 +31,18 @@ export default class TextLabel {
     this.position = new THREE.Vector3(0, 0, 0)
 
     this.animate = new TWEEN.Tween(this.span.style)
-      .to({ opacity: 1 }, 2000)
-      .easing(TWEEN.Easing.Circular.In)
+    .to({ opacity: 1 }, 2000)
+    .easing(TWEEN.Easing.Circular.In)
 
   }
 
   private projectTo2D = () => {
-    const vector = this.position.project(this.camera)
+    const vector = this.parent.matrixWorld.getPosition().clone()
+    vector.project(this.camera)
 
-    // TODO: Fix this
-    vector.x = ((vector.x + 1) / 2 * window.innerWidth) - (this.text.length * 20)
+    vector.x = (vector.x + 1) / 2 * window.innerWidth
     vector.y = -(vector.y - 1) / 2 * window.innerHeight
+    vector.z = 5
 
     return vector
   }
@@ -57,9 +52,6 @@ export default class TextLabel {
   public out = () => this.animate.stop()
 
   public update = () => {
-    if (this.parent) {
-      this.position.copy(new THREE.Vector3(0, 0, 0))
-    }
     const coordinates = this.projectTo2D()
     this.span.style.left = `${coordinates.x}px`
     this.span.style.top = `${coordinates.y}px`

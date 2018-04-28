@@ -62,7 +62,6 @@ export class Root {
   public listener: THREE.AudioListener
 
   public loadingManager: THREE.LoadingManager
-  public isLoaded: boolean
 
   constructor() {
     /*
@@ -71,7 +70,6 @@ export class Root {
 
     this.backToEvent = false
     this.scene = new THREE.Scene()
-    this.scene.matrixAutoUpdate = false
     this.devicePixelRatio = window.devicePixelRatio ? window.devicePixelRatio : 1
     this.camera = new THREE.PerspectiveCamera(
       70,

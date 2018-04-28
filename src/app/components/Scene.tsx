@@ -9,6 +9,7 @@ export class Scene {
   public _start: any
   public _stop: any
   public _update: any
+  public _render: any
 
   constructor(name: string) {
     this.el = new THREE.Object3D()
@@ -49,6 +50,10 @@ export class Scene {
     this._update()
   }
 
+  public renderDom = () => {
+    return this._render()
+  }
+
   public onIn = (callback) => {
     this._in = callback
   }
@@ -67,5 +72,9 @@ export class Scene {
 
   public onUpdate = (callback) => {
     this._update = callback
+  }
+
+  public onRenderDom = (callback) => {
+    this._render = callback
   }
 }

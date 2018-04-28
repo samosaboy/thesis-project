@@ -1,9 +1,11 @@
+import * as React from 'react'
 import {
   CapitalCityMarker,
   Country,
   Ripple,
   Scene,
   TextGeometry,
+  EventHTML,
 } from '../../components'
 import { RootComponent } from '../App'
 
@@ -293,6 +295,26 @@ export const EthiopiaEvent = () => {
   event.add(ripple3.waveMesh())
   event.add(ripple3.waveAudio())
 
+  const test = new EventHTML({
+    id: 'test1',
+    parent: city1.getMarker(),
+    style: {
+      color: '#000000',
+      width: 300,
+      height: 300
+    }
+  })
+
+  const test2 = new EventHTML({
+    id: 'test2',
+    parent: city2.getMarker(),
+    style: {
+      color: '#000000',
+      width: 200,
+      height: 200
+    }
+  })
+
   event.onIn(() => {
     city1.getCity().in()
     city2.getCity().in()
@@ -378,6 +400,18 @@ export const EthiopiaEvent = () => {
     ripple2.update(ripple2Data.getAverageFrequency())
     ripple2_2.update(ripple2_2Data.getAverageFrequency())
     ripple3.update(ripple3Data.getAverageFrequency())
+
+    test.update()
+    test2.update()
+  })
+
+  event.onRenderDom(() => {
+    const testDiv = document.getElementById('renderSceneDOM')
+    testDiv.appendChild(test.getContainer())
+    test.getContentContainer().innerHTML = 'BOB'
+
+    testDiv.appendChild(test2.getContainer())
+    test2.getContentContainer().innerHTML = 'PIZZA'
   })
 
 

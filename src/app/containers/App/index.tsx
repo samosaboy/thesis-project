@@ -20,9 +20,10 @@ import * as style from './style.css'
 if (!isDev) {
   window.console.warn('😃 Hello! Check out my work @ nikunj.ca :)')
   window.console.log = () => {}
-  window.console.warn = () => {}
   window.console.error = () => {}
 }
+
+window.console.warn = () => {}
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -274,38 +275,39 @@ class App extends React.Component<App.Props, App.State> {
         ],
       )
     } else if (this.state.currentScene === 'ethiopiaEvent') {
-      return this.renderRippleDom(
-        {
-          from: 'ethiopiaEvent',
-          name: 'Ethiopia',
-          description: 'March 2017',
-          information: 'As part of the East African Crisis, Ethiopia is seeing millions of men, women and children in severe starvation.',
-        }, [
-          {
-            id: 1,
-            text: '<b>Every 2 - 6 seconds,</b> one person is struggling with a disease as a result of lack of clean water.',
-            hoverText: `Lack of clean water results in stomach infections which can lead to diarrhea and other symptoms
-            which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
-            constraints from the government and the United Nations.`,
-            color: '#6269e0',
-          },
-          {
-            id: 2,
-            text: 'All people in this region are extremely dehyrated and starving, <b>every second</b>.',
-            hoverText: `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
-            its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
-            region is under a famine.`,
-            color: '#c970be',
-          },
-          {
-            id: 3,
-            text: 'One person in this region is able to get access to food <b>every 20 seconds</b>.',
-            hoverText: `Fortunately, some parts of Ethiopia have access to food, water and medications to combat
-            the many infections and diseases from the lack of essential resources. `,
-            color: '#e05d00',
-          },
-        ],
-      )
+      EthiopiaEventScene.renderDom()
+      // return this.renderRippleDom(
+      //   {
+      //     from: 'ethiopiaEvent',
+      //     name: 'Ethiopia',
+      //     description: 'March 2017',
+      //     information: 'As part of the East African Crisis, Ethiopia is seeing millions of men, women and children in severe starvation.',
+      //   }, [
+      //     {
+      //       id: 1,
+      //       text: '<b>Every 2 - 6 seconds,</b> one person is struggling with a disease as a result of lack of clean water.',
+      //       hoverText: `Lack of clean water results in stomach infections which can lead to diarrhea and other symptoms
+      //       which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
+      //       constraints from the government and the United Nations.`,
+      //       color: '#6269e0',
+      //     },
+      //     {
+      //       id: 2,
+      //       text: 'All people in this region are extremely dehyrated and starving, <b>every second</b>.',
+      //       hoverText: `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
+      //       its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
+      //       region is under a famine.`,
+      //       color: '#c970be',
+      //     },
+      //     {
+      //       id: 3,
+      //       text: 'One person in this region is able to get access to food <b>every 20 seconds</b>.',
+      //       hoverText: `Fortunately, some parts of Ethiopia have access to food, water and medications to combat
+      //       the many infections and diseases from the lack of essential resources. `,
+      //       color: '#e05d00',
+      //     },
+      //   ],
+      // )
     }
     return null
   }
@@ -323,6 +325,7 @@ class App extends React.Component<App.Props, App.State> {
             opacity: this.state.isTransitioningStart ? 1 : 0,
           }}
         />
+        <div id={'renderSceneDOM'}/>
         <div
           style={{
             width: '100%',
