@@ -91,7 +91,7 @@ class App extends React.Component<App.Props, App.State> {
         EthiopiaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('ethiopiaEvent')
+      RootComponent.setDefaultScreen('welcomeScene')
       // RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
@@ -188,17 +188,12 @@ class App extends React.Component<App.Props, App.State> {
             <span><b>{event.description}</b>: {event.information}</span>
           </div>
         </div>
-        {/*<div className={style.footer}>*/}
-          {/*{event.information}*/}
-        {/*</div>*/}
       </div>
     )
   }
 
   private renderDOMByScene = () => {
-    if (this.state.currentScene === 'pondScene') {
-      return null
-    } else if (this.state.currentScene === 'syriaEvent') {
+    if (this.state.currentScene === 'syriaEvent') {
       return this.renderRippleDom(
         {
           from: 'syriaEvent',
