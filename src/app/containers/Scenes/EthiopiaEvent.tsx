@@ -313,8 +313,8 @@ export const EthiopiaEvent = () => {
   const ripple1_2_Text = new EventHTML({
     id: 'ethiopia-6269e0-2',
     parent: ripple1_2.waveMesh(),
-    heading:     'Every 2 - 6 seconds, one person is struggling with a disease as a result of lack of clean water.',
-    description:`Lack of clean water results in stomach infections which can lead to diarrhea and other symptoms
+    heading: 'Every 2 - 6 seconds, one person is struggling with a disease as a result of lack of clean water.',
+    description: `Lack of clean water results in stomach infections which can lead to diarrhea and other symptoms
        which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
        constraints from the government and the United Nations.`,
     style: {
@@ -325,7 +325,7 @@ export const EthiopiaEvent = () => {
   const ripple3_Text = new EventHTML({
     id: 'ethiopia-e05d00-2',
     parent: ripple3.waveMesh(),
-    heading:     'One person in this region is able to get access to food every 20 seconds.',
+    heading: 'One person in this region is able to get access to food every 20 seconds.',
     description: `Fortunately, some parts of Ethiopia have access to food, water and medications to combat
       the many infections and diseases from the lack of essential resources.`,
     style: {
@@ -336,7 +336,7 @@ export const EthiopiaEvent = () => {
   const ripple2_2_Text = new EventHTML({
     id: 'ethiopia-26262f-2',
     parent: ripple2_2.waveMesh(),
-    heading:     'All people in this region are extremely dehyrated and starving, every second.',
+    heading: 'All people in this region are extremely dehyrated and starving, every second.',
     description: `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
       its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
       region is under a famine.`,
@@ -348,7 +348,7 @@ export const EthiopiaEvent = () => {
   const ripple2_Text = new EventHTML({
     id: 'ethiopia-26262f-1',
     parent: ripple2.waveMesh(),
-    heading:     'All people in this region are extremely dehyrated and starving, every second.',
+    heading: 'All people in this region are extremely dehyrated and starving, every second.',
     description: `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
       its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
       region is under a famine.`,

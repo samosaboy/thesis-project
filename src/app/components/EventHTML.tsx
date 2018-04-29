@@ -53,6 +53,7 @@ export class EventHTML {
     colorIcon.style.display = 'block'
     colorIcon.style.backgroundColor = params.style.color
     colorIcon.style.borderRadius = '25px'
+    colorIcon.style.marginTop = '5px'
     header.appendChild(colorIcon)
 
     this.div.appendChild(header)
@@ -134,20 +135,4 @@ export class EventHTML {
     this.div.style.left = `${coordinates.x}px`
     this.div.style.top = `${coordinates.y}px`
   }
-
-  // public setEventText = (heading, description) => {
-  //   const head = document.createElement('span')
-  //   head.className = style.eventHTMLHeading
-  //   head.innerHTML = heading
-  //
-  //   const des = document.createElement('span')
-  //   des.className = style.eventHTMLDescription
-  //   des.innerHTML = description
-  //
-  //   this.div.querySelector('#inner_' + this.id).appendChild(head)
-  //   this.div.querySelector('#inner_' + this.id).appendChild(des)
-  //   const renderSceneDomDiv = document.getElementById('renderSceneDOM')
-  //   renderSceneDomDiv.appendChild(this.div)
-  // }
-
 }

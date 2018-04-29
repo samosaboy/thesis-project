@@ -133,11 +133,39 @@ input[type="checkbox"] {
 .backButton {
   font-size: 0.8em;
   text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.5);
   width: 30px;
   height: 30px;
   border-radius: 64px;
   display: block;
+}
+
+.backButton img {
+  filter: brightness(0) invert(1);
+  animation: rotating 10s linear infinite;
+  width: 40px;
+  opacity: 0.5;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.backButton:hover img {
+  opacity: 1;
+}
+
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
 
 .backButton:after {

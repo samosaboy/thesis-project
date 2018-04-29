@@ -13,7 +13,7 @@ import * as Csound2 from '../../../assets/media/syria_damascus/C(1).mp3'
 import * as highGsound from '../../../assets/media/syria_damascus/HighG.mp3'
 import * as highGsound2 from '../../../assets/media/syria_damascus/HighG(1).mp3'
 import * as lowGsound from '../../../assets/media/syria_damascus/LowG.mp3'
-import * as droneSound from '../../../assets/media/atmosphereic_drone_03.wav'
+import { EventHTML } from 'app/components'
 
 const THREE = require('three')
 
@@ -53,7 +53,7 @@ export const PeurtoRicoEvent = () => {
       color: '#646962',
     })
     obj.center()
-    countryMesh.scale.multiplyScalar(2.5)
+    countryMesh.scale.multiplyScalar(2)
   })
   countryMesh.visible = false
   event.add(countryMesh)
@@ -118,7 +118,7 @@ export const PeurtoRicoEvent = () => {
     soundUrl: Csound,
     color: '#e0817d',
     linewidth: 30,
-    radius: 1,
+    radius: 3,
     resolution: 360,
     waveNumber: 2,
     tetaOffset: 50,
@@ -130,7 +130,7 @@ export const PeurtoRicoEvent = () => {
     interval: 1000,
     position: {
       x: 30,
-      y: 55,
+      y: 47,
       z: 1.5,
     },
   })
@@ -148,7 +148,7 @@ export const PeurtoRicoEvent = () => {
     soundUrl: Csound2,
     color: '#e0817d',
     linewidth: 30,
-    radius: 1,
+    radius: 3,
     resolution: 360,
     waveNumber: 3,
     tetaOffset: 50,
@@ -160,7 +160,7 @@ export const PeurtoRicoEvent = () => {
     interval: 1300,
     position: {
       x: 40,
-      y: 53,
+      y: 47,
       z: 1.5,
     },
   })
@@ -260,6 +260,91 @@ export const PeurtoRicoEvent = () => {
   event.add(ripple3.waveMesh())
   event.add(ripple3.waveAudio())
 
+  /*
+   * Text
+   */
+
+  const ripple1_Text = new EventHTML({
+    id: 'pr-e0817d-1',
+    parent: ripple1.waveMesh(),
+    heading: 'One person had lost their home due to the flooding every one - two seconds',
+    description: `Majority of the island's homes were built on faulty, unstable land. Majority of the homes were also
+    built poorly. As a result, homes were easily destroyed and people were displaced.`,
+    style: {
+      color: '#e0817d',
+    },
+  })
+
+  const ripple1_2_Text = new EventHTML({
+    id: 'pr-e0817d-2',
+    parent: ripple1_2.waveMesh(),
+    heading: 'One person had lost their home due to the flooding every one - two seconds',
+    description: `Majority of the island's homes were built on faulty, unstable land. Majority of the homes were also
+    built poorly. As a result, homes were easily destroyed and people were displaced.`,
+    style: {
+      color: '#e0817d',
+    },
+  })
+
+  const ripple2_2_Text = new EventHTML({
+    id: 'pr-c5c968-2',
+    parent: ripple2_2.waveMesh(),
+    heading: 'Every 30 seconds, someone required serious medical attention.',
+    description: `Data from the Puerto Rico Institute states that in September 2017, 94 people died per day from the
+    impact of the hurricane. In total, the month of September 2887 people died.`,
+    style: {
+      color: '#c5c968',
+    },
+  })
+
+  const ripple2_Text = new EventHTML({
+    id: 'pr-c5c968-1',
+    parent: ripple2.waveMesh(),
+    heading: 'Every 30 seconds, someone required serious medical attention.',
+    description: `Data from the Puerto Rico Institute states that in September 2017, 94 people died per day from the
+    impact of the hurricane. In total, the month of September 2887 people died.`,
+    style: {
+      color: '#c5c968',
+    },
+  })
+
+  const ripple3_Text = new EventHTML({
+    id: 'pr-67c9b5-2',
+    parent: ripple3.waveMesh(),
+    heading: 'Every 15 seconds, a family lost electricity, access to potable water and cell service.',
+    description: `Unfortunately, power was not restored until four months later; neither was distribution of potable water
+    to survivors. By January 2018, only 65% of the electricity had been restored. Fortunately, 86% of the population had
+    access to clean, drinking water.`,
+    style: {
+      color: '#67c9b5',
+    },
+  })
+
+  ripple1.clickableRegion().cursor = 'pointer'
+  ripple1.clickableRegion().on('click', () => {
+    ripple1_Text.in()
+  })
+
+  ripple1_2.clickableRegion().cursor = 'pointer'
+  ripple1_2.clickableRegion().on('click', () => {
+    ripple1_2_Text.in()
+  })
+
+  ripple2.clickableRegion().cursor = 'pointer'
+  ripple2.clickableRegion().on('click', () => {
+    ripple2_Text.in()
+  })
+
+  ripple2_2.clickableRegion().cursor = 'pointer'
+  ripple2_2.clickableRegion().on('click', () => {
+    ripple2_2_Text.in()
+  })
+
+  ripple3.clickableRegion().cursor = 'pointer'
+  ripple3.clickableRegion().on('click', () => {
+    ripple3_Text.in()
+  })
+
   event.onIn(() => {
     city1.getCity().in()
     contextRegion1.in()
@@ -267,16 +352,6 @@ export const PeurtoRicoEvent = () => {
     contextRegion2.in()
 
     city1.in()
-
-    /*
-     * Play Background Audio
-     * */
-    // audioLoader.load(droneSound, (buffer) => {
-    //   backgroundAudio.setBuffer(buffer)
-    //   backgroundAudio.setLoop(true)
-    //   backgroundAudio.setVolume(2)
-    //   backgroundAudio.play()
-    // })
 
     ripple1.in(1500)
     ripple1.play()
@@ -298,8 +373,6 @@ export const PeurtoRicoEvent = () => {
 
     city1.out()
 
-    // backgroundAudio.stop()
-
     ripple1.out()
     ripple1.stop()
     ripple1_2.out()
@@ -310,6 +383,12 @@ export const PeurtoRicoEvent = () => {
     ripple2_2.stop()
     ripple3.out()
     ripple3.stop()
+
+    ripple1_Text.out()
+    ripple2_Text.out()
+    ripple2_2_Text.out()
+    ripple1_2_Text.out()
+    ripple3_Text.out()
   })
 
   event.onStart(() => {
@@ -337,6 +416,12 @@ export const PeurtoRicoEvent = () => {
     ripple2.update(ripple2Data.getAverageFrequency())
     ripple2_2.update(ripple2_2Data.getAverageFrequency())
     ripple3.update(ripple3Data.getAverageFrequency())
+
+    ripple1_Text.update()
+    ripple1_2_Text.update()
+    ripple2_2_Text.update()
+    ripple2_Text.update()
+    ripple3_Text.update()
   })
 
 

@@ -14,6 +14,7 @@ import * as Csound from '../../../assets/media/syria_damascus/C.mp3'
 import * as Asound from '../../../assets/media/syria_damascus/A.mp3'
 import * as Gsound from '../../../assets/media/syria_damascus/G.mp3'
 import * as droneSound from '../../../assets/media/drone_01_sound.mp3'
+import { EventHTML } from 'app/components'
 
 export const SyriaEvent = () => {
   const event = new Scene('syriaEvent')
@@ -219,7 +220,7 @@ export const SyriaEvent = () => {
 
   const ripple1 = new Ripple({
     soundUrl: Csound,
-    color: '#E0E0E0',
+    color: '#6fac82',
     linewidth: 30,
     radius: 10,
     resolution: 360,
@@ -245,7 +246,7 @@ export const SyriaEvent = () => {
 
   const ripple2 = new Ripple({
     soundUrl: Asound,
-    color: '#8cafc9',
+    color: '#ca7fb2',
     linewidth: 30,
     radius: 3,
     resolution: 360,
@@ -301,6 +302,60 @@ export const SyriaEvent = () => {
   event.add(ripple3.waveMesh())
   event.add(ripple3.waveAudio())
 
+  /*
+   * Text
+   */
+
+  const ripple1_Text = new EventHTML({
+    id: 'syria-6fac82-1',
+    parent: ripple1.waveMesh(),
+    heading: 'Every 10 seconds one person in Syria had to make the decision to leave their homes.',
+    description: `Refugees have to walk or travel on makeshift boats to neighbouring countries and continents.
+    It is estimated that 5 million people (in a country that had 22 million people) have been forced out, with 6.3
+    million still inside but displaced from their homes.`,
+    style: {
+      color: '#6fac82'
+    }
+  })
+
+  const ripple2_Text = new EventHTML({
+    id: 'syria-ca7fb2-1',
+    parent: ripple2.waveMesh(),
+    heading: 'On average, one person had died as a direct result of the civil war every 5 minutes.',
+    description: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
+    died every 5 minutes in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
+    towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
+    style: {
+      color: '#ca7fb2'
+    }
+  })
+
+  const ripple3_Text = new EventHTML({
+    id: 'syria-b7c980-1',
+    parent: ripple3.waveMesh(),
+    heading: 'A Syrian\'s footstep as they walked their 2253 kilometre journey to Serbia.',
+    description: `Horgos, Serbia is 2253 KM away, a journey that that takes approximately 50 days to complete if you were to walk 40 kilometres per day. This is roughly
+    the duration of a full-time job. This sound plays every second to represent each footstep for one person.`,
+    style: {
+      color: '#b7c980'
+    }
+  })
+
+  ripple1.clickableRegion().cursor = 'pointer'
+  ripple1.clickableRegion().on('click', () => {
+    ripple1_Text.in()
+  })
+
+  ripple2.clickableRegion().cursor = 'pointer'
+  ripple2.clickableRegion().on('click', () => {
+    ripple2_Text.in()
+  })
+
+  ripple3.clickableRegion().cursor = 'pointer'
+  ripple3.clickableRegion().on('click', () => {
+    ripple3_Text.in()
+  })
+
   event.onIn(() => {
     city1.getCity().in()
     city2.getCity().in()
@@ -317,16 +372,6 @@ export const SyriaEvent = () => {
     contextCity1.in()
     contextCity2.in()
     contextCity3.in()
-
-    /*
-     * Play Background Audio
-     * */
-    // audioLoader.load(droneSound, (buffer) => {
-    //   backgroundAudio.setBuffer(buffer)
-    //   backgroundAudio.setLoop(true)
-    //   backgroundAudio.setVolume(2)
-    //   backgroundAudio.play()
-    // })
 
     ripple1.in(1500)
     ripple1.play()
@@ -353,14 +398,16 @@ export const SyriaEvent = () => {
     contextCity2.out()
     contextCity3.out()
 
-    // backgroundAudio.stop()
-
     ripple1.out()
     ripple1.stop()
     ripple2.out()
     ripple2.stop()
     ripple3.out()
     ripple3.stop()
+
+    ripple1_Text.out()
+    ripple2_Text.out()
+    ripple3_Text.out()
   })
 
   event.onStart(() => {
@@ -394,6 +441,10 @@ export const SyriaEvent = () => {
     ripple1.update(ripple1Data.getAverageFrequency())
     ripple2.update(ripple2Data.getAverageFrequency())
     ripple3.update(ripple3Data.getAverageFrequency())
+
+    ripple1_Text.update()
+    ripple2_Text.update()
+    ripple3_Text.update()
   })
 
 
