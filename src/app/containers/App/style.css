@@ -167,3 +167,34 @@ input[type="checkbox"] {
     opacity: 1;
   }
 }
+
+.closeIcon {
+  display: block;
+}
+
+.closeIcon img {
+  width: 40px;
+  filter: brightness(0) invert(1);
+  padding: 0;
+  margin: 0;
+}
+
+.closeIcon:hover {
+  cursor: pointer;
+}
+
+.eventHTML {
+  padding: 1em 2em;
+  line-height: 22px;
+}
+
+.eventHTMLHeading {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+.eventHTMLDescription {
+  display: block;
+  opacity: 0.5;
+}

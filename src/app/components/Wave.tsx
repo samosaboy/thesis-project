@@ -1,9 +1,8 @@
 import { createAnimation } from './Utils'
+import * as  ImprovedNoise from './Utils/ImprovedNoise.js'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
-
-import * as  ImprovedNoise from './Utils/ImprovedNoise.js'
 
 export class Wave {
   private count: number
@@ -29,6 +28,8 @@ export class Wave {
 
   private createAnimation: any
 
+  public clickableArea: any
+
   constructor(options) {
     this.resolution = options.resolution
     this.radius = options.radius
@@ -43,20 +44,21 @@ export class Wave {
     this.speed = 0.05
     this.waveHeight = 0.001 * this.radius
 
-    // const waveGeom = new THREE.Geometry()
-    // const waveMaterial = new THREE.LineBasicMaterial({
-    //   color: options.color,
-    //   linewidth: options.linewidth,
-    // })
-    // this.mesh = new THREE.Line(waveGeom, waveMaterial)
-
     this.mesh = new THREE.Object3D()
     this.mesh.visible = false
     this.mesh.position.setZ(5)
 
     this.createAnimation = new createAnimation(this.mesh, {
-      z: 300
+      z: 300,
     })
+
+    const sphere = new THREE.TorusBufferGeometry(this.radius * 2, 1.5, 18, 18)
+    const sphereMaterial = new THREE.MeshBasicMaterial({
+      color: 0xFFFFFF,
+      // color: options.color,
+    })
+    this.clickableArea = new THREE.Mesh(sphere, sphereMaterial)
+    this.mesh.add(this.clickableArea)
 
     this.noisePos = 0.005
 
@@ -82,7 +84,6 @@ export class Wave {
   }
 
   public update = (audioData?: any): any => {
-
     this.noisePos += 0.01
     const perlin = ImprovedNoise().noise
     const n = Math.abs(perlin(this.noisePos, 0, 0))
@@ -91,10 +92,17 @@ export class Wave {
     for (let y = 0; y < this.waveCount; y++) {
       this.waveArray[y].scale.set(
         this.radius * 2 + this.colorArray[y] * audioData,
-        this.radius * 2 + this.colorArray[y] * audioData
+        this.radius * 2 + this.colorArray[y] * audioData,
       )
       this.waveArray[y].material.opacity = this.colorArray[y] > 1 ? this.colorArray[y] : 0.2
     }
+
+    // this.clickableArea.scale.set(
+    //   (this.radius / 2) + 0.02 * audioData,
+    //   (this.radius / 2) + 0.02 * audioData,
+    //   (this.radius / 2) + 0.02 * audioData,
+    // )
+
     const scaleValue = 0.01
     // new TWEEN.Tween(this.mesh.scale)
     //   .to({
@@ -107,11 +115,11 @@ export class Wave {
     // // this.mesh.scale.set(0.5 * audioData, 0.5 * audioData, 0.5 * audioData)
     //
     new TWEEN.Tween(this.mesh.rotation)
-      .to({
-        z: scaleValue * audioData,
-      }, 100)
-      .easing(TWEEN.Easing.Circular.InOut)
-      .start()
+    .to({
+      z: scaleValue * audioData,
+    }, 100)
+    .easing(TWEEN.Easing.Circular.InOut)
+    .start()
 
     const newVertices = []
 
@@ -152,7 +160,7 @@ export class Wave {
 
   public in = (dur) => {
     this.createAnimation.in({
-      z: 5
+      z: 5,
     }, dur)
   }
 

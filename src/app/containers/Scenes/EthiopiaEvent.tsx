@@ -265,6 +265,21 @@ export const EthiopiaEvent = () => {
   event.add(ripple2_2.waveMesh())
   event.add(ripple2_2.waveAudio())
 
+  const ripple2_2_Text = new EventHTML({
+    id: 'test1',
+    parent: ripple2_2.waveMesh(),
+    style: {
+      color: '#26262f',
+      width: 300,
+      height: 300
+    }
+  })
+
+  ripple2_2.clickableRegion().cursor = 'pointer'
+  ripple2_2.clickableRegion().on('click', () => {
+    ripple2_2_Text.in()
+  })
+
   /*
    * Ripple 3
    * */
@@ -294,26 +309,6 @@ export const EthiopiaEvent = () => {
 
   event.add(ripple3.waveMesh())
   event.add(ripple3.waveAudio())
-
-  const test = new EventHTML({
-    id: 'test1',
-    parent: city1.getMarker(),
-    style: {
-      color: '#000000',
-      width: 300,
-      height: 300
-    }
-  })
-
-  const test2 = new EventHTML({
-    id: 'test2',
-    parent: city2.getMarker(),
-    style: {
-      color: '#000000',
-      width: 200,
-      height: 200
-    }
-  })
 
   event.onIn(() => {
     city1.getCity().in()
@@ -401,17 +396,15 @@ export const EthiopiaEvent = () => {
     ripple2_2.update(ripple2_2Data.getAverageFrequency())
     ripple3.update(ripple3Data.getAverageFrequency())
 
-    test.update()
-    test2.update()
+    ripple2_2_Text.update()
   })
 
   event.onRenderDom(() => {
-    const testDiv = document.getElementById('renderSceneDOM')
-    testDiv.appendChild(test.getContainer())
-    test.getContentContainer().innerHTML = 'BOB'
-
-    testDiv.appendChild(test2.getContainer())
-    test2.getContentContainer().innerHTML = 'PIZZA'
+    ripple2_2_Text.setEventText(
+      'All people in this region are extremely dehyrated and starving, <b>every second</b>.',
+      `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
+      its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
+      region is under a famine.`)
   })
 
 

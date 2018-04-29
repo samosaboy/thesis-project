@@ -117,6 +117,7 @@ class App extends React.Component<App.Props, App.State> {
         } else if (to === 'ethiopiaEvent') {
           EthiopiaEventScene.in()
           EthiopiaEventScene.start()
+          EthiopiaEventScene.renderDom()
         }
 
         if (from === 'welcomeScene') {
@@ -275,7 +276,6 @@ class App extends React.Component<App.Props, App.State> {
         ],
       )
     } else if (this.state.currentScene === 'ethiopiaEvent') {
-      EthiopiaEventScene.renderDom()
       // return this.renderRippleDom(
       //   {
       //     from: 'ethiopiaEvent',

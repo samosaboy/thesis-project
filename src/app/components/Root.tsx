@@ -118,17 +118,16 @@ export class Root {
      * Custom camera functionality
      * for THREE.Camera prototype
      * */
-    THREE.Camera.prototype.resetPosition = () => {
+    this.camera.resetPosition = () => {
+      console.log(this.defaultScene)
       new TWEEN.Tween(this.camera.position)
         .to({
-          x: 0,
-          y: 0,
-          z: 300,
-        }, this.cameraSpeed * 2000)
+          y: this.currentScene ? this.nextScene.el.position.y : this.defaultScene.el.position.y,
+        }, this.cameraSpeed * 500)
         .easing(TWEEN.Easing.Cubic.InOut).start()
     }
 
-    THREE.Camera.prototype.resetZoom = () => {
+    this.camera.resetZoom = () => {
       new TWEEN.Tween(this.camera.rotation)
         .to({
           x: 0,
@@ -138,21 +137,17 @@ export class Root {
         .easing(TWEEN.Easing.Cubic.InOut).start()
     }
 
-    THREE.Camera.prototype.zoom = object => {
-      if (object instanceof THREE.Group) {
-        return new Promise(resolve => {
-          const position = new THREE.Vector3()
-          position.setFromMatrixPosition(object.matrixWorld)
+    this.camera.zoom = object => {
+      const _pos = this.camera.position
+      if (object instanceof THREE.Object3D) {
+        const position = new THREE.Vector3()
+        position.setFromMatrixPosition(object.matrixWorld)
 
-          new TWEEN.Tween(this.camera.position)
-            .to({
-              x: position.x,
-              y: position.y,
-              z: position.z - 35,
-            }, this.cameraSpeed * 2000)
-            .easing(TWEEN.Easing.Cubic.InOut).start()
-            .onComplete(() => resolve())
-        })
+        new TWEEN.Tween(this.camera.position)
+        .to({
+          y: position.y,
+        }, this.cameraSpeed * 1000)
+        .easing(TWEEN.Easing.Cubic.InOut).start()
       }
     }
 

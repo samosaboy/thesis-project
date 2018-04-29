@@ -30,6 +30,8 @@ export class Ripple {
     })
   }
 
+  public clickableRegion = () => this.wave.clickableArea
+
   public waveMesh = () => this.wave.mesh
 
   public waveAudio = () => this.audio.audio
