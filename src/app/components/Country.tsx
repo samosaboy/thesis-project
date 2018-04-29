@@ -23,7 +23,7 @@ export class Country {
     this.countryName = props.countryName
     this.des = props.description
 
-    const skyGeometry = new THREE.SphereBufferGeometry(400, 4, 4)
+    const skyGeometry = new THREE.SphereBufferGeometry(600, 4, 4)
     const skyMaterial = new THREE.ShaderMaterial({
       vertexShader: `varying vec3 vWorldPosition;
   	void main() {
@@ -41,10 +41,10 @@ export class Country {
   		gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
   	}`,
       uniforms: {
-        topColor: { value: new THREE.Color('#37414b') },
+        topColor: { value: new THREE.Color('#434f5c') },
         bottomColor: { value: new THREE.Color('#141619') },
-        offset: { value: 400 },
-        exponent: { value: 10 },
+        offset: { value: 0 },
+        exponent: { value: 1 },
       },
       side: THREE.BackSide,
     })

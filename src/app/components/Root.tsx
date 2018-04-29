@@ -116,10 +116,9 @@ export class Root {
 
     /*
      * Custom camera functionality
-     * for THREE.Camera prototype
+     * for THREE.Camera
      * */
     this.camera.resetPosition = () => {
-      console.log(this.defaultScene)
       new TWEEN.Tween(this.camera.position)
         .to({
           y: this.currentScene ? this.nextScene.el.position.y : this.defaultScene.el.position.y,
@@ -138,15 +137,14 @@ export class Root {
     }
 
     this.camera.zoom = object => {
-      const _pos = this.camera.position
       if (object instanceof THREE.Object3D) {
         const position = new THREE.Vector3()
         position.setFromMatrixPosition(object.matrixWorld)
 
         new TWEEN.Tween(this.camera.position)
         .to({
-          y: position.y,
-        }, this.cameraSpeed * 1000)
+          y: position.y - 100,
+        }, this.cameraSpeed * 500)
         .easing(TWEEN.Easing.Cubic.InOut).start()
       }
     }

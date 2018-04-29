@@ -52,13 +52,24 @@ export class Wave {
       z: 300,
     })
 
-    const sphere = new THREE.TorusBufferGeometry(this.radius * 2, 1.5, 18, 18)
-    const sphereMaterial = new THREE.MeshBasicMaterial({
+    const outlineObj = new THREE.CircleGeometry(this.radius * 2, 64)
+    outlineObj.vertices.shift()
+    const outlineMaterial = new THREE.MeshBasicMaterial({
       color: 0xFFFFFF,
       // color: options.color,
     })
-    this.clickableArea = new THREE.Mesh(sphere, sphereMaterial)
+    this.clickableArea = new THREE.Line(outlineObj, outlineMaterial)
     this.mesh.add(this.clickableArea)
+
+    const clickableObj = new THREE.SphereBufferGeometry(this.radius * 2, 16, 16)
+    const clickableMaterial = new THREE.MeshBasicMaterial({
+      color: 0xFFFFFF,
+      transparent: true,
+      opacity: 0
+    })
+
+    const clickableMesh = new THREE.Mesh(clickableObj, clickableMaterial)
+    this.clickableArea.add(clickableMesh)
 
     this.noisePos = 0.005
 
@@ -97,11 +108,11 @@ export class Wave {
       this.waveArray[y].material.opacity = this.colorArray[y] > 1 ? this.colorArray[y] : 0.2
     }
 
-    // this.clickableArea.scale.set(
-    //   (this.radius / 2) + 0.02 * audioData,
-    //   (this.radius / 2) + 0.02 * audioData,
-    //   (this.radius / 2) + 0.02 * audioData,
-    // )
+    this.clickableArea.scale.set(
+      (this.radius / 2.5) + 0.01 * audioData,
+      (this.radius / 2.5) + 0.01 * audioData,
+      (this.radius / 2.5) + 0.01 * audioData,
+    )
 
     const scaleValue = 0.01
     // new TWEEN.Tween(this.mesh.scale)

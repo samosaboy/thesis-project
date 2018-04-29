@@ -2,10 +2,10 @@ import * as React from 'react'
 import {
   CapitalCityMarker,
   Country,
+  EventHTML,
   Ripple,
   Scene,
   TextGeometry,
-  EventHTML,
 } from '../../components'
 import { RootComponent } from '../App'
 
@@ -15,7 +15,6 @@ import * as Csound2 from '../../../assets/media/syria_damascus/C(1).mp3'
 import * as Asound from '../../../assets/media/syria_damascus/A.mp3'
 import * as Gsound from '../../../assets/media/syria_damascus/HighG.mp3'
 import * as lowGsound from '../../../assets/media/syria_damascus/LowG.mp3'
-import * as dronesound from '../../../assets/media/drone_02_sound.mp3'
 
 const THREE = require('three')
 
@@ -265,21 +264,6 @@ export const EthiopiaEvent = () => {
   event.add(ripple2_2.waveMesh())
   event.add(ripple2_2.waveAudio())
 
-  const ripple2_2_Text = new EventHTML({
-    id: 'test1',
-    parent: ripple2_2.waveMesh(),
-    style: {
-      color: '#26262f',
-      width: 300,
-      height: 300
-    }
-  })
-
-  ripple2_2.clickableRegion().cursor = 'pointer'
-  ripple2_2.clickableRegion().on('click', () => {
-    ripple2_2_Text.in()
-  })
-
   /*
    * Ripple 3
    * */
@@ -310,6 +294,94 @@ export const EthiopiaEvent = () => {
   event.add(ripple3.waveMesh())
   event.add(ripple3.waveAudio())
 
+  /*
+   * Text
+   */
+
+  const ripple1_Text = new EventHTML({
+    id: 'ethiopia-6269e0-1',
+    parent: ripple1.waveMesh(),
+    heading: 'Every 2 - 6 seconds, one person is struggling with a disease as a result of lack of clean water.',
+    description: `Lack of clean water results in stomach infections which can lead to diarrhea and other symptoms
+       which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
+       constraints from the government and the United Nations.`,
+    style: {
+      color: '#6269e0',
+    },
+  })
+
+  const ripple1_2_Text = new EventHTML({
+    id: 'ethiopia-6269e0-2',
+    parent: ripple1_2.waveMesh(),
+    heading:     'Every 2 - 6 seconds, one person is struggling with a disease as a result of lack of clean water.',
+    description:`Lack of clean water results in stomach infections which can lead to diarrhea and other symptoms
+       which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
+       constraints from the government and the United Nations.`,
+    style: {
+      color: '#6269e0',
+    },
+  })
+
+  const ripple3_Text = new EventHTML({
+    id: 'ethiopia-e05d00-2',
+    parent: ripple3.waveMesh(),
+    heading:     'One person in this region is able to get access to food every 20 seconds.',
+    description: `Fortunately, some parts of Ethiopia have access to food, water and medications to combat
+      the many infections and diseases from the lack of essential resources.`,
+    style: {
+      color: '#e05d00',
+    },
+  })
+
+  const ripple2_2_Text = new EventHTML({
+    id: 'ethiopia-26262f-2',
+    parent: ripple2_2.waveMesh(),
+    heading:     'All people in this region are extremely dehyrated and starving, every second.',
+    description: `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
+      its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
+      region is under a famine.`,
+    style: {
+      color: '#c970be',
+    },
+  })
+
+  const ripple2_Text = new EventHTML({
+    id: 'ethiopia-26262f-1',
+    parent: ripple2.waveMesh(),
+    heading:     'All people in this region are extremely dehyrated and starving, every second.',
+    description: `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
+      its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
+      region is under a famine.`,
+    style: {
+      color: '#c970be',
+    },
+  })
+
+  ripple1.clickableRegion().cursor = 'pointer'
+  ripple1.clickableRegion().on('click', () => {
+    ripple1_Text.in()
+  })
+
+  ripple1_2.clickableRegion().cursor = 'pointer'
+  ripple1_2.clickableRegion().on('click', () => {
+    ripple1_2_Text.in()
+  })
+
+  ripple2.clickableRegion().cursor = 'pointer'
+  ripple2.clickableRegion().on('click', () => {
+    ripple2_Text.in()
+  })
+
+  ripple2_2.clickableRegion().cursor = 'pointer'
+  ripple2_2.clickableRegion().on('click', () => {
+    ripple2_2_Text.in()
+  })
+
+  ripple3.clickableRegion().cursor = 'pointer'
+  ripple3.clickableRegion().on('click', () => {
+    ripple3_Text.in()
+  })
+
   event.onIn(() => {
     city1.getCity().in()
     city2.getCity().in()
@@ -320,16 +392,6 @@ export const EthiopiaEvent = () => {
 
     city1.in()
     city2.in()
-
-    /*
-     * Play Background Audio
-     * */
-    // audioLoader.load(dronesound, (buffer) => {
-    //   backgroundAudio.setBuffer(buffer)
-    //   backgroundAudio.setLoop(true)
-    //   backgroundAudio.setVolume(1)
-    //   backgroundAudio.play()
-    // })
 
     ripple1.in(1500)
     ripple1.play()
@@ -354,8 +416,6 @@ export const EthiopiaEvent = () => {
     city1.out()
     city2.out()
 
-    // backgroundAudio.stop()
-
     ripple1.out()
     ripple1.stop()
     ripple1_2.out()
@@ -366,6 +426,12 @@ export const EthiopiaEvent = () => {
     ripple2_2.stop()
     ripple3.out()
     ripple3.stop()
+
+    ripple1_Text.out()
+    ripple2_Text.out()
+    ripple2_2_Text.out()
+    ripple1_2_Text.out()
+    ripple3_Text.out()
   })
 
   event.onStart(() => {
@@ -396,17 +462,12 @@ export const EthiopiaEvent = () => {
     ripple2_2.update(ripple2_2Data.getAverageFrequency())
     ripple3.update(ripple3Data.getAverageFrequency())
 
+    ripple1_Text.update()
+    ripple1_2_Text.update()
     ripple2_2_Text.update()
+    ripple2_Text.update()
+    ripple3_Text.update()
   })
-
-  event.onRenderDom(() => {
-    ripple2_2_Text.setEventText(
-      'All people in this region are extremely dehyrated and starving, <b>every second</b>.',
-      `The South-East portion of Ethiopia is extremely impoverished. The extreme heat from
-      its neighbouring oceans causes severe drought, loss of crops and farm animals. As a result, this entire
-      region is under a famine.`)
-  })
-
 
   return event
 }
