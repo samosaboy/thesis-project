@@ -61,7 +61,7 @@ export class Wave {
     this.clickableArea = new THREE.Line(outlineObj, outlineMaterial)
     this.mesh.add(this.clickableArea)
 
-    const clickableObj = new THREE.SphereBufferGeometry(this.radius * 2, 16, 16)
+    const clickableObj = new THREE.SphereBufferGeometry(this.radius * 2.2, 16, 16)
     const clickableMaterial = new THREE.MeshBasicMaterial({
       color: 0xFFFFFF,
       transparent: true,

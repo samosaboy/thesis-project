@@ -64,7 +64,7 @@ input[type="checkbox"] {
 .header h2 {
   font-size: 18pt;
   text-transform: uppercase;
-  letter-spacing: 4pt;
+  letter-spacing: 3.5pt;
 }
 
 .header h2,
@@ -83,7 +83,7 @@ input[type="checkbox"] {
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  flex: 0.9;
+  flex: 0.65;
 }
 
 .footer {
@@ -92,10 +92,11 @@ input[type="checkbox"] {
   bottom: 0;
   left: 0;
   width: 100%;
+  padding: 3em;
   overflow: hidden;
   display: flex;
-  justify-content: flex-start;
-  align-items: stretch;
+  justify-content: center;
+  align-items: center;
 }
 
 .footer div {
@@ -130,12 +131,15 @@ input[type="checkbox"] {
   padding: 1em !important;
 }
 
+.backButtonContainer {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 200px;
+}
+
 .backButton {
-  font-size: 0.8em;
-  text-transform: uppercase;
-  width: 30px;
-  height: 30px;
-  border-radius: 64px;
   display: block;
 }
 
@@ -168,32 +172,17 @@ input[type="checkbox"] {
   }
 }
 
-.backButton:after {
-  animation: hoverButton 0.3
-}
-
 .backButton:hover {
   cursor: pointer;
   border: none;
 }
 
-.backButton:hover:after {
-  text-align: center;
-  content: 'Back To Pond';
-  margin-left: -2px;
-  margin-top: -6px;
-  display: block;
-}
-
-@keyframes hoverButton {
-  0% {
-    content: 'Back To Pond';
-    opacity: 0;
-  }
-  100% {
-    content: 'Back To Pond';
-    opacity: 1;
-  }
+.backButtonText {
+  text-transform: uppercase;
+  font-size: 10pt;
+  font-weight: bold;
+  transition: opacity 0.25s ease-in-out;
+  margin-left: 1.10em;
 }
 
 .closeIcon {

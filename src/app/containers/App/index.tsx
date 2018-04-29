@@ -45,6 +45,7 @@ export namespace App {
   }
 
   export interface State {
+    backButtonHover: boolean,
     isTransitioningStart: boolean,
     isTransitioningSuccess: boolean,
     currentScene: string,
@@ -68,6 +69,7 @@ class App extends React.Component<App.Props, App.State> {
   constructor(props?: any, context?: any) {
     super(props, context)
     this.state = {
+      backButtonHover: false,
       isTransitioningStart: false,
       isTransitioningSuccess: true,
       currentScene: '',
@@ -89,7 +91,7 @@ class App extends React.Component<App.Props, App.State> {
         EthiopiaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('syriaEvent')
+      RootComponent.setDefaultScreen('ethiopiaEvent')
       // RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
@@ -111,7 +113,7 @@ class App extends React.Component<App.Props, App.State> {
         } else if (to === 'syriaEvent') {
           SyriaEventScene.in()
           SyriaEventScene.start()
-        }  else if (to === 'peurtoRicoEvent') {
+        } else if (to === 'peurtoRicoEvent') {
           PeurtoRicoEventScene.in()
           PeurtoRicoEventScene.start()
         } else if (to === 'ethiopiaEvent') {
@@ -167,18 +169,28 @@ class App extends React.Component<App.Props, App.State> {
           <div className={style.backButtonContainer}>
             <button
               className={style.backButton}
+              onMouseOver={() => this.setState({ backButtonHover: true })}
+              onMouseOut={() => this.setState({ backButtonHover: false })}
               onClick={() => {
                 RootComponent.backToEvent = true
                 RootComponent.switchScreen(event.from, 'pondScene')
               }}>
-              <img src="../../../assets/images/back-icon.png" />
+              <img src="../../../assets/images/back-icon.png"/>
             </button>
+            <span
+              style={{
+                opacity: this.state.backButtonHover ? 1 : 0,
+              }}
+              className={style.backButtonText}>Back To Pond</span>
           </div>
           <div className={style.headerTitleContainer}>
             <h2>{event.name}</h2>
-            <h4>{event.description}</h4>
+            <span><b>{event.description}</b>: {event.information}</span>
           </div>
         </div>
+        {/*<div className={style.footer}>*/}
+          {/*{event.information}*/}
+        {/*</div>*/}
       </div>
     )
   }
@@ -192,8 +204,8 @@ class App extends React.Component<App.Props, App.State> {
           from: 'syriaEvent',
           name: 'Syria',
           description: 'March 2011',
-          information: 'March 2011 was the outbreak of the Syrian Civil War, which is still ongoing today.',
-        }
+          information: 'since the outbreak of the Syrian Civil War, millions have been horribly affected.',
+        },
       )
     } else if (this.state.currentScene === 'peurtoRicoEvent') {
       return this.renderRippleDom(
@@ -201,7 +213,7 @@ class App extends React.Component<App.Props, App.State> {
           from: 'peurtoRicoEvent',
           name: 'Puerto Rico',
           description: 'September 2017',
-          information: 'Hurricane Maria struck the small island of Puerto Rico which left the country without power and resources.',
+          information: 'Hurricane Maria struck the island leaving it without power and resources.',
         },
       )
     } else if (this.state.currentScene === 'ethiopiaEvent') {
@@ -210,8 +222,8 @@ class App extends React.Component<App.Props, App.State> {
           from: 'ethiopiaEvent',
           name: 'Ethiopia',
           description: 'March 2017',
-          information: 'As part of the East African Crisis, Ethiopia is seeing millions of men, women and children in severe starvation.',
-        }
+          information: 'millions of men, women and children are enduring severe starvation.',
+        },
       )
     }
     return null
