@@ -92,7 +92,7 @@ export class Root {
     this.stats.showPanel(0)
     this.stats.dom.style.right = 0
     this.stats.dom.style.left = 'auto'
-    if (isDev) {
+    if (!isDev) {
       document.body.appendChild(this.stats.dom)
     }
 
