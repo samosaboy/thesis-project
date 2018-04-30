@@ -157,7 +157,7 @@ export const PeurtoRicoEvent = () => {
     waveCount: 100,
     waveScale: 0.05,
     volume: 2.1,
-    interval: 1300,
+    interval: 2000,
     position: {
       x: 40,
       y: 47,
@@ -187,7 +187,7 @@ export const PeurtoRicoEvent = () => {
     waveCount: 240,
     waveScale: 0.1,
     volume: 1.55,
-    interval: 5000,
+    interval: 30000,
     position: {
       x: -115,
       y: -50,
@@ -217,10 +217,10 @@ export const PeurtoRicoEvent = () => {
     waveCount: 240,
     waveScale: 0.2,
     volume: 1.55,
-    interval: 5300,
+    interval: 30000,
     position: {
       x: -105,
-      y: 60,
+      y: 50,
       z: 3,
     },
   })
@@ -247,7 +247,7 @@ export const PeurtoRicoEvent = () => {
     waveCount: 100,
     waveScale: 0.1,
     volume: 2.1,
-    interval: 1500, // duration + interval
+    interval: 15000, // duration + interval
     position: {
       x: -130,
       y: -20,
@@ -267,7 +267,7 @@ export const PeurtoRicoEvent = () => {
   const ripple1_Text = new EventHTML({
     id: 'pr-e0817d-1',
     parent: ripple1.waveMesh(),
-    heading: 'One person had lost their home due to the flooding every one - two seconds',
+    heading: 'Every 1 - 2 seconds, a person had lost their home due to the flooding.',
     description: `Majority of the island's homes were built on faulty, unstable land. Majority of the homes were also
     built poorly. As a result, homes were easily destroyed and people were displaced.`,
     style: {
@@ -278,7 +278,7 @@ export const PeurtoRicoEvent = () => {
   const ripple1_2_Text = new EventHTML({
     id: 'pr-e0817d-2',
     parent: ripple1_2.waveMesh(),
-    heading: 'One person had lost their home due to the flooding every one - two seconds',
+    heading: 'Every 1 - 2 seconds, a person had lost their home due to the flooding.',
     description: `Majority of the island's homes were built on faulty, unstable land. Majority of the homes were also
     built poorly. As a result, homes were easily destroyed and people were displaced.`,
     style: {
@@ -359,7 +359,7 @@ export const PeurtoRicoEvent = () => {
     ripple1_2.play()
     ripple2.in(2000)
     ripple2.play()
-    ripple2_2.in(1500)
+    ripple2_2.in(2100)
     ripple2_2.play()
     ripple3.in(2500)
     ripple3.play()

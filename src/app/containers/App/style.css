@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lora:400,400i,700');
-@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900');
-
-/* Download the fonts and reference it locally */
+@import url('//fonts.googleapis.com/css?family=Lato:300,400,700,900');
 
 html,
 body {
@@ -24,7 +21,7 @@ button {
 }
 
 body {
-  font-family: 'Lato', 'Arial', 'Helvetica', sans-serif;
+  font-family: 'Lato', 'Arial', 'Helvetica', sans-serif !important;
   color: #FFFFFF;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;

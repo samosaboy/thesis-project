@@ -3,7 +3,6 @@ import { RootComponent } from '../containers/App'
 // Implement THREE CACHE?
 
 const THREE = require('three')
-const TWEEN = require('@tweenjs/tween.js')
 
 export class WaveAudio {
   private sound: any
@@ -21,7 +20,7 @@ export class WaveAudio {
     this.sound = sound
     this.volume = options.volume
     this.interval = options.interval
-    this.audioLoader = new THREE.AudioLoader()
+    this.audioLoader = new THREE.AudioLoader(RootComponent.loadingManager)
     this.audio = new THREE.Audio(RootComponent.listener)
     this.loop = !!options.loop
     this.duration = options.duration
@@ -46,12 +45,12 @@ export class WaveAudio {
           }
           this.audio.play()
         }, this.interval)
-      } else {
+      }else {
         this.audio.play()
       }
     },
         // xhr => console.log((xhr.loaded / xhr.total * 100) + '% loaded' ),
-        // e => console.warn(e)
+        // e => console.log(e)
     )
   }
 
