@@ -5,6 +5,8 @@ import { RootComponent } from '../containers/App'
 
 import * as style from '../containers/App/style.css'
 
+import * as closeIcon from '../../assets/images/close-icon.png'
+
 /*
  * The top left corner is the starting position
  * */

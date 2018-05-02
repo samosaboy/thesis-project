@@ -33,7 +33,7 @@ export class CapitalCityMarker {
 
     this.marker = new THREE.Mesh(Shape, material)
     this.marker.visible = false
-    this.marker.position.set(this.position.x, this.position.y - 10, this.position.z + 2)
+    this.marker.position.set(this.position.x, this.position.y - 10, this.position.z + 35)
 
     this.createAnimation = new createAnimation(this.marker, {
       y: this.position.y < 0 / 2 ? -200 : 200,

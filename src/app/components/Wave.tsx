@@ -15,6 +15,7 @@ export class Wave {
   private tetaOffset: number
   private waveLength: number
   private waveHeight: number
+  private color: any
 
   private waveType: string
 
@@ -41,6 +42,7 @@ export class Wave {
     this.waveType = options.waveType
     this.waveCount = options.waveCount
     this.waveScale = options.waveScale
+    this.color = options.color
 
     this.count = 0
     this.speed = 0.05
@@ -58,7 +60,7 @@ export class Wave {
     outlineObj.vertices.shift()
 
     const outlineMaterial = new THREE.MeshBasicMaterial({
-      color: 0xFFFFFF,
+      color: 0xE0E0E0,
       // color: options.color,
     })
     this.clickableArea = new THREE.Line(outlineObj, outlineMaterial)
@@ -113,9 +115,9 @@ export class Wave {
 
     for (let y = 0; y < this.waveCount; y++) {
       this.waveArray[y].scale.set(
-        (this.radius + this.colorArray[y] * audioData) / 3,
-        (this.radius + this.colorArray[y] * audioData) / 3,
-        (this.radius + this.colorArray[y] * audioData) / 3,
+        this.radius * 2 + this.colorArray[y] * audioData,
+        this.radius * 2 + this.colorArray[y] * audioData,
+        this.radius * 2 + this.colorArray[y] * audioData,
       )
       this.waveArray[y].material.opacity = this.colorArray[y] > 1 ? this.colorArray[y] : 0.2
     }
@@ -125,9 +127,14 @@ export class Wave {
       this.radius + 0.01 * audioData,
       this.radius + 0.01 * audioData,
     )
+    if (audioData) {
+      this.clickableArea.material.color.set(this.color)
+    } else {
+      this.clickableArea.material.color.set(0xE0E0E0)
+    }
 
     const scaleValue = 0.01
-
+    
     new TWEEN.Tween(this.mesh.rotation)
     .to({
       z: scaleValue * audioData,

@@ -18,6 +18,8 @@ import {
 import * as style from './style.css'
 import * as backIcon from '../../../assets/images/back-icon.png'
 
+import * as backIcon from '../../../assets/images/back-icon.png'
+
 if (!isDev) {
   window.console.warn('😃 Hello! Check out my work @ nikunj.ca :)')
   window.console.log = () => {}
