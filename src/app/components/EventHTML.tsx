@@ -11,6 +11,8 @@ import * as closeIcon from '../../assets/images/close-icon.png'
  * The top left corner is the starting position
  * */
 
+import * as closeIcon from '../../assets/images/close-icon.png'
+
 export class EventHTML {
   private parent: any
   private position: THREE.Vector3

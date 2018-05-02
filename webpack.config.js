@@ -48,7 +48,11 @@ module.exports = {
       'three/trackballcontrols': path.join(__dirname, 'node_modules/three/examples/js/controls/TrackballControls.tsx'),
       'three/flycontrols': path.join(__dirname, 'node_modules/three/examples/js/controls/FlyControls.js'),
       'three/firstpersoncontrols': path.join(__dirname, 'node_modules/three/examples/js/controls/FirstPersonControls.js'),
-      'three/geometryutils': path.join(__dirname, 'node_modules/three/examples/js/utils/GeometryUtils.js'),
+      'three/line2': path.join(__dirname, 'node_modules/three/examples/js/lines/Line2.js'),
+      'three/linegeometry': path.join(__dirname, 'node_modules/three/examples/js/lines/LineGeometry.js'),
+      'three/linematerial': path.join(__dirname, 'node_modules/three/examples/js/lines/LineMaterial.js'),
+      'three/linesegments2': path.join(__dirname, 'node_modules/three/examples/js/lines/LineSegments2.js'),
+      'three/linesegmentsgeometry': path.join(__dirname, 'node_modules/three/examples/js/lines/LineSegmentsGeometry.js'),
     }
   },
   module: {
