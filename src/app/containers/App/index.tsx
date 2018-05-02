@@ -16,7 +16,6 @@ import {
   Root,
 } from '../../components'
 import * as style from './style.css'
-import * as backIcon from '../../../assets/images/back-icon.png'
 
 import * as backIcon from '../../../assets/images/back-icon.png'
 
