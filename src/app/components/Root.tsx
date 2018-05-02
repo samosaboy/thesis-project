@@ -88,11 +88,11 @@ export class Root {
     /*
      * Instantiate Stats for Development
      * */
-    this.stats = new Stats()
-    this.stats.showPanel(0)
-    this.stats.dom.style.right = 0
-    this.stats.dom.style.left = 'auto'
-    if (!isDev) {
+    if (isDev) {
+      this.stats = new Stats()
+      this.stats.showPanel(0)
+      this.stats.dom.style.right = 0
+      this.stats.dom.style.left = 'auto'
       document.body.appendChild(this.stats.dom)
     }
 

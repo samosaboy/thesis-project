@@ -21,7 +21,7 @@ export class CapitalCityMarker {
         position: {
           x: params.position.x,
           y: params.position.y,
-          z: params.position.z + 20,
+          z: params.position.z + 35,
         },
       },
     )

@@ -66,8 +66,9 @@
     "react-router": "^4.2.0",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
-    "three": "0.92.0",
+    "three": "https://github.com/samosaboy/three.js.git",
     "three-bas": "^2.7.0",
-    "three.interaction": "0.0.9"
+    "three.interaction": "0.0.9",
+    "three.meshline": "^1.0.3"
   }
 }

@@ -16,6 +16,7 @@ import {
   Root,
 } from '../../components'
 import * as style from './style.css'
+import * as backIcon from '../../../assets/images/back-icon.png'
 
 if (!isDev) {
   window.console.warn('😃 Hello! Check out my work @ nikunj.ca :)')
@@ -91,7 +92,7 @@ class App extends React.Component<App.Props, App.State> {
         EthiopiaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('peurtoRicoEvent')
+      RootComponent.setDefaultScreen('ethiopiaEvent')
       // RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
@@ -175,7 +176,7 @@ class App extends React.Component<App.Props, App.State> {
                 RootComponent.backToEvent = true
                 RootComponent.switchScreen(event.from, 'pondScene')
               }}>
-              <img src="../../../assets/images/back-icon.png"/>
+              <img src={backIcon} />
             </button>
             <span
               style={{

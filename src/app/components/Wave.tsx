@@ -1,8 +1,10 @@
 import { createAnimation } from './Utils'
 import * as  ImprovedNoise from './Utils/ImprovedNoise.js'
+import { RootComponent } from 'app/containers/App'
 
 const THREE = require('three')
 const TWEEN = require('@tweenjs/tween.js')
+const TML = require('three.meshline')
 
 export class Wave {
   private count: number
@@ -52,8 +54,9 @@ export class Wave {
       z: 300,
     })
 
-    const outlineObj = new THREE.CircleGeometry(this.radius * 2, 64)
+    const outlineObj = new THREE.CircleGeometry(this.radius * 2.5, 64, 0, 2.05 * Math.PI)
     outlineObj.vertices.shift()
+
     const outlineMaterial = new THREE.MeshBasicMaterial({
       color: 0xFFFFFF,
       // color: options.color,
@@ -61,11 +64,11 @@ export class Wave {
     this.clickableArea = new THREE.Line(outlineObj, outlineMaterial)
     this.mesh.add(this.clickableArea)
 
-    const clickableObj = new THREE.SphereBufferGeometry(this.radius * 2.2, 16, 16)
+    const clickableObj = new THREE.SphereBufferGeometry(this.radius * 2, 16, 16)
     const clickableMaterial = new THREE.MeshBasicMaterial({
       color: 0xFFFFFF,
       transparent: true,
-      opacity: 0
+      opacity: 0,
     })
 
     const clickableMesh = new THREE.Mesh(clickableObj, clickableMaterial)
@@ -73,21 +76,29 @@ export class Wave {
 
     this.noisePos = 0.005
 
-    const shape = new THREE.Shape()
-    shape.absarc(0, 0, 1, 0, Math.PI * 2, false)
-    this.waveGeom = shape.createPointsGeometry(100)
-    this.waveGeom.dynamic = true
-    const waveMaterial = new THREE.LineBasicMaterial({
-      color: options.color,
-      linewidth: 1,
+    this.waveGeom = new THREE.Geometry()
+    this.waveGeom.vertices = outlineObj.vertices
+
+    const waveLines = new TML.MeshLine()
+    waveLines.setGeometry(this.waveGeom)
+
+    const waveMaterial = new TML.MeshLineMaterial({
+      lineWidth: 0.5,
+      color: new THREE.Color(options.color),
+      resolution: new THREE.Vector2(window.innerWidth, window.innerHeight),
+      depthWrite: false,
+      depthTest: false,
+      near: RootComponent.getCamera().near,
+      far: RootComponent.getCamera().far,
       transparent: true,
-      blending: THREE.NormalBlending,
+      sizeAttenuation: true,
+      opacity: 0.5
     })
 
     this.colorArray = []
     this.waveArray = []
     for (let y = 0; y < this.waveCount; y++) {
-      const waveMesh = new THREE.Line(this.waveGeom, waveMaterial)
+      const waveMesh = new THREE.Mesh(waveLines.geometry, waveMaterial)
       waveMesh.scale.set((y * this.waveScale), (y * this.waveScale))
       this.mesh.add(waveMesh)
       this.waveArray.push(waveMesh)
@@ -102,29 +113,21 @@ export class Wave {
 
     for (let y = 0; y < this.waveCount; y++) {
       this.waveArray[y].scale.set(
-        this.radius * 2 + this.colorArray[y] * audioData,
-        this.radius * 2 + this.colorArray[y] * audioData,
+        (this.radius + this.colorArray[y] * audioData) / 3,
+        (this.radius + this.colorArray[y] * audioData) / 3,
+        (this.radius + this.colorArray[y] * audioData) / 3,
       )
       this.waveArray[y].material.opacity = this.colorArray[y] > 1 ? this.colorArray[y] : 0.2
     }
 
     this.clickableArea.scale.set(
-      (this.radius / 2.5) + 0.01 * audioData,
-      (this.radius / 2.5) + 0.01 * audioData,
-      (this.radius / 2.5) + 0.01 * audioData,
+      this.radius + 0.01 * audioData,
+      this.radius + 0.01 * audioData,
+      this.radius + 0.01 * audioData,
     )
 
     const scaleValue = 0.01
-    // new TWEEN.Tween(this.mesh.scale)
-    //   .to({
-    //     x: this.radius * 2 + (scaleValue * audioData),
-    //     y: this.radius * 2 + (scaleValue * audioData),
-    //     z: this.radius * 2 + (scaleValue * audioData),
-    //   }, 100)
-    //   .easing(TWEEN.Easing.Circular.InOut)
-    //   .start()
-    // // this.mesh.scale.set(0.5 * audioData, 0.5 * audioData, 0.5 * audioData)
-    //
+
     new TWEEN.Tween(this.mesh.rotation)
     .to({
       z: scaleValue * audioData,
@@ -132,41 +135,41 @@ export class Wave {
     .easing(TWEEN.Easing.Circular.InOut)
     .start()
 
-    const newVertices = []
-
-    for (let i = 0; i <= this.resolution; i++) {
-      {
-        const teta = Math.PI / 180 * (i + this.tetaOffset)
-        let deltaRadius = 0
-
-        if (i < this.waveLength * this.resolution || i === this.resolution) {
-          const smoothAmount = 0.14
-          let smoothPercent = 1
-
-          if (i < this.waveLength * this.resolution * smoothAmount) {
-            smoothPercent = i / (this.waveLength * this.resolution * smoothAmount)
-          } else if (i > this.waveLength * this.resolution * (1 - smoothAmount) && i <= this.waveLength * this.resolution) {
-            smoothPercent = (this.waveLength * this.resolution - i) / (this.waveLength * this.resolution * smoothAmount)
-          } else if (i == this.resolution) {
-            smoothPercent = 0
-          }
-
-          if (this.waveType === 'normal') {
-            deltaRadius = this.waveHeight * smoothPercent * Math.cos((teta + this.count) * this.waveNumber) * audioData * 5
-          } else if (this.waveType === 'crazy') {
-            deltaRadius = this.waveHeight * smoothPercent * Math.sin((teta + this.count) * this.waveNumber) * audioData * 5
-          }
-        }
-
-        const x = (this.radius + deltaRadius) * Math.cos(teta + this.count)
-        const y = (this.radius + deltaRadius) * Math.sin(teta + this.count)
-        const z = 0
-
-        newVertices.push(new THREE.Vector3(x, y, z))
-      }
-      this.waveGeom.vertices = newVertices
-      this.waveGeom.verticesNeedUpdate = true
-    }
+    // const newVertices = []
+	//
+    // for (let i = 0; i <= this.resolution; i++) {
+    //   {
+    //     const teta = Math.PI / 180 * (i + this.tetaOffset)
+    //     let deltaRadius = 0
+	//
+    //     if (i < this.waveLength * this.resolution || i === this.resolution) {
+    //       const smoothAmount = 0.14
+    //       let smoothPercent = 2
+	//
+    //       if (i < this.waveLength * this.resolution * smoothAmount) {
+    //         smoothPercent = i / (this.waveLength * this.resolution * smoothAmount)
+    //       } else if (i > this.waveLength * this.resolution * (1 - smoothAmount) && i <= this.waveLength * this.resolution) {
+    //         smoothPercent = (this.waveLength * this.resolution - i) / (this.waveLength * this.resolution * smoothAmount)
+    //       } else if (i == this.resolution) {
+    //         smoothPercent = 0
+    //       }
+	//
+    //       if (this.waveType === 'normal') {
+    //         deltaRadius = this.waveHeight * smoothPercent * Math.cos((teta + this.count) * this.waveNumber) * audioData * 5
+    //       } else if (this.waveType === 'crazy') {
+    //         deltaRadius = this.waveHeight * smoothPercent * Math.sin((teta + this.count) * this.waveNumber) * audioData * 5
+    //       }
+    //     }
+	//
+    //     const x = (this.radius + deltaRadius) * Math.cos(teta + this.count)
+    //     const y = (this.radius + deltaRadius) * Math.sin(teta + this.count)
+    //     const z = 0
+	//
+    //     newVertices.push(new THREE.Vector3(x, y, z))
+    //   }
+    //   this.waveGeom.vertices = newVertices
+    //   this.waveGeom.verticesNeedUpdate = true
+    // }
   }
 
   public in = (dur) => {
