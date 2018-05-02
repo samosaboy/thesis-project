@@ -5,6 +5,8 @@ import { RootComponent } from '../containers/App'
 
 import * as style from '../containers/App/style.css'
 
+import * as closeIcon from '../../assets/images/close-icon.png'
+
 /*
  * The top left corner is the starting position
  * */
@@ -43,7 +45,7 @@ export class EventHTML {
 
     const closeButton = document.createElement('button')
     closeButton.className = style.closeIcon
-    closeButton.innerHTML = '<img src="../../assets/images/close-icon.png" />'
+    closeButton.innerHTML = '<img src=' + closeIcon + ' />'
     closeButton.onclick = () => this.closeIcon()
     header.appendChild(closeButton)
 

@@ -17,6 +17,8 @@ import {
 } from '../../components'
 import * as style from './style.css'
 
+import * as backIcon from '../../../assets/images/back-icon.png'
+
 if (!isDev) {
   window.console.warn('😃 Hello! Check out my work @ nikunj.ca :)')
   window.console.log = () => {}
@@ -175,7 +177,7 @@ class App extends React.Component<App.Props, App.State> {
                 RootComponent.backToEvent = true
                 RootComponent.switchScreen(event.from, 'pondScene')
               }}>
-              <img src="../../../assets/images/back-icon.png"/>
+              <img src={backIcon} />
             </button>
             <span
               style={{
