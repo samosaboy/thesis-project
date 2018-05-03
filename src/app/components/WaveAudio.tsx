@@ -33,9 +33,6 @@ export class WaveAudio {
     }
   }
 
-  private loadAudio = () => {
-  }
-
   public playAudio = () => {
     this.audioLoader.load(this.sound,
       buffer => {
