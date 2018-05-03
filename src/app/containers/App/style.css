@@ -161,7 +161,7 @@ input[type="checkbox"] {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  animation: fadeIn 0.5s ease-in-out 0s 1 normal forwards;
+  animation: fadeIn 1s ease-in-out 0s 1 normal forwards;
 }
 
 @keyframes fadeIn {

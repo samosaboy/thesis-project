@@ -46,5 +46,7 @@ export class Ripple {
 
   public stop = () => this.audio.stopAudio()
 
+  public intervalId = () => this.audio.intervalId
+
   public update = (delta) => this.wave.update(delta)
 }

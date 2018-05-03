@@ -536,21 +536,6 @@ export const SyriaEvent = () => {
     contextCity1.in()
     contextCity2.in()
     contextCity3.in()
-
-    ripple1.in(1500)
-    ripple1.play()
-    ripple2.in(2000)
-    ripple2.play()
-    ripple2_2.in(2000)
-    ripple2_2.play()
-    ripple2_3.in(2000)
-    ripple2_3.play()
-    ripple3.in(2500)
-    ripple3.play()
-    ripple3_2.in(3500)
-    ripple3_2.play()
-    ripple3_3.in(4500)
-    ripple3_3.play()
   })
 
   event.onOut(() => {
@@ -563,21 +548,6 @@ export const SyriaEvent = () => {
     contextCity1.out()
     contextCity2.out()
     contextCity3.out()
-
-    ripple1.out()
-    ripple1.stop()
-    ripple2.out()
-    ripple2.stop()
-    ripple2_2.out()
-    ripple2_2.stop()
-    ripple2_3.out()
-    ripple2_3.stop()
-    ripple3.out()
-    ripple3.stop()
-    ripple3_2.out()
-    ripple3_2.stop()
-    ripple3_3.out()
-    ripple3_3.stop()
 
     ripple1_Text.out()
     ripple2_Text.out()
@@ -595,6 +565,21 @@ export const SyriaEvent = () => {
     city3.getMarker().visible = true
     city4.getMarker().visible = true
     city5.getMarker().visible = true
+
+    ripple1.in(1500)
+    ripple1.play()
+    ripple2.in(2000)
+    ripple2.play()
+    ripple2_2.in(2000)
+    ripple2_2.play()
+    ripple2_3.in(2000)
+    ripple2_3.play()
+    ripple3.in(2500)
+    ripple3.play()
+    ripple3_2.in(3500)
+    ripple3_2.play()
+    ripple3_3.in(4500)
+    ripple3_3.play()
   })
 
   event.onStop(() => {
@@ -608,6 +593,21 @@ export const SyriaEvent = () => {
     city3.getMarker().visible = false
     city4.getMarker().visible = false
     city5.getMarker().visible = false
+
+    ripple1.out()
+    ripple1.stop()
+    ripple2.out()
+    ripple2.stop()
+    ripple2_2.out()
+    ripple2_2.stop()
+    ripple2_3.out()
+    ripple2_3.stop()
+    ripple3.out()
+    ripple3.stop()
+    ripple3_2.out()
+    ripple3_2.stop()
+    ripple3_3.out()
+    ripple3_3.stop()
   })
 
   event.onUpdate(() => {

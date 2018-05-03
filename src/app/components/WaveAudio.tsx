@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { RootComponent } from '../containers/App'
 
 // Implement THREE CACHE?
@@ -9,7 +10,7 @@ export class WaveAudio {
   private audioLoader: any
   public audio: any
   private interval: any
-  private intervalId: any
+  public intervalId: any
   private loop: boolean
   private duration: number
 
@@ -34,34 +35,43 @@ export class WaveAudio {
   }
 
   public playAudio = () => {
-    this.audioLoader.load(this.sound,
-      buffer => {
-        this.audio.setBuffer(buffer)
-        this.audio.setLoop(this.loop)
-        this.audio.autoPlay = true
-        this.audio.setVolume(this.volume)
-        if (this.interval > -1) {
-          this.intervalId = setInterval(() => {
-            if (this.audio.isPlaying && this.audio) {
-              this.audio.stop()
-            }
+    if (typeof this.intervalId === 'undefined') {
+      if (!this.audioLoader) {
+        this.audioLoader = new THREE.AudioLoader(RootComponent.loadingManager)
+      }
+      this.audioLoader.load(this.sound,
+        buffer => {
+          this.audio.setBuffer(buffer)
+          this.audio.setLoop(this.loop)
+          this.audio.autoPlay = true
+          this.audio.setVolume(this.volume)
+          if (this.interval > -1) {
             this.audio.play()
-          }, this.interval)
-        } else {
-          this.audio.play()
-        }
-      },
-      // xhr => console.log((xhr.loaded / xhr.total * 100) + '% loaded' ),
-      // e => console.log(e)
-    )
+            this.intervalId = setInterval(() => {
+              if (this.audio.isPlaying && this.audio) {
+                this.audio.stop()
+              }
+              this.audio.play()
+            }, this.interval)
+          } else {
+            this.audio.play()
+          }
+        },
+        // xhr => console.log((xhr.loaded / xhr.total * 100) + '% loaded' ),
+        // e => console.log(e)
+      )
+    }
   }
 
   public stopAudio = () => {
-    if (this.audio.isPlaying && this.audio) {
-      this.audio.stop()
-    }
     if (this.intervalId) {
       clearInterval(this.intervalId)
+      this.intervalId = undefined
+    }
+    if (this.audio.isPlaying && this.audio
+      || !this.audio.isPlaying && this.audio
+      || this.audio) {
+      this.audio.stop()
     }
   }
 
