@@ -166,6 +166,7 @@ export class Root {
   }
 
   public handleMouseMove = (event) => {
+    this.step = 0
     this.mouse.mouseX = (event.clientX - (window.innerWidth / 2)) / 12
     this.mouse.mouseY = (event.clientY - (window.innerHeight / 2)) / 6
   }
@@ -296,6 +297,10 @@ export class Root {
     }
 
     this.step += 1
+
+    if ((this.step / 60) > (60 * 2)) {
+      window.location.href = isDev ? 'http://localhost:3000/' : 'http://www.therippleeffect.ca'
+    }
 
     this.renderer.render(this.scene, this.camera)
   }

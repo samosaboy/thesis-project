@@ -58,6 +58,16 @@ input[type="checkbox"] {
   overflow: hidden;
   display: flex;
   align-items: center;
+  animation: fadeInUpHeader 1s ease-in-out 0s 1 normal forwards;
+  opacity: 0;
+}
+
+.header.backButtonContainer {
+  animation-delay: 2s;
+}
+
+.header.headerTitleContainer {
+  animation-delay: 1s;
 }
 
 .header h2 {
@@ -138,6 +148,92 @@ input[type="checkbox"] {
   padding: 1em !important;
 }
 
+.backContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  animation: fadeIn 0.5s ease-in-out 0s 1 normal forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0.8;
+  }
+}
+
+.backContainer button {
+  margin: 0 2em;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+  animation: fadeInUp 1s ease-in-out 0s 1 normal forwards;
+}
+
+.backContainer button:nth-child(1) {
+  animation-delay: 1s;
+}
+
+.backContainer button:nth-child(2) {
+  animation-delay: 2s;
+}
+
+.backContainer span {
+  opacity: 0;
+  animation: fadeInUp 1s ease-in-out 0s 1 normal forwards;
+  animation-delay: 3s;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: none;
+  }
+}
+
+@keyframes fadeInUpHeader {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+
+  100% {
+    opacity: 0.9;
+    transform: none;
+  }
+}
+
+.backContainer button img {
+  padding-top: 1em;
+  margin: 0 auto;
+  filter: brightness(0) invert(1);
+  width: 30px;
+  transform: rotate(180deg);
+}
+
+.backContainer button:hover {
+  cursor: pointer;
+}
+
 .backButtonContainer {
   position: relative;
   display: flex;
@@ -152,8 +248,9 @@ input[type="checkbox"] {
 
 .backButton img {
   filter: brightness(0) invert(1);
-  animation: rotating 10s linear infinite;
-  width: 40px;
+  /*animation: rotating 10s linear infinite;*/
+  transform: rotate(180deg);
+  width: 30px;
   opacity: 0.5;
   transition: opacity 0.25s ease-in-out;
 }

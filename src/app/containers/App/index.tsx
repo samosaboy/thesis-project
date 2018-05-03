@@ -18,6 +18,7 @@ import {
 import * as style from './style.css'
 
 import * as backIcon from '../../../assets/images/back-icon.png'
+import * as backIcon2 from '../../../assets/images/back-icon-2.png'
 
 if (!isDev) {
   window.console.warn('😃 Hello! Check out my work @ nikunj.ca :)')
@@ -48,6 +49,7 @@ export namespace App {
 
   export interface State {
     backButtonHover: boolean,
+    backButtonClick: boolean,
     isTransitioningStart: boolean,
     isTransitioningSuccess: boolean,
     currentScene: string,
@@ -72,6 +74,7 @@ class App extends React.Component<App.Props, App.State> {
     super(props, context)
     this.state = {
       backButtonHover: false,
+      backButtonClick: false,
       isTransitioningStart: false,
       isTransitioningSuccess: true,
       currentScene: '',
@@ -93,7 +96,7 @@ class App extends React.Component<App.Props, App.State> {
         EthiopiaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('syriaEvent')
+      RootComponent.setDefaultScreen('welcomeScene')
       // RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
@@ -174,10 +177,9 @@ class App extends React.Component<App.Props, App.State> {
               onMouseOver={() => this.setState({ backButtonHover: true })}
               onMouseOut={() => this.setState({ backButtonHover: false })}
               onClick={() => {
-                RootComponent.backToEvent = true
-                RootComponent.switchScreen(event.from, 'pondScene')
+                this.setState({ backButtonClick: true })
               }}>
-              <img src={backIcon}/>
+              <img src={backIcon2}/>
             </button>
             <span
               style={{
@@ -252,6 +254,36 @@ class App extends React.Component<App.Props, App.State> {
             opacity: this.state.isTransitioningStart ? 1 : 0,
           }}
         />
+        {
+          this.state.backButtonClick &&
+          <div
+            onClick={() => this.setState({ backButtonClick: false })}
+            className={style.backContainer}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}>
+              <button onClick={() => {
+                RootComponent.backToEvent = true
+                RootComponent.switchScreen(this.state.currentScene, 'pondScene')}
+              }>
+                <img src={backIcon2}/>
+                Back To Pond
+              </button>
+              <button onClick={() => {
+                window.location.href = isDev ? 'http://localhost:3000/' : 'http://www.therippleeffect.ca'
+              }}>
+                <img src={backIcon}/>
+                Restart
+              </button>
+            </div>
+            <span
+            style={{
+              paddingTop: '6em',
+              fontSize: '9pt',
+            }}>Click anywhere to cancel</span>
+          </div>
+        }
         <div id={'renderSceneDOM'}/>
         <div
           style={{
