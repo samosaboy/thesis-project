@@ -447,17 +447,6 @@ export const EthiopiaEvent = () => {
     city3.in()
     city4.in()
     city5.in()
-
-    ripple1.in(1500)
-    ripple1.play()
-    ripple1_2.in(1500)
-    ripple1_2.play()
-    ripple2.in(2000)
-    ripple2.play()
-    ripple2_2.in(1500)
-    ripple2_2.play()
-    ripple3.in(2500)
-    ripple3.play()
   })
 
   event.onOut(() => {
@@ -471,17 +460,6 @@ export const EthiopiaEvent = () => {
     city3.out()
     city4.out()
     city5.out()
-
-    ripple1.out()
-    ripple1.stop()
-    ripple1_2.out()
-    ripple1_2.stop()
-    ripple2.out()
-    ripple2.stop()
-    ripple2_2.out()
-    ripple2_2.stop()
-    ripple3.out()
-    ripple3.stop()
 
     ripple1_Text.out()
     ripple2_Text.out()
@@ -498,6 +476,17 @@ export const EthiopiaEvent = () => {
 
     city1.getMarker().visible = true
     city2.getMarker().visible = true
+
+    ripple1.in(1500)
+    ripple1.play()
+    ripple1_2.in(1500)
+    ripple1_2.play()
+    ripple2.in(2000)
+    ripple2.play()
+    ripple2_2.in(1500)
+    ripple2_2.play()
+    ripple3.in(2500)
+    ripple3.play()
   })
 
   event.onStop(() => {
@@ -508,6 +497,17 @@ export const EthiopiaEvent = () => {
 
     city1.getMarker().visible = false
     city2.getMarker().visible = false
+
+    ripple1.out()
+    ripple1.stop()
+    ripple1_2.out()
+    ripple1_2.stop()
+    ripple2.out()
+    ripple2.stop()
+    ripple2_2.out()
+    ripple2_2.stop()
+    ripple3.out()
+    ripple3.stop()
   })
 
   event.onUpdate(() => {
