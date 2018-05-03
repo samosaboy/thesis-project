@@ -24,6 +24,8 @@ export class WaveAudio {
     this.loop = !!options.loop
     this.duration = options.duration
 
+    this.audioLoader = new THREE.AudioLoader(RootComponent.loadingManager)
+
     if (options.color) {
       const geometry = new THREE.TorusGeometry(10, 0.1, 2, 69)
       const material = new THREE.MeshLambertMaterial({ color: options.color })
@@ -31,28 +33,30 @@ export class WaveAudio {
     }
   }
 
+  private loadAudio = () => {
+  }
+
   public playAudio = () => {
-    this.audioLoader = new THREE.AudioLoader(RootComponent.loadingManager)
-    this.audioLoader.load(this.sound, buffer => {
+    this.audioLoader.load(this.sound,
+      buffer => {
         this.audio.setBuffer(buffer)
         this.audio.setLoop(this.loop)
         this.audio.autoPlay = true
         this.audio.setVolume(this.volume)
-        this.audio.play()
+        if (this.interval > -1) {
+          this.intervalId = setInterval(() => {
+            if (this.audio.isPlaying && this.audio) {
+              this.audio.stop()
+            }
+            this.audio.play()
+          }, this.interval)
+        } else {
+          this.audio.play()
+        }
       },
       // xhr => console.log((xhr.loaded / xhr.total * 100) + '% loaded' ),
       // e => console.log(e)
     )
-    // if (this.interval > -1) {
-    //   this.intervalId = setInterval(() => {
-    //     if (this.audio.isPlaying && this.audio) {
-    //       this.audio.stop()
-    //     }
-    //     this.audio.play()
-    //   }, this.interval)
-    // } else {
-    //   this.audio.play()
-    // }
   }
 
   public stopAudio = () => {
@@ -66,20 +70,5 @@ export class WaveAudio {
 
   public createAnalyzer = () => {
     return new THREE.AudioAnalyser(this.audio, 32)
-  }
-
-  public updateTorus = (scale) => {
-    this.torus.scale.set(scale, scale, scale)
-  }
-
-  public toggle = () => {
-    // FIX THIS SO IT DOESNT LOAD EvERYTIME
-    this.audioLoader.load(this.sound, buffer => {
-      this.audio.setBuffer(buffer)
-      this.audio.setLoop(this.loop)
-      this.audio.autoPlay = true
-      this.audio.setVolume(this.volume)
-      this.audio.play()
-    })
   }
 }

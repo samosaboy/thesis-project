@@ -138,8 +138,8 @@ export const SyriaEvent = () => {
     style: 'Bold',
     color: '#000000',
     position: {
-      x: -160,
-      y: -145,
+      x: -135,
+      y: -135,
       z: 2,
     },
   })
@@ -284,7 +284,7 @@ export const SyriaEvent = () => {
     waveCount: 240,
     waveScale: 0.1,
     volume: 2,
-    interval: 2000,
+    interval: 60000 * 5,
     position: {
       x: -110,
       y: 45,
@@ -310,7 +310,7 @@ export const SyriaEvent = () => {
     waveCount: 240,
     waveScale: 0.1,
     volume: 2,
-    interval: 2000,
+    interval: 60000 * 5,
     position: {
       x: -95,
       y: 55,
