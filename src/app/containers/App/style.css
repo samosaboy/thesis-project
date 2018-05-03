@@ -61,7 +61,7 @@ input[type="checkbox"] {
 }
 
 .header h2 {
-  font-size: 18pt;
+  font-size: 22pt;
   text-transform: uppercase;
   letter-spacing: 3.5pt;
 }
@@ -70,7 +70,7 @@ input[type="checkbox"] {
 .header h4 {
   padding: 0;
   margin: 0;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .header h4 {
@@ -84,6 +84,14 @@ input[type="checkbox"] {
   justify-content: center;
   text-align: center;
   flex: 0.8;
+}
+
+.headerTitleContainer span {
+  opacity: 0.7;
+  padding-top: 0.5rem;
+  margin: 0 auto;
+  hyphens: auto;
+  width: 100%;
 }
 
 .footer {
@@ -103,7 +111,6 @@ input[type="checkbox"] {
   flex-basis: 0;
   flex-grow: 1;
   height: 100px;
-  /*margin-right: 3em;*/
   padding: 1em;
   transition: ease-in-out 0.25s;
   background: linear-gradient(to bottom, transparent 50%, #45526c 50%);
@@ -238,4 +245,38 @@ input[type="checkbox"] {
 .eventHTMLDescription {
   display: block;
   opacity: 0.5;
+}
+
+.pondHeader {
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  font-size: 10pt;
+}
+
+.pondHeader > div {
+  display: flex;
+  justify-content: space-between;
+  opacity: 0.5;
+  animation: headerOptionsOpacity 2s ease-in-out;
+}
+
+@keyframes headerOptionsOpacity {
+  0% {
+    opacity: 0 !important;
+  }
+  100% {
+    opacity: 0.5 !important;
+  }
+}
+
+.pondHeader > div a {
+  text-transform: uppercase;
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.pondHeader > div a:hover {
+  opacity: 1 !important;
 }

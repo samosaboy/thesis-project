@@ -77,7 +77,7 @@ export class Root {
       0.01,
       10000)
     this.renderer = new THREE.WebGLRenderer({
-      antialias: false,
+      antialias: !isDev,
     })
     this.composer = new THREE.EffectComposer(this.renderer)
     this.composer.setSize(window.innerWidth * this.devicePixelRatio, window.innerHeight * this.devicePixelRatio)
@@ -91,6 +91,8 @@ export class Root {
     if (isDev) {
       this.stats = new Stats()
       this.stats.showPanel(0)
+      this.stats.dom.style.top = 'auto'
+      this.stats.dom.style.bottom = 0
       this.stats.dom.style.right = 0
       this.stats.dom.style.left = 'auto'
       document.body.appendChild(this.stats.dom)
@@ -104,7 +106,6 @@ export class Root {
     /*
      * Setup audio Listener
      * */
-
     this.listener = new THREE.AudioListener()
     this.camera.add(this.listener)
 

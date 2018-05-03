@@ -12,8 +12,9 @@ const THREE = require('three')
 import countryObj from '../../../assets/objects/SyriaObj.json'
 import * as Csound from '../../../assets/media/syria_damascus/C.mp3'
 import * as Asound from '../../../assets/media/syria_damascus/A.mp3'
+import * as Asound2 from '../../../assets/media/syria_damascus/A(1).mp3'
+import * as Asound3 from '../../../assets/media/syria_damascus/A(2).mp3'
 import * as Gsound from '../../../assets/media/syria_damascus/G.mp3'
-import * as droneSound from '../../../assets/media/drone_01_sound.mp3'
 import { EventHTML } from 'app/components'
 
 export const SyriaEvent = () => {
@@ -258,7 +259,6 @@ export const SyriaEvent = () => {
     waveScale: 0.1,
     volume: 2,
     interval: 60000 * 5,
-    duration: 5000,
     position: {
       x: -125,
       y: -75,
@@ -270,6 +270,58 @@ export const SyriaEvent = () => {
 
   event.add(ripple2.waveMesh())
   event.add(ripple2.waveAudio())
+
+  const ripple2_2 = new Ripple({
+    soundUrl: Asound2,
+    color: '#ca7fb2',
+    linewidth: 30,
+    radius: 3,
+    resolution: 360,
+    waveNumber: 5,
+    tetaOffset: 120,
+    waveLength: 1,
+    waveType: 'normal',
+    waveCount: 240,
+    waveScale: 0.1,
+    volume: 2,
+    interval: 2000,
+    position: {
+      x: -110,
+      y: 45,
+      z: 3,
+    },
+  })
+
+  const ripple2_2Data = ripple2.analyzer()
+
+  event.add(ripple2_2.waveMesh())
+  event.add(ripple2_2.waveAudio())
+
+  const ripple2_3 = new Ripple({
+    soundUrl: Asound3,
+    color: '#ca7fb2',
+    linewidth: 30,
+    radius: 3,
+    resolution: 360,
+    waveNumber: 5,
+    tetaOffset: 120,
+    waveLength: 1,
+    waveType: 'normal',
+    waveCount: 240,
+    waveScale: 0.1,
+    volume: 2,
+    interval: 2000,
+    position: {
+      x: -95,
+      y: 55,
+      z: 3,
+    },
+  })
+
+  const ripple2_3Data = ripple2.analyzer()
+
+  event.add(ripple2_3.waveMesh())
+  event.add(ripple2_3.waveAudio())
 
   /*
    * Ripple 3
@@ -330,6 +382,30 @@ export const SyriaEvent = () => {
     }
   })
 
+  const ripple2_2Text = new EventHTML({
+    id: 'syria-ca7fb2-2',
+    parent: ripple2_2.waveMesh(),
+    heading: 'On average, one person had died as a direct result of the civil war every 5 minutes.',
+    description: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
+    died every 5 minutes in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
+    towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
+    style: {
+      color: '#ca7fb2'
+    }
+  })
+
+  const ripple2_3Text = new EventHTML({
+    id: 'syria-ca7fb2-3',
+    parent: ripple2_3.waveMesh(),
+    heading: 'On average, one person had died as a direct result of the civil war every 5 minutes.',
+    description: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
+    died every 5 minutes in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
+    towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
+    style: {
+      color: '#ca7fb2'
+    }
+  })
+
   const ripple3_Text = new EventHTML({
     id: 'syria-b7c980-1',
     parent: ripple3.waveMesh(),
@@ -351,18 +427,22 @@ export const SyriaEvent = () => {
     ripple2_Text.in()
   })
 
+  ripple2_2.clickableRegion().cursor = 'pointer'
+  ripple2_2.clickableRegion().on('click', () => {
+    ripple2_2Text.in()
+  })
+
+  ripple2_3.clickableRegion().cursor = 'pointer'
+  ripple2_3.clickableRegion().on('click', () => {
+    ripple2_3Text.in()
+  })
+
   ripple3.clickableRegion().cursor = 'pointer'
   ripple3.clickableRegion().on('click', () => {
     ripple3_Text.in()
   })
 
   event.onIn(() => {
-    city1.getCity().in()
-    city2.getCity().in()
-    city3.getCity().in()
-    city4.getCity().in()
-    city5.getCity().in()
-
     city1.in()
     city2.in()
     city3.in()
@@ -377,17 +457,15 @@ export const SyriaEvent = () => {
     ripple1.play()
     ripple2.in(2000)
     ripple2.play()
+    ripple2_2.in(2000)
+    ripple2_2.play()
+    ripple2_3.in(2000)
+    ripple2_3.play()
     ripple3.in(2500)
     ripple3.play()
   })
 
   event.onOut(() => {
-    city1.getCity().out()
-    city2.getCity().out()
-    city3.getCity().out()
-    city4.getCity().out()
-    city5.getCity().out()
-
     city1.out()
     city2.out()
     city3.out()
@@ -402,6 +480,10 @@ export const SyriaEvent = () => {
     ripple1.stop()
     ripple2.out()
     ripple2.stop()
+    ripple2_2.out()
+    ripple2_2.stop()
+    ripple2_3.out()
+    ripple2_3.stop()
     ripple3.out()
     ripple3.stop()
 
@@ -440,10 +522,14 @@ export const SyriaEvent = () => {
     syriaEvent.update()
     ripple1.update(ripple1Data.getAverageFrequency())
     ripple2.update(ripple2Data.getAverageFrequency())
+    ripple2_2.update(ripple2_2Data.getAverageFrequency())
+    ripple2_3.update(ripple2_3Data.getAverageFrequency())
     ripple3.update(ripple3Data.getAverageFrequency())
 
     ripple1_Text.update()
     ripple2_Text.update()
+    ripple2_2Text.update()
+    ripple2_3Text.update()
     ripple3_Text.update()
   })
 

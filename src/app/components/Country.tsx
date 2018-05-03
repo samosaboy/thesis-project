@@ -46,12 +46,12 @@ export class Country {
         offset: { value: 0 },
         exponent: { value: 1 },
       },
-      side: THREE.BackSide,
+      side: THREE.DoubleSide,
     })
     this.sky = new THREE.Mesh(skyGeometry, skyMaterial)
     this.sky.visible = false
 
-    const geometry = new THREE.PlaneBufferGeometry(window.innerWidth * 1.5, window.innerHeight * 1.5, 100, 100)
+    const geometry = new THREE.PlaneBufferGeometry(window.innerWidth * 2, window.innerHeight * 2, 100, 100)
     geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI / 2))
     const colors = new THREE.BufferAttribute(new Float32Array(60 * 3 * 4), 4)
 
@@ -104,30 +104,8 @@ export class Country {
 
     this.terrain = new THREE.Mesh(geometry, shaderMaterial)
     this.terrain.visible = false
-    this.terrain.position.set(0, 0, -25)
+    this.terrain.position.set(0, 0, -35)
     this.terrain.rotateX(1.5)
-
-    // this.backButton = new TextGeometry(
-    //   'B A C K', {
-    //     align: 'center',
-    //     size: 200,
-    //     lineSpacing: 10,
-    //     font: 'Lato',
-    //     style: 'Normal',
-    //     color: '#FFFFFF',
-    //     label: true,
-    //     position: {
-    //       x: -190,
-    //       y: 180,
-    //       z: 0,
-    //     },
-    //   })
-    //
-    // this.backButton.text.cursor = 'pointer'
-    // this.backButton.text.on('click', () => {
-    //   RootComponent.backToEvent = true
-    //   RootComponent.switchScreen('pondScene')
-    // })
 
     this.title = new TextGeometry(
       this.countryName.split('').join(' ').toUpperCase(), {

@@ -93,6 +93,60 @@ export const EthiopiaEvent = () => {
   event.add(city2.getCity().text)
   event.add(city2.getMarker())
 
+  const city3 = new CapitalCityMarker({
+    city: 'W E R D E R',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: 105,
+      y: -50,
+      z: 2,
+    },
+  })
+
+  event.add(city3.getCity().text)
+  event.add(city3.getMarker())
+
+  const city4 = new CapitalCityMarker({
+    city: 'O G A D E N',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: 125,
+      y: -40,
+      z: 2,
+    },
+  })
+
+  event.add(city4.getCity().text)
+  event.add(city4.getMarker())
+
+  const city5 = new CapitalCityMarker({
+    city: 'G A M B E L L A',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: -130,
+      y: -10,
+      z: 2,
+    },
+  })
+
+  event.add(city5.getCity().text)
+  event.add(city5.getMarker())
+
   const contextRegion1 = new TextGeometry(
     'R E D     S E A', {
       align: 'left',
@@ -103,7 +157,7 @@ export const EthiopiaEvent = () => {
       color: '#afafaf',
       position: {
         x: 80,
-        y: 150,
+        y: 130,
         z: 2,
       },
     },
@@ -150,7 +204,7 @@ export const EthiopiaEvent = () => {
 
   const ripple1 = new Ripple({
     soundUrl: Csound,
-    color: '#6269e0',
+    color: '#95a6e0',
     linewidth: 30,
     radius: 3,
     resolution: 360,
@@ -180,7 +234,7 @@ export const EthiopiaEvent = () => {
 
   const ripple1_2 = new Ripple({
     soundUrl: Csound2,
-    color: '#6269e0',
+    color: '#95a6e0',
     linewidth: 30,
     radius: 3,
     resolution: 360,
@@ -193,8 +247,8 @@ export const EthiopiaEvent = () => {
     volume: 2.1,
     interval: 6000,
     position: {
-      x: -90,
-      y: 100,
+      x: -85,
+      y: 70,
       z: 1.5,
     },
   })
@@ -253,8 +307,8 @@ export const EthiopiaEvent = () => {
     volume: 2,
     interval: 1500,
     position: {
-      x: 150,
-      y: -80,
+      x: 110,
+      y: -60,
       z: 3,
     },
   })
@@ -306,7 +360,7 @@ export const EthiopiaEvent = () => {
        which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
        constraints from the government and the United Nations.`,
     style: {
-      color: '#6269e0',
+      color: '#95a6e0',
     },
   })
 
@@ -318,7 +372,7 @@ export const EthiopiaEvent = () => {
        which have negative affects on the people. Unfortunately, clean water is hard to distribute due to budget
        constraints from the government and the United Nations.`,
     style: {
-      color: '#6269e0',
+      color: '#95a6e0',
     },
   })
 
@@ -383,8 +437,6 @@ export const EthiopiaEvent = () => {
   })
 
   event.onIn(() => {
-    city1.getCity().in()
-    city2.getCity().in()
     contextRegion1.in()
     contextRegion2.in()
     contextRegion2.in()
@@ -392,6 +444,9 @@ export const EthiopiaEvent = () => {
 
     city1.in()
     city2.in()
+    city3.in()
+    city4.in()
+    city5.in()
 
     ripple1.in(1500)
     ripple1.play()
@@ -406,8 +461,6 @@ export const EthiopiaEvent = () => {
   })
 
   event.onOut(() => {
-    city1.getCity().out()
-    city2.getCity().out()
     contextRegion1.out()
     contextRegion2.out()
     contextRegion2.out()
@@ -415,6 +468,9 @@ export const EthiopiaEvent = () => {
 
     city1.out()
     city2.out()
+    city3.out()
+    city4.out()
+    city5.out()
 
     ripple1.out()
     ripple1.stop()

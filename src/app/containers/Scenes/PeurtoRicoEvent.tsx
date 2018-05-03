@@ -53,7 +53,7 @@ export const PeurtoRicoEvent = () => {
       color: '#646962',
     })
     obj.center()
-    countryMesh.scale.multiplyScalar(2)
+    countryMesh.scale.multiplyScalar(3.5)
   })
   countryMesh.visible = false
   event.add(countryMesh)
@@ -65,16 +65,70 @@ export const PeurtoRicoEvent = () => {
     lineSpacing: 15,
     font: 'Lato',
     style: 'Bold',
-    color: '#cacaca',
+    color: '#000000',
     position: {
-      x: 30,
-      y: 60,
+      x: 105,
+      y: 76,
       z: 2,
     },
   })
 
   event.add(city1.getCity().text)
   event.add(city1.getMarker())
+
+  const city2 = new CapitalCityMarker({
+    city: 'P O N C E',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: -50,
+      y: -60,
+      z: 2,
+    },
+  })
+
+  event.add(city2.getCity().text)
+  event.add(city2.getMarker())
+
+  const city3 = new CapitalCityMarker({
+    city: 'M A Y A G U E Z',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: -195,
+      y: 0,
+      z: 2,
+    },
+  })
+
+  event.add(city3.getCity().text)
+  event.add(city3.getMarker())
+
+  const city4 = new CapitalCityMarker({
+    city: 'A R E C I B O',
+    align: 'left',
+    size: 100,
+    lineSpacing: 15,
+    font: 'Lato',
+    style: 'Bold',
+    color: '#000000',
+    position: {
+      x: -75,
+      y: 75,
+      z: 2,
+    },
+  })
+
+  event.add(city4.getCity().text)
+  event.add(city4.getMarker())
 
   const contextRegion1 = new TextGeometry(
     'A T L A N T I C     O C E A N', {
@@ -86,7 +140,7 @@ export const PeurtoRicoEvent = () => {
       color: '#afafaf',
       position: {
         x: 0,
-        y: 150,
+        y: 125,
         z: 2,
       },
     },
@@ -103,7 +157,7 @@ export const PeurtoRicoEvent = () => {
       color: '#afafaf',
       position: {
         x: 0,
-        y: -150,
+        y: -125,
         z: 2,
       },
     },
@@ -129,8 +183,8 @@ export const PeurtoRicoEvent = () => {
     volume: 1.85,
     interval: 1000,
     position: {
-      x: 30,
-      y: 47,
+      x: 110,
+      y: 72,
       z: 1.5,
     },
   })
@@ -159,8 +213,8 @@ export const PeurtoRicoEvent = () => {
     volume: 2.1,
     interval: 2000,
     position: {
-      x: 40,
-      y: 47,
+      x: 100,
+      y: 60,
       z: 1.5,
     },
   })
@@ -189,8 +243,8 @@ export const PeurtoRicoEvent = () => {
     volume: 1.55,
     interval: 30000,
     position: {
-      x: -115,
-      y: -50,
+      x: -55,
+      y: -70,
       z: 3,
     },
   })
@@ -219,8 +273,8 @@ export const PeurtoRicoEvent = () => {
     volume: 1.55,
     interval: 30000,
     position: {
-      x: -105,
-      y: 50,
+      x: -77,
+      y: 70,
       z: 3,
     },
   })
@@ -249,8 +303,8 @@ export const PeurtoRicoEvent = () => {
     volume: 2.1,
     interval: 15000, // duration + interval
     position: {
-      x: -130,
-      y: -20,
+      x: -200,
+      y: -10,
       z: 3,
     },
   })
@@ -346,12 +400,14 @@ export const PeurtoRicoEvent = () => {
   })
 
   event.onIn(() => {
-    city1.getCity().in()
     contextRegion1.in()
     contextRegion2.in()
     contextRegion2.in()
 
     city1.in()
+    city2.in()
+    city3.in()
+    city4.in()
 
     ripple1.in(1500)
     ripple1.play()
@@ -366,12 +422,14 @@ export const PeurtoRicoEvent = () => {
   })
 
   event.onOut(() => {
-    city1.getCity().out()
     contextRegion1.out()
     contextRegion2.out()
     contextRegion2.out()
 
     city1.out()
+    city2.out()
+    city3.out()
+    city4.out()
 
     ripple1.out()
     ripple1.stop()

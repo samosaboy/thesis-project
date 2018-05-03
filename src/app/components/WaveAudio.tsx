@@ -20,7 +20,6 @@ export class WaveAudio {
     this.sound = sound
     this.volume = options.volume
     this.interval = options.interval
-    this.audioLoader = new THREE.AudioLoader(RootComponent.loadingManager)
     this.audio = new THREE.Audio(RootComponent.listener)
     this.loop = !!options.loop
     this.duration = options.duration
@@ -33,25 +32,27 @@ export class WaveAudio {
   }
 
   public playAudio = () => {
+    this.audioLoader = new THREE.AudioLoader(RootComponent.loadingManager)
     this.audioLoader.load(this.sound, buffer => {
-      this.audio.setBuffer(buffer)
-      this.audio.setLoop(this.loop)
-      this.audio.autoPlay = true
-      this.audio.setVolume(this.volume)
-      if (this.interval > -1) {
-        this.intervalId = setInterval(() => {
-          if (this.audio.isPlaying && this.audio) {
-            this.audio.stop()
-          }
-          this.audio.play()
-        }, this.interval)
-      }else {
+        this.audio.setBuffer(buffer)
+        this.audio.setLoop(this.loop)
+        this.audio.autoPlay = true
+        this.audio.setVolume(this.volume)
         this.audio.play()
-      }
-    },
-        // xhr => console.log((xhr.loaded / xhr.total * 100) + '% loaded' ),
-        // e => console.log(e)
+      },
+      // xhr => console.log((xhr.loaded / xhr.total * 100) + '% loaded' ),
+      // e => console.log(e)
     )
+    // if (this.interval > -1) {
+    //   this.intervalId = setInterval(() => {
+    //     if (this.audio.isPlaying && this.audio) {
+    //       this.audio.stop()
+    //     }
+    //     this.audio.play()
+    //   }, this.interval)
+    // } else {
+    //   this.audio.play()
+    // }
   }
 
   public stopAudio = () => {

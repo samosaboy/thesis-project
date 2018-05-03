@@ -54,11 +54,10 @@ export class Wave {
       z: 300,
     })
 
-    const outlineObj = new THREE.CircleGeometry(this.radius * 2, 64)
+    const outlineObj = new THREE.CircleGeometry(this.radius * 2, 928)
     outlineObj.vertices.shift()
     const outlineMaterial = new THREE.MeshBasicMaterial({
       color: 0xE0E0E0,
-      // color: options.color,
     })
     this.clickableArea = new THREE.Line(outlineObj, outlineMaterial)
     this.mesh.add(this.clickableArea)
@@ -67,6 +66,7 @@ export class Wave {
     const clickableMaterial = new THREE.MeshBasicMaterial({
       color: 0xFFFFFF,
       transparent: true,
+      depthWrite: false,
       opacity: 0
     })
 
@@ -116,7 +116,7 @@ export class Wave {
       this.radius + 0.01 * audioData,
       this.radius + 0.01 * audioData,
     )
-    if (audioData) {
+    if (audioData > 0.5) {
       this.clickableArea.material.color.set(this.color)
     } else {
       this.clickableArea.material.color.set(0xE0E0E0)
@@ -167,9 +167,9 @@ export class Wave {
     }
   }
 
-  public in = (dur) => {
+  public in = (dur: number) => {
     this.createAnimation.in({
-      z: 5,
+      z: 25,
     }, dur)
   }
 

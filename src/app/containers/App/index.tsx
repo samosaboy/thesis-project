@@ -93,7 +93,7 @@ class App extends React.Component<App.Props, App.State> {
         EthiopiaEventScene,
       ])
 
-      RootComponent.setDefaultScreen('peurtoRicoEvent')
+      RootComponent.setDefaultScreen('ethiopiaEvent')
       // RootComponent.backToEvent = true
       RootEvent.eventOn('sceneChangeStart', (scene) => {
         const { to, from } = scene
@@ -177,7 +177,7 @@ class App extends React.Component<App.Props, App.State> {
                 RootComponent.backToEvent = true
                 RootComponent.switchScreen(event.from, 'pondScene')
               }}>
-              <img src={backIcon} />
+              <img src={backIcon}/>
             </button>
             <span
               style={{
@@ -221,6 +221,19 @@ class App extends React.Component<App.Props, App.State> {
           description: 'March 2017',
           information: 'millions of men, women and children are enduring severe starvation.',
         },
+      )
+    } else if (this.state.currentScene === 'pondScene') {
+      return (
+        <div className={style.pondHeader}>
+          <div style={{
+            padding: '2em',
+          }}>
+            <a href={isDev ? 'http://localhost:3000/' : 'http://www.therippleeffect.ca'}>Restart</a>
+            <span className={style.volumeControl}>
+
+            </span>
+          </div>
+        </div>
       )
     }
     return null
