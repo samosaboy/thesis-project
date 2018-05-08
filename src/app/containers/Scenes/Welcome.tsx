@@ -92,7 +92,7 @@ export const Welcome = () => {
   welcomeScene.add(splashDescription.text)
 
   const button = new TextGeometry(
-    'H O L D', {
+    'C L I C K', {
       align: 'center',
       size: 200,
       lineSpacing: 10,
@@ -127,23 +127,24 @@ export const Welcome = () => {
   sprite.el().scale.set(0.4, 0.6, 0.4)
   welcomeScene.add(sprite.el())
 
-  let time = 0
-  let mouseDown
+  button.text.on('click', () => {
+    RootComponent.switchScreen('welcomeScene', 'pondScene')
+  })
 
-  button.text.on('mousedown', () => {
-    sprite.in(1000)
-    splashText.out(500)
-    splashDescription.out()
-    keepHolding.in()
-    mouseDown = true
-  })
-  button.text.on('mouseup', () => {
-    sprite.out()
-    splashText.in()
-    splashDescription.in()
-    keepHolding.out(500)
-    mouseDown = false
-  })
+  // button.text.on('mousedown', () => {
+  //   sprite.in(1000)
+  //   splashText.out(500)
+  //   splashDescription.out()
+  //   keepHolding.in()
+  //   mouseDown = true
+  // })
+  // button.text.on('mouseup', () => {
+  //   sprite.out()
+  //   splashText.in()
+  //   splashDescription.in()
+  //   keepHolding.out(500)
+  //   mouseDown = false
+  // })
   button.text.cursor = 'pointer'
 
   const geometry = new THREE.IcosahedronGeometry(300, 4)
@@ -188,15 +189,6 @@ export const Welcome = () => {
   welcomeScene.onUpdate(() => {
     sprite.update(1000 * RootComponent.delta)
     earthMesh.material.alphaMap.offset.y = RootComponent.step * 0.001
-
-    if (mouseDown) {
-      time += 1 / 60
-      if (time > 4) {
-        RootComponent.switchScreen('welcomeScene', 'pondScene')
-      }
-    } else {
-      time = 0
-    }
   })
 
   return welcomeScene

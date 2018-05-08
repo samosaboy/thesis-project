@@ -53,7 +53,7 @@ export namespace App {
     isTransitioningStart: boolean,
     isTransitioningSuccess: boolean,
     currentScene: string,
-    text: any
+    text: any,
   }
 }
 
@@ -230,9 +230,17 @@ class App extends React.Component<App.Props, App.State> {
           <div style={{
             padding: '2em',
           }}>
-            <a href={isDev ? 'http://localhost:3000/' : 'http://www.therippleeffect.ca'}>Restart</a>
+            <a href={isDev ? 'http://localhost:3000/' : 'http://www.therippleeffect.ca'}>‹ Restart</a>
             <span className={style.volumeControl}>
-
+              Volume <button onClick={() => {
+              if (RootComponent.listener.getMasterVolume() < 5) {
+                RootComponent.listener.setMasterVolume(RootComponent.listener.getMasterVolume() + 0.5)
+              }
+            }}>+</button> / <button onClick={() => {
+              if (RootComponent.listener.getMasterVolume() > 0.2) {
+                RootComponent.listener.setMasterVolume(RootComponent.listener.getMasterVolume() - 0.5)
+              }
+            }}>-</button>
             </span>
           </div>
         </div>

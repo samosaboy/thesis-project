@@ -332,7 +332,7 @@ export const PeurtoRicoEvent = () => {
   const ripple1_2_Text = new EventHTML({
     id: 'pr-e0817d-2',
     parent: ripple1_2.waveMesh(),
-    heading: 'Every 1 - 2 seconds, a person had lost their home due to the flooding.',
+    heading: 'A person lost their home due to the flooding every 1 - 2 seconds.',
     description: `Majority of the island's homes were built on faulty, unstable land. Majority of the homes were also
     built poorly. As a result, homes were easily destroyed and people were displaced.`,
     style: {
@@ -343,7 +343,7 @@ export const PeurtoRicoEvent = () => {
   const ripple2_2_Text = new EventHTML({
     id: 'pr-c5c968-2',
     parent: ripple2_2.waveMesh(),
-    heading: 'Every 30 seconds, someone required serious medical attention.',
+    heading: 'A person lost their home due to the flooding every 1 - 2 seconds.',
     description: `Data from the Puerto Rico Institute states that in September 2017, 94 people died per day from the
     impact of the hurricane. In total, the month of September 2887 people died.`,
     style: {

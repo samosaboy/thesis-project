@@ -414,9 +414,8 @@ export const SyriaEvent = () => {
     id: 'syria-6fac82-1',
     parent: ripple1.waveMesh(),
     heading: 'Every 10 seconds one person in Syria had to make the decision to leave their homes.',
-    description: `Refugees have to walk or travel on makeshift boats to neighbouring countries and continents.
-    It is estimated that 5 million people (in a country that had 22 million people) have been forced out, with 6.3
-    million still inside but displaced from their homes.`,
+    description: `It is estimated that 5 million people (in a country that had 22 million people) have been forced out, with 6.3
+    million still inside but displaced from their homes. Refugees have to walk or travel on makeshift boats to neighbouring countries and continents.`,
     style: {
       color: '#6fac82'
     }
@@ -425,7 +424,7 @@ export const SyriaEvent = () => {
   const ripple2_Text = new EventHTML({
     id: 'syria-ca7fb2-1',
     parent: ripple2.waveMesh(),
-    heading: 'On average, one person had died as a direct result of the civil war every 5 minutes.',
+    heading: 'In Damascus, on average one person died every 5 minutes as a result of the civil war.',
     description: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
     died every 5 minutes in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
     towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
@@ -437,7 +436,7 @@ export const SyriaEvent = () => {
   const ripple2_2Text = new EventHTML({
     id: 'syria-ca7fb2-2',
     parent: ripple2_2.waveMesh(),
-    heading: 'On average, one person had died as a direct result of the civil war every 5 minutes.',
+    heading: 'In Damascus, on average one person died every 5 minutes as a result of the civil war.',
     description: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
     died every 5 minutes in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
     towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
@@ -449,7 +448,7 @@ export const SyriaEvent = () => {
   const ripple2_3Text = new EventHTML({
     id: 'syria-ca7fb2-3',
     parent: ripple2_3.waveMesh(),
-    heading: 'On average, one person had died as a direct result of the civil war every 5 minutes.',
+    heading: 'In Damascus, on average one person died every 5 minutes as a result of the civil war.',
     description: `Although the statistics is not complete, as it is hard to keep track of names, on average one person
     died every 5 minutes in Damascus. Often, deaths would follow a pattern in Syria: daily slaughters in Damascus would propogate
     towards Homs, Aleppo, Daraa and Idlib, where similar events would occur.`,
@@ -472,9 +471,8 @@ export const SyriaEvent = () => {
   const ripple3_2Text = new EventHTML({
     id: 'syria-b7c980-2',
     parent: ripple3_2.waveMesh(),
-    heading: 'A Syrian\'s footstep as they walked their 2253 kilometre journey to Serbia.',
-    description: `Horgos, Serbia is 2253 KM away, a journey that that takes approximately 50 days to complete if you were to walk 40 kilometres per day. This is roughly
-    the duration of a full-time job. This sound plays every second to represent each footstep for one person.`,
+    heading: 'A Syrian\'s footstep as they walk to escape the anguish.',
+    description: `This sound plays every second to represent a footstep of a Syrian on their 2253 km walk to Horgos, Serbia, the closest safe haven.`,
     style: {
       color: '#b7c980'
     }
@@ -483,9 +481,8 @@ export const SyriaEvent = () => {
   const ripple3_3Text = new EventHTML({
     id: 'syria-b7c980-3',
     parent: ripple3_3.waveMesh(),
-    heading: 'A Syrian\'s footstep as they walked their 2253 kilometre journey to Serbia.',
-    description: `Horgos, Serbia is 2253 KM away, a journey that that takes approximately 50 days to complete if you were to walk 40 kilometres per day. This is roughly
-    the duration of a full-time job. This sound plays every second to represent each footstep for one person.`,
+    heading: 'A Syrian\'s footstep as they walk to escape the anguish.',
+    description: `This sound plays every second to represent a footstep of a Syrian on their 2253 km walk to Horgos, Serbia, the closest safe haven.`,
     style: {
       color: '#b7c980'
     }
